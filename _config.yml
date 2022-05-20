@@ -20,3 +20,5 @@ email: "#"
 gems: [jekyll-paginate]
 paginate_path: "/page/:num/"
 paginate: 5
+
+theme: jekyll-theme-cayman
