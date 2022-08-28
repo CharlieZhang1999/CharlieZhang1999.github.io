@@ -22,22 +22,22 @@ image: /images/fulls/01.jpg
 <section>
   <header class="major">
         <h1>Blog</h1>
-  </header>
+  </header> 
+
+  <!-- This loops through the paginated posts -->
+  {% for post in paginator.posts %}
+    <section>
+      <h2><a href="{{ post.url | prepend: site.github.url }}">{{ post.title }}</a></h2>
+      <p>
+        <span><i class="fa fa-calendar"></i> {{ post.date | date: "%d %B %Y" }}{% if post.categories %} on <i class="fa fa-tags"></i> {{ post.categories | join: ', ' }}{% endif %}</span>
+      </p>
+      <div>
+        {{ post.excerpt }}
+      </div>
+      <hr style="border:1 dashed">
+  {% endfor %}
 </section>
 
-<!-- This loops through the paginated posts -->
-{% for post in paginator.posts %}
-  <section>
-    <h2><a href="{{ post.url | prepend: site.github.url }}">{{ post.title }}</a></h2>
-    <p>
-      <span><i class="fa fa-calendar"></i> {{ post.date | date: "%d %B %Y" }}{% if post.categories %} on <i class="fa fa-tags"></i> {{ post.categories | join: ', ' }}{% endif %}</span>
-    </p>
-    <div>
-      {{ post.excerpt }}
-    </div>
-    <hr style="border:1 dashed">
-  </section>
-{% endfor %}
 
 {% if paginator.total_pages > 1 %}
 <!-- Pagination links -->
