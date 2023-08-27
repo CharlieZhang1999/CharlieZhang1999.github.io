@@ -4,50 +4,55 @@ image: /images/fulls/01.jpg
 ---
 
 <section>
-  <h2>About Me / 关于我</h2>
+  <h2>About Me</h2>
   <p>
     <font size="4px">
-    I am <b>Qiuyang Zhang</b>, a graduate student at Carnegie Melon University. 
-    My current research interests involve Computer Vision and Software Engineering.  
-    <br>
-    I obtained my B.S. degree at <a href="https://www.unc.edu/">the University of North Carolina At Chapel Hill</a>.
-    I worked as an undergraduate research assistant with <a href="https://cs.unc.edu/person/henry-fuchs/">Prof.Henry Fuchs</a> in the UNC Graphics & Virtual Reality Group.
-    Further info can be found in my <a href="/resources/Qiuyang's resume.pdf">Curriculum Vitae</a>
+      I am <b>Qiuyang Zhang</b>, a graduate student pursuing Master's degree in Software Engineering at Carnegie Melon
+      University. I am enthusiatic about building applications that are user-friendly and has good customer experience.
+      I am also a big enthusiat about AI and levraging AI in health care and especially improving and monitoring
+      people's mental health.
+      <br>
+      I obtained my B.S. degree at <a href="https://www.unc.edu/">the University of North Carolina At Chapel Hill</a>.
+      I worked as an undergraduate research assistant with <a href="https://cs.unc.edu/person/henry-fuchs/">Prof.Henry
+        Fuchs</a> in the UNC Graphics & Virtual Reality Group.
+      Further info can be found in my <a href="/resources/Qiuyang's resume.pdf">Curriculum Vitae</a>
     </font>
   </p>
-  <h2><a href="/sections/funfact.html">Fun Facts / 我的小窝</a></h2>
-</section>    
+  <h2><a href="/sections/funfact.html">Fun Facts</a></h2>
+  <h2><a href="/resources/Qiuyang's resume.pdf">Curriculum Vitae</a></h2>
+</section>
 
 
 <section>
   <header class="major">
-        <h1>Blog</h1>
-  </header> 
+    <h1>Blog</h1>
+  </header>
 
   <!-- This loops through the paginated posts -->
   {% for post in paginator.posts %}
-    <section>
-      <h2><a href="{{ post.url | prepend: site.github.url }}">{{ post.title }}</a></h2>
-      <p>
-        <span><i class="fa fa-calendar"></i> {{ post.date | date: "%d %B %Y" }}{% if post.categories %} on <i class="fa fa-tags"></i> {{ post.categories | join: ', ' }}{% endif %}</span>
-      </p>
-      <div>
-        {{ post.excerpt }}
-      </div>
-      <hr style="border:1 dashed">
-  {% endfor %}
-</section>
+  <section>
+    <h2><a href="{{ post.url | prepend: site.github.url }}">{{ post.title }}</a></h2>
+    <p>
+      <span><i class="fa fa-calendar"></i> {{ post.date | date: "%d %B %Y" }}{% if post.categories %} on <i
+          class="fa fa-tags"></i> {{ post.categories | join: ', ' }}{% endif %}</span>
+    </p>
+    <div>
+      {{ post.excerpt }}
+    </div>
+    <hr style="border:1 dashed">
+    {% endfor %}
+  </section>
 
 
-{% if paginator.total_pages > 1 %}
-<!-- Pagination links -->
-<section>
-  {% if paginator.previous_page %}
+  {% if paginator.total_pages > 1 %}
+  <!-- Pagination links -->
+  <section>
+    {% if paginator.previous_page %}
     <a href="{{ paginator.previous_page_path }}">Previous</a>
-  {% endif %}
-  <span>Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
-  {% if paginator.next_page %}
+    {% endif %}
+    <span>Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
+    {% if paginator.next_page %}
     <a href="{{ paginator.next_page_path }}">Next</a>
+    {% endif %}
+  </section>
   {% endif %}
-</section>
-{% endif %}
