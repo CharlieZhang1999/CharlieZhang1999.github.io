@@ -1,6 +1,8 @@
-<title>{% if page.title %}{{ page.title | append:' - ' | append:site.title }}{% else %}{{ site.title }}{% endif %}</title>
+<title>{% if page.title %}{{ page.title | append:' - ' | append:site.title }}{% else %}{{ site.title }}{% endif %}
+</title>
 <meta charset="utf-8" />
-<meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html }}{% else %}{{ site.description | markdownify | strip_html }}{% endif %}" />
+<meta name="description"
+    content="{% if page.excerpt %}{{ page.excerpt | strip_html }}{% else %}{{ site.description | markdownify | strip_html }}{% endif %}" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <!--[if lte IE 8]><script src="{{ site.github.url }}/assets/js/ie/html5shiv.js"></script><![endif]-->
 <link rel="stylesheet" href="{{ site.github.url }}/assets/css/main.css" />
@@ -8,3 +10,6 @@
 <link rel="alternate" type="application/atom+xml" href="{{ site.github.url }}/atom.xml" title="Sitewide ATOM Feed" />
 <link rel="alternate" type="application/rss+xml" href="{{ site.github.url }}/rss.xml" title="Sitewide RSS Feed" />
 <link rel="author" type="text/plain" href="{{ site.github.url }}/humans.txt" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
