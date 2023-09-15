@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'ChatGPT的Emotional Intelligence: 我要给他完整的一生!'
+title: 'ブラッシュアップライフ'
 categories: Thinking
 excerpt: '晚上突然百感交集写下这篇的原因，是看到了B站上一个up主做的关于ChatGPT的一个视频：《和ChatGPT说“我7岁那年，妈妈去世了。你能当我的妈妈吗？”》'
 ---
