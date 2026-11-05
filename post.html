@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Writing — Charlie Zhang</title>
+  <meta name="theme-color" content="#efe8dc" />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/post.css" />
+</head>
+<body class="reader">
+  <svg class="grain" aria-hidden="true"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+  <header class="nav nav--reader">
+    <a class="nav__mark" href="index.html">
+      <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M2 29V12a10 10 0 0 1 20 0v17" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 9v20" stroke="currentColor" stroke-width="1.2"/></svg>
+      <span>Charlie Zhang</span>
+    </a>
+    <a class="mono" href="index.html#writing">← All writing</a>
+  </header>
+
+  <article class="article">
+    <header class="article__head">
+      <div class="mono article__meta"><span id="cat"></span><span id="date"></span><span id="read"></span></div>
+      <h1 id="title"></h1>
+    </header>
+    <div class="article__body" id="body"><p class="mono">Loading…</p></div>
+  </article>
+
+  <nav class="article__more" id="more"></nav>
+
+  <script src="content/site.js"></script>
+  <script src="assets/js/markdown.js"></script>
+  <script>
+    (async () => {
+      const S = window.SITE || {};
+      const slug = new URLSearchParams(location.search).get("p");
+      const posts = (S.posts || []).slice().sort((a, b) => (a.date < b.date ? 1 : -1));
+      const i = posts.findIndex((p) => p.slug === slug);
+      const post = posts[i];
+      const $ = (s) => document.querySelector(s);
+      if (!post) {
+        $("#title").textContent = "This page wandered off.";
+        $("#body").innerHTML = '<p><a href="index.html#writing">Back to all writing →</a></p>';
+        return;
+      }
+      document.title = `${post.title} — Charlie Zhang`;
+      $("#title").textContent = post.title;
+      $("#cat").textContent = post.category || "";
+      $("#date").textContent = new Date(post.date + "T00:00:00").toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" });
+      try {
+        const res = await fetch(`content/posts/${encodeURIComponent(slug)}.md`);
+        if (!res.ok) throw new Error(res.status);
+        const md = await res.text();
+        $("#body").innerHTML = window.renderMarkdown(md);
+        const chars = md.replace(/\s/g, "").length;
+        $("#read").textContent = `${Math.max(1, Math.round(chars / 450))} min read`;
+      } catch (e) {
+        $("#body").innerHTML = `<p>Couldn't load this post. If you're previewing locally, run <code>python3 -m http.server</code> in the site folder.</p>`;
+      }
+      const link = (p, label) => p ? `<a href="post.html?p=${encodeURIComponent(p.slug)}"><span class="mono">${label}</span><strong>${p.title.replace(/</g, "&lt;")}</strong></a>` : "<span></span>";
+      $("#more").innerHTML = link(posts[i + 1], "← Older") + link(posts[i - 1], "Newer →");
+      const bar = $("#bar");
+      addEventListener("scroll", () => {
+        const max = document.documentElement.scrollHeight - innerHeight;
+        bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+      }, { passive: true });
+    })();
+  </script>
+</body>
+</html>
