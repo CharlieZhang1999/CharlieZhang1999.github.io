@@ -1,86 +1,92 @@
-/* Charlie Zhang — site behaviour. Content lives in content/site.js */
+/* Charlie Zhang — a small multiverse. Content lives in content/site.js */
 (() => {
   const S = window.SITE || {};
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-  const h = (tag, attrs = {}, html = "") => {
-    const el = document.createElement(tag);
-    for (const [k, v] of Object.entries(attrs)) {
-      if (k === "class") el.className = v;
-      else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
-      else if (v !== undefined && v !== null && v !== false) el.setAttribute(k, v);
-    }
-    if (html) el.innerHTML = html;
-    return el;
-  };
   const esc = (s = "") => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-  const ease = (t) => 1 - Math.pow(1 - t, 3);
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  /* ---------- Universe shuffle ---------- */
+  const UNI_COUNT = 5;
+  const UNI_NAMES = ["cobalt", "candy", "matcha", "daylight", "tangerine"];
+  let uni = 1;
+  try { uni = parseInt(localStorage.getItem("uni")) || 1; } catch (e) {}
+  const applyUni = () => {
+    document.documentElement.setAttribute("data-uni", uni);
+    $("#uniName").textContent = `universe 0${uni}`;
+    $("#footUni").textContent = `currently in universe 0${uni} · “${UNI_NAMES[uni - 1]}”`;
+    try { localStorage.setItem("uni", uni); } catch (e) {}
+  };
+  const shuffle = () => {
+    uni = (uni % UNI_COUNT) + 1;
+    applyUni();
+    const b = $("#shuffleBtn");
+    b.classList.remove("spin"); void b.offsetWidth; b.classList.add("spin");
+  };
+  applyUni();
+  $("#shuffleBtn").addEventListener("click", shuffle);
+  $("#shuffleBtn2").addEventListener("click", shuffle);
 
   /* ---------- Hero ---------- */
-  $("#portrait").src = S.portrait || "";
-  $("#portraitCaption").textContent = S.portraitCaption || "";
   $("#intro").textContent = S.intro || "";
   $("#year").textContent = new Date().getFullYear();
-
-  const clock = $("#clock");
-  const tick = () => {
-    const d = new Date();
-    clock.textContent = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · local";
-  };
-  tick();
-  setInterval(tick, 30000);
+  const WORDS = S.heroWords || ["universe", "workshop", "archive", "playlist", "darkroom", "notebook"];
+  let wi = 0;
+  const swap = $("#swapWord");
+  if (!reduce) setInterval(() => {
+    wi = (wi + 1) % WORDS.length;
+    swap.textContent = WORDS[wi];
+    swap.classList.remove("swap"); void swap.offsetWidth; swap.classList.add("swap");
+  }, 2600);
+  const badges = S.badges || [];
+  $("#heroBadges").innerHTML = badges
+    .map((b, i) => {
+      const pos = [
+        "right:6%;top:16%", "right:16%;bottom:26%", "right:5%;top:40%",
+        "left:52%;top:11%", "right:24%;top:24%", "left:62%;bottom:14%",
+      ][i % 6];
+      return `<li style="${pos};--r:${rand(-5, 5).toFixed(1)}deg;animation-delay:${-i * 1.3}s">${esc(b)}</li>`;
+    })
+    .join("");
+  const tick = (S.ticker || ["software", "design", "film", "music", "photography", "writing"]);
+  $("#ticker").innerHTML = (tick.map((t) => `<span>${esc(t)}</span><i>✦</i>`).join("")).repeat(2);
 
   /* ---------- About ---------- */
   const st = $("#statement");
   st.innerHTML = (S.statement || "").split(/\s+/).map((w) => `<span class="w">${esc(w)}</span>`).join(" ");
   $("#facts").innerHTML = (S.facts || [])
-    .map((f) => `<div><dt class="mono">${esc(f.label)}</dt><dd>${esc(f.value)}</dd></div>`)
+    .map((f) => `<dl class="chip"><dt>${esc(f.label)}</dt><dd>${esc(f.value)}</dd></dl>`)
     .join("");
 
   /* ---------- Work ---------- */
-  const projects = $("#projects");
-  (S.projects || []).forEach((p, i) => {
-    const li = h("li", { class: "project" });
-    li.innerHTML = `
-      <button class="project__row" type="button" aria-expanded="false">
-        <span class="project__n">${String(i + 1).padStart(2, "0")}</span>
-        <span class="project__title">${esc(p.title)}</span>
-        <span class="project__role">${esc(p.role || "")}</span>
-        <span class="project__year">${esc(p.year || "")}</span>
-        <span class="project__plus" aria-hidden="true"></span>
-      </button>
-      <div class="project__body"><div class="project__inner"><div class="project__grid">
-        ${p.cover ? `<img src="${esc(p.cover)}" alt="" loading="lazy" />` : ""}
-        <div class="project__text">
-          <p class="project__summary">${esc(p.summary || "")}</p>
-          <ul class="project__points">${(p.points || []).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
-          <div class="tags">${(p.tags || []).map((t) => `<span>${esc(t)}</span>`).join("")}</div>
-          ${p.link ? `<a class="pill" href="${esc(p.link)}" target="_blank" rel="noopener">View project ↗</a>` : ""}
+  $("#projects").innerHTML = (S.projects || [])
+    .map(
+      (p, i) => `<article class="card reveal" data-i="${i}">
+        <div class="card__cover"><img src="${esc(p.cover)}" alt="" loading="lazy" /><span class="card__year">${esc(p.year || "")}</span></div>
+        <div class="card__body">
+          <div class="card__top"><h3>${esc(p.title)}</h3><span class="card__role">${esc(p.role || "")}</span></div>
+          <p class="card__summary">${esc(p.summary || "")}</p>
+          <div class="card__more"><div>
+            <ul class="card__points">${(p.points || []).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+            ${p.link ? `<p style="margin:14px 0 0"><a class="btn btn--line" href="${esc(p.link)}" target="_blank" rel="noopener">View project ↗</a></p>` : ""}
+          </div></div>
+          <div class="card__foot">
+            <div class="tags">${(p.tags || []).map((t) => `<span>${esc(t)}</span>`).join("")}</div>
+            <button class="card__toggle" type="button" aria-expanded="false">Details <i>+</i></button>
+          </div>
         </div>
-      </div></div></div>`;
-    const btn = $(".project__row", li);
+      </article>`
+    )
+    .join("");
+  $$(".card").forEach((card) => {
+    const btn = $(".card__toggle", card);
     btn.addEventListener("click", () => {
-      const open = li.classList.toggle("open");
+      const open = card.classList.toggle("open");
       btn.setAttribute("aria-expanded", open);
+      btn.firstChild.textContent = open ? "Close " : "Details ";
     });
-    li.dataset.cover = p.cover || "";
-    projects.appendChild(li);
-  });
-
-  // Floating preview following the cursor over project rows
-  const preview = $(".preview");
-  const pimg = $("img", preview);
-  let px = 0, py = 0, tx = 0, ty = 0;
-  $$(".project").forEach((li) => {
-    li.addEventListener("mouseenter", () => {
-      if (li.classList.contains("open") || !li.dataset.cover) return;
-      pimg.src = li.dataset.cover;
-      preview.classList.add("on");
-    });
-    li.addEventListener("mouseleave", () => preview.classList.remove("on"));
-    li.addEventListener("click", () => preview.classList.remove("on"));
   });
 
   $("#experience").innerHTML = (S.experience || [])
@@ -89,16 +95,71 @@
   const resume = $("#resumeLink");
   if (S.links?.resume) resume.href = S.links.resume; else resume.remove();
 
-  /* ---------- Photos + lightbox ---------- */
+  /* ---------- Photo board (draggable polaroids) ---------- */
   const photos = S.photos || [];
-  $("#gallery").innerHTML = photos
-    .map(
-      (p, i) => `<figure class="shot reveal" data-i="${i}" tabindex="0" role="button" aria-label="Open photo: ${esc(p.caption)}">
-        <div class="shot__img"><img src="${esc(p.src)}" alt="${esc(p.caption)}" loading="lazy" data-speed="${(i % 3) * 0.04 + 0.03}" /></div>
-        <figcaption><span>${esc(p.caption)}</span><span>${esc([p.place, p.date].filter(Boolean).join(" · "))}</span></figcaption>
-      </figure>`
-    )
-    .join("");
+  const board = $("#board");
+  const isBoard = () => innerWidth > 920;
+  photos.forEach((p, i) => {
+    const f = document.createElement("figure");
+    f.className = "polaroid";
+    f.dataset.i = i;
+    f.innerHTML = `<img src="${esc(p.src)}" alt="${esc(p.caption)}" loading="lazy" draggable="false" />
+      <figcaption><span>${esc(p.caption)}</span><span class="d">${esc([p.place, p.date].filter(Boolean).join(" · "))}</span></figcaption>`;
+    board.appendChild(f);
+  });
+  const scatter = () => {
+    if (!isBoard()) return;
+    const bw = board.clientWidth, bh = board.clientHeight;
+    const items = $$(".polaroid", board);
+    const cols = Math.ceil(Math.sqrt(items.length * (bw / Math.max(bh, 1))));
+    const rows = Math.ceil(items.length / cols);
+    const order = items.map((_, i) => i).sort(() => Math.random() - 0.5);
+    items.forEach((f, i) => {
+      const w = f.offsetWidth || 200, h = f.offsetHeight || 230;
+      const cell = order[i], cw = bw / cols, ch = bh / rows;
+      const bx = (cell % cols) * cw, by = Math.floor(cell / cols) * ch;
+      f.style.left = Math.min(Math.max(bx + rand(-cw * 0.14, cw - w * 0.72), 6), bw - w - 6) + "px";
+      f.style.top = Math.min(Math.max(by + rand(-ch * 0.12, ch - h * 0.6), 6), bh - h - 6) + "px";
+      f.style.transform = `rotate(${rand(-9, 9).toFixed(1)}deg)`;
+      f.style.zIndex = i + 1;
+    });
+  };
+  let zTop = photos.length + 1;
+  let dragging = null, moved = false, ox = 0, oy = 0;
+  board.addEventListener("pointerdown", (e) => {
+    const f = e.target.closest(".polaroid");
+    if (!f || !isBoard()) return;
+    dragging = f; moved = false;
+    const r = f.getBoundingClientRect(), br = board.getBoundingClientRect();
+    ox = e.clientX - r.left; oy = e.clientY - r.top;
+    f.dataset.bx = br.left; f.dataset.by = br.top;
+    f.classList.add("drag"); f.style.zIndex = ++zTop;
+    f.setPointerCapture(e.pointerId);
+  });
+  board.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    moved = true;
+    dragging.style.left = e.clientX - dragging.dataset.bx - ox + "px";
+    dragging.style.top = e.clientY - dragging.dataset.by - oy + "px";
+  });
+  const endDrag = (e) => {
+    if (!dragging) return;
+    dragging.classList.remove("drag");
+    const f = dragging; dragging = null;
+    if (!moved) openPhoto(+f.dataset.i);
+  };
+  board.addEventListener("pointerup", endDrag);
+  board.addEventListener("pointercancel", endDrag);
+  board.addEventListener("click", (e) => {
+    const f = e.target.closest(".polaroid");
+    if (f && !isBoard()) openPhoto(+f.dataset.i);
+  });
+  $("#scatterBtn").addEventListener("click", scatter);
+  addEventListener("load", scatter);
+  let wasBoard = isBoard();
+  addEventListener("resize", () => { const n = isBoard(); if (n !== wasBoard) { wasBoard = n; if (n) scatter(); } });
+
+  /* ---------- Lightbox ---------- */
   const lb = $("#lightbox");
   let cur = 0;
   const showPhoto = (i) => {
@@ -108,24 +169,13 @@
     $("img", lb).alt = p.caption;
     $("figcaption", lb).textContent = `${String(cur + 1).padStart(2, "0")} / ${String(photos.length).padStart(2, "0")} — ${p.caption}`;
   };
-  const openLayer = (el) => {
-    el.hidden = false;
-    requestAnimationFrame(() => el.classList.add("on"));
-    document.documentElement.style.overflow = "hidden";
-  };
+  const openLayer = (el) => { el.hidden = false; requestAnimationFrame(() => el.classList.add("on")); document.documentElement.style.overflow = "hidden"; };
   const closeLayer = (el) => {
     el.classList.remove("on");
-    setTimeout(() => {
-      el.hidden = true;
-      if (el.id === "videoModal") $(".modal__frame", el).innerHTML = "";
-    }, 350);
+    setTimeout(() => { el.hidden = true; if (el.id === "videoModal") $(".modal__frame", el).innerHTML = ""; }, 320);
     document.documentElement.style.overflow = "";
   };
-  $$(".shot").forEach((f) => {
-    const go = () => { showPhoto(+f.dataset.i); openLayer(lb); };
-    f.addEventListener("click", go);
-    f.addEventListener("keydown", (e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), go()));
-  });
+  const openPhoto = (i) => { showPhoto(i); openLayer(lb); };
   $(".lightbox__nav--prev", lb).addEventListener("click", () => showPhoto(cur - 1));
   $(".lightbox__nav--next", lb).addEventListener("click", () => showPhoto(cur + 1));
   $$("[data-close]").forEach((b) => b.addEventListener("click", () => closeLayer(b.closest("[role=dialog]"))));
@@ -145,7 +195,6 @@
     if (m) return `https://www.youtube-nocookie.com/embed/${m[1]}?autoplay=1&rel=0`;
     m = url.match(/(BV[\w]+)/);
     if (m) return `https://player.bilibili.com/player.html?bvid=${m[1]}&autoplay=1&high_quality=1`;
-    if (/\.(mp4|webm)$/i.test(url)) return url;
     return url;
   };
   const vm = $("#videoModal");
@@ -203,8 +252,56 @@
   audio.addEventListener("ended", () => { loadTrack((track + 1) % music.length); setPlaying(true); });
   if (music.length) loadTrack(0);
 
-  /* ---------- Ideal world ---------- */
+  /* ---------- Ideal world: plant stars ---------- */
   $("#idealLines").innerHTML = (S.idealWorld || []).map((l) => `<li class="reveal"><span>${esc(l)}</span></li>`).join("");
+  const ideal = $("#ideal");
+  const sc = $("#starCanvas");
+  const sctx = sc.getContext("2d");
+  const stars = [];
+  const sizeStarCanvas = () => { sc.width = ideal.clientWidth; sc.height = ideal.clientHeight; };
+  addEventListener("resize", sizeStarCanvas);
+  addEventListener("load", sizeStarCanvas);
+  const drawStar = (x, y, r, rot, color, alpha) => {
+    sctx.save(); sctx.translate(x, y); sctx.rotate(rot); sctx.globalAlpha = alpha; sctx.fillStyle = color;
+    sctx.beginPath();
+    for (let i = 0; i < 8; i++) {
+      const rr = i % 2 ? r * 0.4 : r;
+      const a = (i * Math.PI) / 4;
+      sctx[i ? "lineTo" : "moveTo"](Math.cos(a) * rr, Math.sin(a) * rr);
+    }
+    sctx.closePath(); sctx.fill(); sctx.restore();
+  };
+  let starAnim = null;
+  const renderStars = (t) => {
+    sctx.clearRect(0, 0, sc.width, sc.height);
+    let alive = false;
+    for (const s of stars) {
+      const age = (t - s.born) / 1000;
+      const pulse = 1 + Math.sin(age * 2.2 + s.ph) * 0.12;
+      const a = age < 0.35 ? age / 0.35 : 1;
+      if (a < 1 || !reduce) alive = true;
+      drawStar(s.x, s.y, s.r * pulse * (age < 0.35 ? 0.6 + 1.1 * a - 0.7 * a * a : 1), s.rot + (reduce ? 0 : age * 0.12), s.c, a * 0.9);
+    }
+    starAnim = alive && !reduce ? requestAnimationFrame(renderStars) : (reduce ? null : requestAnimationFrame(renderStars));
+    if (reduce && !alive) starAnim = null;
+  };
+  const uniAcc = () => getComputedStyle(document.documentElement).getPropertyValue("--acc").trim() || "#3b3bff";
+  ideal.addEventListener("click", (e) => {
+    const r = ideal.getBoundingClientRect();
+    sizeStarCanvas();
+    const colors = [uniAcc(), "#ffd43a", "#171614"];
+    for (let i = 0; i < 3; i++) {
+      stars.push({
+        x: e.clientX - r.left + (i ? rand(-34, 34) : 0),
+        y: e.clientY - r.top + (i ? rand(-30, 30) : 0),
+        r: i ? rand(5, 10) : rand(12, 19),
+        rot: rand(0, Math.PI), ph: rand(0, 6), c: colors[i % 3], born: performance.now(),
+      });
+    }
+    if (stars.length > 140) stars.splice(0, stars.length - 140);
+    $("#starCount").textContent = `(${Math.round(stars.length / 3)} planted)`;
+    if (starAnim == null) starAnim = requestAnimationFrame(renderStars);
+  });
 
   /* ---------- Writing ---------- */
   const posts = (S.posts || []).slice().sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -237,7 +334,7 @@
   const names = { email: "Email", github: "GitHub", linkedin: "LinkedIn", resume: "Résumé", instagram: "Instagram", bilibili: "Bilibili", youtube: "YouTube", xiaohongshu: "小红书", spotify: "Spotify" };
   $("#socials").innerHTML = Object.entries(L)
     .filter(([, v]) => v)
-    .map(([k, v]) => `<a class="pill" href="${k === "email" ? "mailto:" + esc(v) : esc(v)}" ${k === "email" ? "" : 'target="_blank" rel="noopener"'}>${names[k] || k} <span>↗</span></a>`)
+    .map(([k, v]) => `<a class="btn btn--line" href="${k === "email" ? "mailto:" + esc(v) : esc(v)}" ${k === "email" ? "" : 'target="_blank" rel="noopener"'}>${names[k] || k} ↗</a>`)
     .join("");
 
   /* ---------- Reveal on scroll ---------- */
@@ -247,44 +344,24 @@
   );
   $$(".reveal").forEach((el) => io.observe(el));
 
-  /* ---------- Scroll-driven effects ---------- */
-  const door = $("#door"), stage = $(".door__stage"), frame = $(".door__frame");
+  /* ---------- Scroll effects: statement + portal ---------- */
+  const portal = $("#memory"), stage = $(".portal__stage"), ring = $(".portal__ring");
   const words = $$(".w", st);
-  const portrait = $("#portrait");
-  const glow = $(".hero__glow");
-  const parallax = $$("[data-speed]");
   let vh = innerHeight, vw = innerWidth;
   addEventListener("resize", () => { vh = innerHeight; vw = innerWidth; });
-
   const onScroll = () => {
-    const y = scrollY;
-    // Hero parallax
-    if (y < vh * 1.2) {
-      portrait.style.transform = `translateY(${-y * 0.08}px)`;
-    }
-    // Statement words light up
     const r = st.getBoundingClientRect();
-    const prog = clamp((vh * 0.85 - r.top) / (r.height + vh * 0.35));
+    const prog = clamp((vh * 0.85 - r.top) / (r.height + vh * 0.3));
     const n = Math.floor(prog * words.length * 1.05);
     words.forEach((w, i) => w.classList.toggle("on", i < n));
-    // Door
-    const dr = door.getBoundingClientRect();
+    const dr = portal.getBoundingClientRect();
     const p = clamp(-dr.top / (dr.height - vh));
-    const io2 = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
-    const o = io2(clamp((p - 0.04) / 0.4));
-    const fw = frame.offsetWidth, fh = frame.offsetHeight;
-    const cover = Math.max(vw / fw, vh / fh) * 2.4;
-    const s = 1 + Math.pow(clamp((p - 0.4) / 0.5), 2.2) * (cover - 1);
+    const rw = ring.offsetWidth || 300;
+    const cover = (Math.hypot(vw, vh) / rw) * 1.15;
+    const s = 1 + Math.pow(clamp((p - 0.18) / 0.72), 1.8) * (cover - 1);
     stage.style.setProperty("--p", p.toFixed(4));
-    frame.style.setProperty("--o", o.toFixed(4));
-    frame.style.setProperty("--s", s.toFixed(4));
-    // Gentle parallax on photos
-    parallax.forEach((img) => {
-      const b = img.parentElement.getBoundingClientRect();
-      if (b.bottom < 0 || b.top > vh) return;
-      const c = (b.top + b.height / 2 - vh / 2) / vh;
-      img.style.transform = `translateY(${c * -100 * img.dataset.speed}%) scale(1.12)`;
-    });
+    ring.style.setProperty("--p", p.toFixed(4));
+    ring.style.setProperty("--s", s.toFixed(4));
   };
   let ticking = false;
   addEventListener("scroll", () => {
@@ -292,37 +369,43 @@
   }, { passive: true });
   onScroll();
 
-  /* ---------- Cursor + hero glow ---------- */
-  const cursor = $(".cursor");
-  let cx = vw / 2, cy = vh / 2, mx = cx, my = cy;
-  addEventListener("mousemove", (e) => {
-    mx = e.clientX; my = e.clientY;
-    tx = e.clientX + 24; ty = e.clientY - 120;
-    if (scrollY < vh) glow.style.transform = `translate(${(e.clientX / vw - 0.5) * 80}px, ${(e.clientY / vh - 0.5) * 80}px)`;
-  });
-  document.addEventListener("mouseover", (e) => {
-    cursor.classList.toggle("is-hover", !!e.target.closest("a, button, .shot, [role=button]"));
-  });
-  const loop = () => {
-    cx += (mx - cx) * 0.22; cy += (my - cy) * 0.22;
-    cursor.style.transform = `translate(${cx}px, ${cy}px)`;
-    px += (tx - px) * 0.12; py += (ty - py) * 0.12;
-    preview.style.transform = `translate(${px}px, ${py}px) rotate(${(tx - px) * 0.03}deg)`;
-    requestAnimationFrame(loop);
+  /* ---------- Background blobs (canvas, follows cursor) ---------- */
+  const bc = $("#blobs"), bctx = bc.getContext("2d");
+  const sizeB = () => { bc.width = innerWidth; bc.height = innerHeight; };
+  sizeB(); addEventListener("resize", sizeB);
+  let mx = innerWidth * 0.7, my = innerHeight * 0.3, cx = mx, cy = my;
+  addEventListener("pointermove", (e) => { mx = e.clientX; my = e.clientY; });
+  const getTokens = () => {
+    const cs = getComputedStyle(document.documentElement);
+    return [cs.getPropertyValue("--acc-soft").trim(), cs.getPropertyValue("--acc3").trim(), cs.getPropertyValue("--acc2").trim()];
   };
-  if (!reduce) loop();
-
-  /* ---------- Intro ---------- */
-  const done = () => {
-    document.body.classList.remove("is-loading");
-    setTimeout(() => {
-      document.body.classList.add("ready");
-      $$(".hero .reveal").forEach((el) => el.classList.add("in"));
-    }, reduce ? 0 : 450);
+  const blobDefs = [
+    { x: 0.82, y: 0.2, r: 0.34, sp: 0.00022, follow: 0.1 },
+    { x: 0.12, y: 0.75, r: 0.3, sp: 0.00017, follow: 0 },
+    { x: 0.5, y: 0.45, r: 0.22, sp: 0.00028, follow: 0.05 },
+  ];
+  const hex2rgb = (h) => {
+    h = h.replace("#", "");
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    return [parseInt(h.slice(0, 2), 16) || 230, parseInt(h.slice(2, 4), 16) || 230, parseInt(h.slice(4, 6), 16) || 255];
   };
-  const wait = reduce ? 0 : 1300;
-  const start = performance.now();
-  const fin = () => setTimeout(done, Math.max(0, wait - (performance.now() - start)));
-  if (document.readyState === "complete") fin(); else addEventListener("load", fin);
-  setTimeout(done, 3500); // never block on slow assets
+  const drawBlobs = (t) => {
+    bctx.clearRect(0, 0, bc.width, bc.height);
+    cx += (mx - cx) * 0.03; cy += (my - cy) * 0.03;
+    const cols = getTokens();
+    blobDefs.forEach((b, i) => {
+      const bx = b.x * bc.width + Math.sin(t * b.sp + i * 2.1) * bc.width * 0.06 + (cx - bc.width / 2) * b.follow;
+      const by = b.y * bc.height + Math.cos(t * b.sp * 1.3 + i) * bc.height * 0.07 + (cy - bc.height / 2) * b.follow;
+      const r = b.r * Math.min(bc.width, bc.height) * (1 + Math.sin(t * 0.0004 + i) * 0.06);
+      const [cr, cg, cbl] = hex2rgb(cols[i % cols.length] || "#e4e4ff");
+      const g = bctx.createRadialGradient(bx, by, 0, bx, by, r);
+      g.addColorStop(0, `rgba(${cr},${cg},${cbl},0.5)`);
+      g.addColorStop(1, `rgba(${cr},${cg},${cbl},0)`);
+      bctx.fillStyle = g;
+      bctx.beginPath(); bctx.arc(bx, by, r, 0, 7); bctx.fill();
+    });
+    if (!reduce) requestAnimationFrame(drawBlobs);
+  };
+  drawBlobs(0);
+  if (reduce) { /* one static frame drawn above */ }
 })();
