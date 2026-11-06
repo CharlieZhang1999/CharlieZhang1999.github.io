@@ -10,7 +10,7 @@
 
   /* ---------- Universe shuffle ---------- */
   const UNI_COUNT = 5;
-  const UNI_NAMES = ["cobalt", "candy", "matcha", "daylight", "tangerine"];
+  const UNI_NAMES = ["cobalt", "rust", "forest", "harbour", "violet"];
   let uni = 1;
   try { uni = parseInt(localStorage.getItem("uni")) || 1; } catch (e) {}
   const applyUni = () => {
@@ -27,31 +27,46 @@
   };
   applyUni();
   $("#shuffleBtn").addEventListener("click", shuffle);
-  $("#shuffleBtn2").addEventListener("click", shuffle);
 
-  /* ---------- Hero ---------- */
-  $("#intro").textContent = S.intro || "";
+  /* ---------- Hero: layered hearing-range waves ---------- */
   $("#year").textContent = new Date().getFullYear();
-  const WORDS = S.heroWords || ["universe", "workshop", "archive", "playlist", "darkroom", "notebook"];
-  let wi = 0;
-  const swap = $("#swapWord");
-  if (!reduce) setInterval(() => {
-    wi = (wi + 1) % WORDS.length;
-    swap.textContent = WORDS[wi];
-    swap.classList.remove("swap"); void swap.offsetWidth; swap.classList.add("swap");
-  }, 2600);
-  const badges = S.badges || [];
-  $("#heroBadges").innerHTML = badges
-    .map((b, i) => {
-      const pos = [
-        "right:6%;top:16%", "right:16%;bottom:26%", "right:5%;top:40%",
-        "left:52%;top:11%", "right:24%;top:24%", "left:62%;bottom:14%",
-      ][i % 6];
-      return `<li style="${pos};--r:${rand(-5, 5).toFixed(1)}deg;animation-delay:${-i * 1.3}s">${esc(b)}</li>`;
-    })
-    .join("");
-  const tick = (S.ticker || ["software", "design", "film", "music", "photography", "writing"]);
-  $("#ticker").innerHTML = (tick.map((t) => `<span>${esc(t)}</span><i>✦</i>`).join("")).repeat(2);
+  const wc = $("#wave");
+  const wctx = wc.getContext("2d");
+  let wmx = -1;
+  const sizeWave = () => { wc.width = wc.clientWidth * devicePixelRatio; wc.height = 150 * devicePixelRatio; };
+  sizeWave(); addEventListener("resize", sizeWave);
+  wc.parentElement.addEventListener("pointermove", (e) => {
+    const r = wc.getBoundingClientRect(); wmx = (e.clientX - r.left) / r.width;
+  });
+  wc.parentElement.addEventListener("pointerleave", () => { wmx = -1; });
+  const WAVES = [
+    { f: 26, a: 0.16, sp: 1.6, w: 1.4, tok: "--acc2" },
+    { f: 9, a: 0.3, sp: 1.0, w: 1.6, tok: "--acc" },
+    { f: 2.2, a: 0.5, sp: 0.55, w: 1.8, tok: "--fg" },
+  ];
+  const tokv = (t) => getComputedStyle(document.documentElement).getPropertyValue(t).trim();
+  const drawWave = (t) => {
+    const W = wc.width, H = wc.height, dpr = devicePixelRatio;
+    wctx.clearRect(0, 0, W, H);
+    WAVES.forEach((v, k) => {
+      wctx.beginPath();
+      wctx.lineWidth = v.w * dpr;
+      wctx.strokeStyle = tokv(v.tok);
+      wctx.globalAlpha = v.tok === "--fg" ? 0.32 : 0.85;
+      const steps = Math.floor(W / (3 * dpr)) || 200;
+      for (let i = 0; i <= steps; i++) {
+        const x = i / steps;
+        let env = Math.sin(x * Math.PI);
+        if (wmx >= 0) env *= 1 + 1.3 * Math.exp(-Math.pow((x - wmx) / 0.09, 2));
+        const y = H / 2 + Math.sin(x * v.f * Math.PI * 2 + t * 0.001 * v.sp + k * 1.7) * env * v.a * H * 0.44;
+        i ? wctx.lineTo(x * W, y) : wctx.moveTo(x * W, y);
+      }
+      wctx.stroke();
+    });
+    wctx.globalAlpha = 1;
+    if (!reduce) requestAnimationFrame(drawWave);
+  };
+  drawWave(0);
 
   /* ---------- About ---------- */
   const st = $("#statement");

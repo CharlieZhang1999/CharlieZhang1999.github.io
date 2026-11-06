@@ -11,15 +11,10 @@ window.SITE = {
   name: "Charlie Zhang",
   legalName: "Qiuyang Zhang",
   tagline: "Software engineer who cares how things feel.",
+  motto: "Enriching how we sense the world. For humans, dogs, and whales.",
   // Short line under the name in the hero.
   intro:
     "I build applications that are kind to the people using them, and keep a small archive of the films, songs, places and sentences that made me who I am.",
-  // Words that rotate in the hero headline ("a small ___.")
-  heroWords: ["universe", "workshop", "archive", "playlist", "darkroom", "notebook"],
-  // Floating badges around the hero (desktop only).
-  badges: ["engineer at heart", "AI × mental health", "aespa on repeat", "自学韩语中", "film diary", "CMU · UNC"],
-  // Yellow ticker tape.
-  ticker: ["software", "film", "music", "photography", "writing", "parallel universes"],
 
   // Big statement in the About section. Words fade in as you scroll.
   statement:
