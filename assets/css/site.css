@@ -1,14 +1,14 @@
-/* Qiuyang Zhang: clean white page, soft palace-red stripes behind the hero,
+/* Qiuyang Zhang: clean white page, pale turquoise stripes behind the hero,
    one big tracked-out name and a tilted photo. Everything else stays quiet. */
 :root {
   --paper: #ffffff;
-  --stripe: #f6e3e1;
+  --stripe: #afeeee;
   --ink: #1a1a1a;
-  --muted: #5f5a59;
-  --line: #e6e1e0;
-  --accent: #a3322b;
-  --btn: #c7c3c2;
-  --shadow: #e8e5e4;
+  --muted: #56605f;
+  --line: #dfe8e8;
+  --accent: #1f6f86;
+  --btn: #b8c6c6;
+  --shadow: #ddeef0;
   --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --text: "Hanken Grotesk", "Helvetica Neue", Arial, "PingFang SC", "Noto Sans SC", sans-serif;
   --zh: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -17,14 +17,14 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #161415;
-    --stripe: #251c1c;
-    --ink: #efeceb;
-    --muted: #a8a1a0;
-    --line: #322b2b;
-    --accent: #e27a70;
-    --btn: #4a4343;
-    --shadow: #2a2424;
+    --paper: #121617;
+    --stripe: #17302f;
+    --ink: #eaf0f0;
+    --muted: #9fabab;
+    --line: #26302f;
+    --accent: #87cefa;
+    --btn: #3d4a4a;
+    --shadow: #1f2a2b;
   }
 }
 
@@ -87,7 +87,7 @@ a:hover { color: var(--accent); }
 .actions { display: flex; flex-wrap: wrap; gap: 14px; }
 .btn { display: inline-block; padding: 12px 26px; font-size: 16px; letter-spacing: .02em; text-decoration: none; border: 1px solid transparent; }
 .btn-solid { background: var(--ink); color: var(--paper); }
-.btn-solid:hover { background: var(--accent); color: #fff; }
+.btn-solid:hover { background: var(--accent); color: var(--paper); }
 .btn-line { border-color: var(--btn); background: var(--paper); }
 .btn-line:hover { border-color: var(--ink); color: var(--ink); }
 
