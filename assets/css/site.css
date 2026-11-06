@@ -1,8 +1,8 @@
-/* Qiuyang Zhang: clean white page, pale turquoise stripes behind the hero,
+/* Qiuyang Zhang: clean white page, pale aqua stripes behind the hero,
    one big tracked-out name and a tilted photo. Everything else stays quiet. */
 :root {
   --paper: #ffffff;
-  --stripe: #afeeee;
+  --stripe: #bfefea;
   --ink: #1a1a1a;
   --muted: #56605f;
   --line: #dfe8e8;
