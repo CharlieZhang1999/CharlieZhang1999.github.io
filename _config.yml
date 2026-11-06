@@ -1,24 +1,18 @@
-title: Qiuyang Zhang | Graduate Student at CMU
+title: Qiuyang Zhang
 description: |
-  **Qiuyang Zhang**
-  Graduate student in CS
-  Carnegie Mellon University.
-copyright: Untitled
-sass:
-  sass_dir: assets/sass
+  Qiuyang Zhang, Software Engineering master's student at Carnegie Mellon University.
 url: http://localhost:4000
-disqus_shortname: stratajekylldemo
+disqus_shortname:
 facebook_username:
-twitter_username: "#"
+twitter_username:
 linkedin_username: "qiuyang-zhang-489743196"
 instagram_username:
 pinterest_username:
 flickr_username:
 github_username: "CharlieZhang1999"
 feed_icon: rss
-email: "#"
+email:
 gems: [jekyll-paginate]
 paginate_path: "/page/:num/"
 paginate: 5
 
-theme: jekyll-theme-cayman
