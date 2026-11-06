@@ -1,90 +1,15 @@
 ---
 layout: announcement
 title: "Experience"
+intro: "Internships and research from UNC Chapel Hill to Amazon."
 ---
-
-
-<h2>Software Development Engineer Intern at Amazon</h2>
-<i class="fa-solid fa-calendar-days"></i> 2023.05 - 2023.08
-<p>
-<ul>
-    <li>
-        Applied Apple’s iOS Edge Saliency Model within the Vision framework supported by Neural Engine to generate
-        bounding boxes for salient regions and performed smart cropping on images in Swift.
-    </li>
-    <li>
-        Assessed model performance on more than 1.5k images across diverse image datasets, including selfies, food,
-        and landscapes.
-    </li>
-    <li>
-        Developed a visual prototype in XCode showcasing the real-time impact of smart cropping and enabled
-        side-by-side comparison with the baseline model. Work submitted to ECCV2018.
-    </li>
-    <li>
-        Conducted comparative analysis among the iOS Edge Saliency Model, the baseline model, and the Amazon
-        In-House Saliency Model. Evaluated performance metrics such as latency and IoU score, providing actionable
-        insights and suggestions for future enhancements.
-    </li>
-    <li>
-        Uploaded the test beta version to Testflight to ensure the functionality’s accessibility in later builds.
-    </li>
-</ul>
-</p>
-
-<h2>Research Assistant at UNC Graphics & Virtual Reality Group</h2>
-<i class="fa-solid fa-calendar-days"></i> 2021.02 - 2022.05
-<i class="fa fa-users"></i> Advised by
-<a href="https://cs.unc.edu/person/henry-fuchs/" target="_blank"><span class="label">Prof. Henry Fuchs</span></a>,
-collaborated with <span class="label">Qian Zhang</span>
-<p>
-<ul>
-    <li>
-        Trained a ResNet body-segmentation model on human body images to perform human body segmentation task,
-        effectively preprocessing the data and providing as an prior to the 3D body reconstruction project.
-    </li>
-    <li>
-        Creatively harnessed the temporal frames information by integrating propagation module and optical flow
-        analysis, resulting in significant enhancement of video segmentation accuracy and the overall IoU score.
-    </li>
-</ul>
-</p>
-
-<h2>Backend Intern at Shenzhen Gridsum Technology Co., Ltd.</h2>
-<i class="fa-solid fa-calendar-days"></i> 2021.05 - 2021.07
-<p>
-<ul>
-    <li>
-        Integrated 20+ APIs utilizing Java Spring Boot, MyBatis, MySQL, Postman and API documentations, greatly
-        expanding app functionalities.
-    </li>
-    <li>
-        Wrote comprehensive test suites leveraging Mockito, achieving test coverage exceeding 80% across features.
-    </li>
-</ul>
-</p>
-
-
-<h2>Research Assistant at Biomedical Research Imaging Center IDEA Lab at UNC Chapel Hill</h2>
-<i class="fa-solid fa-calendar-days"></i> 2020.02 - 2020.08
-<p>
-<ul>
-    <li>
-        Led development and training of Convolutional Neural Networks (CNN) on Alzheimer’s Disease Neuroimaging
-        Initiative (ADNI) datasets, resulting in a three-way classification model with great accuracy.
-    </li>
-    <li>
-        Utilized transfer learning and attention mechanisms to identify key Alzheimer’s Indicator brain region.
-    </li>
-</ul>
-</p>
-
-<h2>Instructional Assistant at Department of Statistics and Operations Research at UNC Chapel Hill</h2>
-<i class="fa-solid fa-calendar-days"></i> 2020.01 - 2020.05
-<p>
-<ul>
-    <li>
-        Graded assignments for a “Data Analysis” course for over 200+ students using R and provided
-        feedback to help students better understand the coursework.
-    </li>
-</ul>
-</p>
+<ol class="entries">
+  {% for job in site.data.experience %}
+  <li class="entry">
+    <p class="when">{{ job.dates }}</p>
+    <h2>{{ job.role }}, {{ job.org }}</h2>
+    {% if job.note %}<p class="note">{{ job.note }}</p>{% endif %}
+    <ul>{% for b in job.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
+  </li>
+  {% endfor %}
+</ol>

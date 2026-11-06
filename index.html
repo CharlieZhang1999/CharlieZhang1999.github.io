@@ -1,63 +1,78 @@
 ---
 layout: default
-image: /images/fulls/01.jpg
+body_class: home
+image: /images/avatar.jpg
 ---
-
-<section>
-  <h2>About Me</h2>
-  <p>
-    <font size="4px">
-      I am <b>Qiuyang Zhang</b>, a graduate student pursuing Master's degree in Software Engineering at Carnegie Melon
-      University.
-      <br>
-      I am enthusiatic about building applications that are user-friendly and has good customer experience.
-      I am also a big enthusiat about AI and levraging AI in health care and especially improving and monitoring
-      people's mental health.
-      <br>
-      I obtained my B.S. degree at <a href="https://www.unc.edu/">the University of North Carolina At Chapel Hill</a>.
-      I worked as an undergraduate research assistant with <a href="https://cs.unc.edu/person/henry-fuchs/">Prof.Henry
-        Fuchs</a> in the UNC Graphics & Virtual Reality Group.
-      <br>
-      Further info can be found in my <a href="/resources/Qiuyang's resume.pdf">Curriculum Vitae</a>
-    </font>
-  </p>
-  <h2><a href="/sections/Experience.html">Experience</a></h2>
-  <h2><a href="/sections/Project.html">>Projects</a></h2>
-  <h2><a href="/sections/funfact.html">Fun Facts</a></h2>
-  <h2><a href="/resources/Qiuyang's resume.pdf">Curriculum Vitae</a></h2>
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <p class="hello">Hi, I'm</p>
+      <h1 class="name">Qiuyang</h1>
+      <p class="tags">Software Engineering <span aria-hidden="true">|</span> Computer Vision <span aria-hidden="true">|</span> AI for Mental Health</p>
+      <p class="intro">Software Engineering master's student at Carnegie Mellon. I build apps that are easy and pleasant to use, and I want to use AI to help people look after their mental health.</p>
+      <div class="actions">
+        <a class="btn btn-solid" href="{{ site.github.url }}/resources/Qiuyang's resume.pdf">View my CV</a>
+        <a class="btn btn-line" href="#about">Learn more</a>
+      </div>
+    </div>
+    <figure class="hero-photo">
+      <img src="{{ site.github.url }}/images/avatar.jpg" width="974" height="1541" alt="Qiuyang standing in a courtyard of the Forbidden City in Beijing" />
+    </figure>
+  </div>
 </section>
 
-
-<section>
-  <header class="major">
-    <h1>Blog</h1>
-  </header>
-
-  <!-- This loops through the paginated posts -->
-  {% for post in paginator.posts %}
-  <section>
-    <h2><a href="{{ post.url | prepend: site.github.url }}">{{ post.title }}</a></h2>
-    <p>
-      <span><i class="fa fa-calendar"></i> {{ post.date | date: "%d %B %Y" }}{% if post.categories %} on <i
-          class="fa fa-tags"></i> {{ post.categories | join: ', ' }}{% endif %}</span>
-    </p>
-    <div>
-      {{ post.excerpt }}
+<section class="block" id="about">
+  <div class="block-inner">
+    <h2>About</h2>
+    <div class="about">
+      <p>I'm Qiuyang Zhang. I'm studying for a Master's in Software Engineering at Carnegie Mellon University, after a B.S. at <a href="https://www.unc.edu/">UNC Chapel Hill</a>, where I was an undergraduate research assistant with <a href="https://cs.unc.edu/person/henry-fuchs/">Prof. Henry Fuchs</a> in the Graphics &amp; Virtual Reality Group.</p>
+      <p>I enjoy building user-friendly applications with a good experience end to end. I'm also excited about AI, especially using it in health care to support and monitor people's mental health.</p>
+      <p class="facts">Off the clock: a big aespa fan, teaching myself Korean by guesswork, and writing about films in Chinese.</p>
     </div>
-    <hr style="border:1 dashed">
-    {% endfor %}
-  </section>
+  </div>
+</section>
 
+<section class="block" id="experience">
+  <div class="block-inner">
+    <h2>Experience</h2>
+    <ol class="rows">
+      {% for job in site.data.experience limit: 3 %}
+      <li>
+        <span class="when">{{ job.dates }}</span>
+        <div><strong>{{ job.org }}</strong><span class="role">{{ job.role }}</span><p>{{ job.summary }}</p></div>
+      </li>
+      {% endfor %}
+    </ol>
+    <a class="more" href="{{ site.github.url }}/sections/Experience.html">All experience</a>
+  </div>
+</section>
 
-  {% if paginator.total_pages > 1 %}
-  <!-- Pagination links -->
-  <section>
-    {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path }}">Previous</a>
-    {% endif %}
-    <span>Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
-    {% if paginator.next_page %}
-    <a href="{{ paginator.next_page_path }}">Next</a>
-    {% endif %}
-  </section>
-  {% endif %}
+<section class="block" id="projects">
+  <div class="block-inner">
+    <h2>Projects</h2>
+    <ol class="rows">
+      {% for p in site.data.projects %}
+      <li>
+        <span class="when">{{ p.dates }}</span>
+        <div><strong>{{ p.name }}</strong><span class="role">{{ p.stack }}</span><p>{{ p.summary }}</p></div>
+      </li>
+      {% endfor %}
+    </ol>
+    <a class="more" href="{{ site.github.url }}/sections/Project.html">Project details</a>
+  </div>
+</section>
+
+<section class="block" id="writing">
+  <div class="block-inner">
+    <h2>Writing</h2>
+    <ol class="rows posts">
+      {% for post in site.posts %}{% unless post.categories contains 'Meta' %}
+      <li>
+        <span class="when">{{ post.date | date: "%Y.%m" }}</span>
+        <div><a class="post-link" href="{{ post.url | prepend: site.github.url }}" lang="zh">{{ post.title }}</a>
+          <p lang="zh">{{ post.excerpt | strip_html | truncate: 90 }}</p></div>
+      </li>
+      {% endunless %}{% endfor %}
+    </ol>
+  </div>
+</section>

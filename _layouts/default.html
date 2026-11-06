@@ -1,26 +1,16 @@
-<!DOCTYPE HTML>
-<!--
-	Strata by HTML5 UP
-	html5up.net | @n33co
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: 'en' }}">
   <head>
     {% include head.html %}
     {% include opengraph.html %}
     {% include twittercard.html %}
   </head>
-	<body id="top">
-
-		{% include header.html %}
-
-		<!-- Main -->
-			<div id="main">
-				{{ content }}
-			</div>
-
-      {% include footer.html %}
-      {% include scripts.html %}
-
-	</body>
+  <body class="{{ page.body_class | default: 'page' }}">
+    <a class="skip" href="#main">Skip to content</a>
+    {% include header.html %}
+    <main id="main">
+      {{ content }}
+    </main>
+    {% include footer.html %}
+  </body>
 </html>

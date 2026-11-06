@@ -1,0 +1,24 @@
+- name: Incident Response App
+  dates: 2023.01 – 2023.05
+  stack: React · Socket.IO · MongoDB
+  summary: Group chat and incident management for citizens and first responders.
+  bullets:
+    - Built an emergency app for group chat and incident management for citizens and first responders, using React, Socket.IO, and MongoDB.
+    - Used Figma, Ant Design, and Storybook, and ran heuristic evaluations against 10 usability principles to improve the frontend.
+    - Practiced test-driven development, reaching over 80% test coverage.
+    - Worked with the product and performance teams to prioritize Jira tickets, closing 50 story points across three Scrum sprints.
+- name: Emergency Social Network for Covid-19
+  dates: 2022.08 – 2022.11
+  stack: TypeScript · Node.js
+  summary: Real-time public and private chat with a daily Covid-19 quiz.
+  bullets:
+    - Built a Covid-19 social network for real-time communication with HTML, TypeScript, and Node.js.
+    - Developed private chat, public chat, and keyword search, and created the Covid-19 daily quiz to raise awareness of protective measures.
+    - Went from user stories and object-oriented analysis to prototype, testing, and CI/CD, using a mix of Scrum and Kanban.
+- name: Covid-19 Tracker
+  dates: 2022.08 – 2022.11
+  stack: React · Node.js · MongoDB
+  summary: Latest case and death counts for almost every country.
+  bullets:
+    - Led the team building a Covid-19 tracker with React on the frontend and Node.js and MongoDB on the backend.
+    - Pulled the latest case and death counts for almost every country from a Covid-19 API.
