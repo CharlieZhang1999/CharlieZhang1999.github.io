@@ -1,6 +1,8 @@
 - name: Incident Response App
   dates: 2023.01 – 2023.05
   stack: React · Socket.IO · MongoDB
+  tags: [React, Socket.IO, MongoDB, Storybook, TDD]
+  role: Team project, Carnegie Mellon
   summary: Group chat and incident management for citizens and first responders.
   bullets:
     - Built an emergency app for group chat and incident management for citizens and first responders, using React, Socket.IO, and MongoDB.
@@ -10,6 +12,8 @@
 - name: Emergency Social Network for Covid-19
   dates: 2022.08 – 2022.11
   stack: TypeScript · Node.js
+  tags: [TypeScript, Node.js, CI/CD]
+  role: Team project, Carnegie Mellon
   summary: Real-time public and private chat with a daily Covid-19 quiz.
   bullets:
     - Built a Covid-19 social network for real-time communication with HTML, TypeScript, and Node.js.
@@ -18,6 +22,8 @@
 - name: Covid-19 Tracker
   dates: 2022.08 – 2022.11
   stack: React · Node.js · MongoDB
+  tags: [React, Node.js, MongoDB]
+  role: Team lead
   summary: Latest case and death counts for almost every country.
   bullets:
     - Led the team building a Covid-19 tracker with React on the frontend and Node.js and MongoDB on the backend.

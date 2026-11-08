@@ -1,0 +1,21 @@
+{% assign items = site.data.experience %}{% assign limit = include.limit | default: 99 %}
+<ol class="timeline" data-filter-list>
+  {% for job in items limit: limit %}
+  <li class="tl-item" data-kind="{{ job.kind }}">
+    <span class="tl-dot" aria-hidden="true"></span>
+    <details class="tl-card"{% if include.open_first and forloop.first %} open{% endif %}>
+      <summary>
+        <span class="when">{{ job.dates }}</span>
+        <span class="tl-title"><strong>{{ job.org }}</strong><span class="role">{{ job.role }}</span></span>
+        <span class="kind kind-{{ job.kind | downcase }}">{{ job.kind }}</span>
+        <span class="toggle" aria-hidden="true"></span>
+      </summary>
+      <div class="reveal">
+        <p class="lead">{{ job.summary }}{% if job.note %} {{ job.note }}{% endif %}</p>
+        <ul class="bullets">{% for b in job.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
+        {% if job.tags %}<ul class="chips" aria-label="Skills">{% for t in job.tags %}<li>{{ t }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    </details>
+  </li>
+  {% endfor %}
+</ol>

@@ -1,14 +1,15 @@
 ---
 layout: announcement
 title: "Projects"
-intro: "Apps I've built at Carnegie Mellon."
+intro: "Apps I've built at Carnegie Mellon. Pick a technology to filter, or open a project to see what I did."
+wide: true
 ---
-<ol class="entries">
-  {% for p in site.data.projects %}
-  <li class="entry">
-    <p class="when">{{ p.dates }} · {{ p.stack }}</p>
-    <h2>{{ p.name }}</h2>
-    <ul>{% for b in p.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
-  </li>
-  {% endfor %}
-</ol>
+{% assign alltags = "" | split: "" %}{% for p in site.data.projects %}{% assign alltags = alltags | concat: p.tags %}{% endfor %}{% assign alltags = alltags | uniq %}
+<div class="toolbar">
+  <div class="filters" role="group" aria-label="Filter by technology" data-filter-group="tag">
+    <button type="button" aria-pressed="true" data-value="">All</button>
+    {% for t in alltags %}<button type="button" aria-pressed="false" data-value="{{ t }}">{{ t }}</button>{% endfor %}
+  </div>
+</div>
+{% include project-cards.html %}
+<p class="empty" hidden>No projects use that yet.</p>

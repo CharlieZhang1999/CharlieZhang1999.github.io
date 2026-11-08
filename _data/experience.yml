@@ -1,5 +1,7 @@
 - role: Software Development Engineer Intern
   org: Amazon
+  kind: Industry
+  tags: [Swift, iOS Vision, Neural Engine, Xcode, TestFlight]
   dates: 2023.05 – 2023.08
   summary: On-device saliency and smart cropping for iOS images in Swift.
   bullets:
@@ -10,14 +12,18 @@
     - Shipped the beta build to TestFlight so the feature stayed available in later builds.
 - role: Research Assistant
   org: UNC Graphics & Virtual Reality Group
+  kind: Research
+  tags: [ResNet, Optical flow, Video segmentation]
   dates: 2021.02 – 2022.05
-  summary: Human body segmentation in video, advised by Prof. Henry Fuchs.
+  summary: Human body segmentation in video for 3D body reconstruction.
   note: Advised by <a href="https://cs.unc.edu/person/henry-fuchs/">Prof. Henry Fuchs</a>, with Qian Zhang.
   bullets:
     - Trained a ResNet body-segmentation model on human body images as a prior for a 3D body reconstruction project.
     - Used temporal information through a propagation module and optical flow, improving video segmentation accuracy and overall IoU.
 - role: Backend Intern
   org: Shenzhen Gridsum Technology
+  kind: Industry
+  tags: [Java, Spring Boot, MyBatis, MySQL, Mockito]
   dates: 2021.05 – 2021.07
   summary: Java Spring Boot APIs and test suites.
   bullets:
@@ -25,6 +31,8 @@
     - Wrote test suites with Mockito, reaching over 80% coverage across features.
 - role: Research Assistant
   org: BRIC IDEA Lab, UNC Chapel Hill
+  kind: Research
+  tags: [CNN, Transfer learning, Attention, Medical imaging]
   dates: 2020.02 – 2020.08
   summary: CNN classification of Alzheimer’s disease from brain imaging.
   bullets:
@@ -32,6 +40,8 @@
     - Used transfer learning and attention mechanisms to identify key Alzheimer’s indicator brain regions.
 - role: Instructional Assistant
   org: UNC Statistics & Operations Research
+  kind: Teaching
+  tags: [R, Data analysis]
   dates: 2020.01 – 2020.05
   summary: Graded and gave feedback for a 200-student data analysis course in R.
   bullets:

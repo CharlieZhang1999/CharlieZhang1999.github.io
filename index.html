@@ -35,30 +35,20 @@ image: /images/avatar.jpg
 <section class="block" id="experience">
   <div class="block-inner">
     <h2>Experience</h2>
-    <ol class="rows">
-      {% for job in site.data.experience limit: 3 %}
-      <li>
-        <span class="when">{{ job.dates }}</span>
-        <div><strong>{{ job.org }}</strong><span class="role">{{ job.role }}</span><p>{{ job.summary }}</p></div>
-      </li>
-      {% endfor %}
-    </ol>
-    <a class="more" href="{{ site.github.url }}/sections/Experience.html">All experience</a>
+    <div class="block-body">
+      {% include xp-timeline.html limit=3 %}
+      <a class="more" href="{{ site.github.url }}/sections/Experience.html">All experience</a>
+    </div>
   </div>
 </section>
 
 <section class="block" id="projects">
   <div class="block-inner">
     <h2>Projects</h2>
-    <ol class="rows">
-      {% for p in site.data.projects %}
-      <li>
-        <span class="when">{{ p.dates }}</span>
-        <div><strong>{{ p.name }}</strong><span class="role">{{ p.stack }}</span><p>{{ p.summary }}</p></div>
-      </li>
-      {% endfor %}
-    </ol>
-    <a class="more" href="{{ site.github.url }}/sections/Project.html">Project details</a>
+    <div class="block-body">
+      {% include project-cards.html %}
+      <a class="more" href="{{ site.github.url }}/sections/Project.html">Filter projects by technology</a>
+    </div>
   </div>
 </section>
 

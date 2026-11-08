@@ -1,0 +1,17 @@
+<ul class="cards" data-filter-list>
+  {% for p in site.data.projects %}
+  <li class="card" data-tags="{{ p.tags | join: '|' }}">
+    <div class="card-band" aria-hidden="true"><span>{{ p.name }}</span></div>
+    <div class="card-main">
+      <p class="when">{{ p.dates }}{% if p.role %}<span class="sep" aria-hidden="true"></span>{{ p.role }}{% endif %}</p>
+      <h3>{{ p.name }}</h3>
+      <p class="lead">{{ p.summary }}</p>
+      <ul class="chips" aria-label="Built with">{% for t in p.tags %}<li>{{ t }}</li>{% endfor %}</ul>
+      <details class="card-more">
+        <summary><span class="more-open">What I did</span><span class="more-close">Hide details</span><span class="toggle" aria-hidden="true"></span></summary>
+        <div class="reveal"><ul class="bullets">{% for b in p.bullets %}<li>{{ b }}</li>{% endfor %}</ul></div>
+      </details>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
