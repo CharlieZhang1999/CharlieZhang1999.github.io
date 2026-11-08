@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1060">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e2a4a"/><stop offset="1" stop-color="#16456e"/></linearGradient>
+  <pattern id="d" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="11" cy="11" r="2.2" fill="#87cefa" fill-opacity=".28"/></pattern></defs>
+  <rect width="800" height="1060" fill="url(#g)"/>
+  <ellipse cx="400" cy="380" rx="300" ry="300" fill="url(#d)"/>
+  <ellipse cx="400" cy="380" rx="300" ry="300" fill="none" stroke="#87cefa" stroke-opacity=".35"/>
+  <ellipse cx="400" cy="380" rx="140" ry="300" fill="none" stroke="#87cefa" stroke-opacity=".2"/>
+  <path d="M100 380h600M140 230h520M140 530h520" stroke="#87cefa" stroke-opacity=".18"/>
+  <g fill="#ff8a7a"><circle cx="300" cy="300" r="9"/><circle cx="470" cy="260" r="12"/><circle cx="520" cy="440" r="7"/><circle cx="360" cy="470" r="10"/></g>
+  <path d="M80 940 C 200 930, 240 860, 320 840 S 440 760, 500 790 S 620 700, 720 690" fill="none" stroke="#bfefea" stroke-width="5"/>
+  <path d="M80 940 C 200 930, 240 860, 320 840 S 440 760, 500 790 S 620 700, 720 690 V 1000 H 80 Z" fill="#bfefea" fill-opacity=".12"/>
+  <circle cx="720" cy="690" r="9" fill="#bfefea"/>
+</svg>

@@ -1,4 +1,7 @@
 - name: Incident Response App
+  slug: incident-response
+  image: /images/projects/incident-response.svg
+  image_size: [800, 1000]
   dates: 2023.01 – 2023.05
   stack: React · Socket.IO · MongoDB
   tags: [React, Socket.IO, MongoDB, Storybook, TDD]
@@ -10,6 +13,9 @@
     - Practiced test-driven development, reaching over 80% test coverage.
     - Worked with the product and performance teams to prioritize Jira tickets, closing 50 story points across three Scrum sprints.
 - name: Emergency Social Network for Covid-19
+  slug: emergency-social-network
+  image: /images/projects/emergency-social-network.svg
+  image_size: [800, 600]
   dates: 2022.08 – 2022.11
   stack: TypeScript · Node.js
   tags: [TypeScript, Node.js, CI/CD]
@@ -20,6 +26,9 @@
     - Developed private chat, public chat, and keyword search, and created the Covid-19 daily quiz to raise awareness of protective measures.
     - Went from user stories and object-oriented analysis to prototype, testing, and CI/CD, using a mix of Scrum and Kanban.
 - name: Covid-19 Tracker
+  slug: covid-tracker
+  image: /images/projects/covid-tracker.svg
+  image_size: [800, 1060]
   dates: 2022.08 – 2022.11
   stack: React · Node.js · MongoDB
   tags: [React, Node.js, MongoDB]

@@ -1,4 +1,4 @@
-// Filters, "expand all", and smooth open/close for the experience timeline and project cards.
+// Filters, "expand all", smooth open/close for the timeline, and the project gallery dialogs.
 (function () {
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -51,6 +51,15 @@
       });
       if (empty) empty.hidden = shown > 0;
     });
+  });
+
+  // Project gallery: open a project's details in a dialog; click outside to close.
+  document.querySelectorAll('[data-dialog]').forEach(function (btn) {
+    var dlg = document.getElementById(btn.getAttribute('data-dialog'));
+    if (!dlg || !dlg.showModal) return;
+    btn.addEventListener('click', function () { dlg.showModal(); });
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('close', function () { btn.focus(); });
   });
 
   // Expand or collapse every role at once.
