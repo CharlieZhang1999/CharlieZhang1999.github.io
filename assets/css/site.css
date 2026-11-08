@@ -216,7 +216,6 @@ summary::-webkit-details-marker { display: none; }
 /* Project gallery: photo-wall masonry, each preview carries its dates bottom right like a photographer's mark. */
 .sheet-centered .sheet-head { text-align: center; }
 .sheet-centered .sheet-head p { max-width: 36em; margin-inline: auto; }
-.filters-center { justify-content: center; margin-bottom: 36px; }
 .gallery { list-style: none; margin: 0; padding: 0; columns: 3 260px; column-gap: 20px; }
 .block-body .gallery { columns: 3 200px; }
 .shot { break-inside: avoid; margin-bottom: 20px; }
@@ -234,10 +233,61 @@ summary::-webkit-details-marker { display: none; }
   font-size: 14px; letter-spacing: .03em; color: rgba(255, 255, 255, .82);
   text-shadow: 0 1px 6px rgba(0, 0, 0, .35); font-variant-numeric: tabular-nums;
 }
-.shot-cap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; }
-.shot-cap strong { font-weight: 600; font-size: 17px; }
-.shot-cap span { color: var(--muted); font-size: 14px; }
-.shot-btn:hover .shot-cap strong { color: var(--accent); }
+/* Title sits in the middle of each preview; hover lifts the veil, widens the type and draws a rule. */
+.shot-veil { position: absolute; inset: 0; background: rgba(8, 22, 26, .38); transition: background-color .4s; }
+.shot-btn:hover .shot-veil, .shot-btn:focus-visible .shot-veil { background: rgba(8, 22, 26, .58); }
+.shot-title {
+  position: absolute; inset: 0; z-index: 1; padding: 24px 22px;
+  display: grid; place-content: center; justify-items: center; gap: 12px; text-align: center; color: #fff;
+}
+.shot-title strong {
+  font: 800 clamp(22px, 2.3vw, 30px)/1.08 var(--display); letter-spacing: .05em; text-transform: uppercase;
+  text-wrap: balance; text-shadow: 0 2px 18px rgba(0, 0, 0, .35);
+  transition: letter-spacing .5s cubic-bezier(.2, .7, .2, 1);
+}
+.block-body .shot-title strong { font-size: clamp(17px, 1.6vw, 22px); }
+.shot-rule { width: 28px; height: 2px; background: #bfefea; transition: width .5s cubic-bezier(.2, .7, .2, 1); }
+.shot-stack { font-size: 13px; letter-spacing: .08em; color: rgba(255, 255, 255, .85); opacity: 0; transform: translateY(6px); transition: opacity .35s, transform .35s; }
+.shot-btn:hover .shot-title strong, .shot-btn:focus-visible .shot-title strong { letter-spacing: .09em; }
+.shot-btn:hover .shot-rule, .shot-btn:focus-visible .shot-rule { width: 72px; }
+.shot-btn:hover .shot-stack, .shot-btn:focus-visible .shot-stack { opacity: 1; transform: none; }
+@media (hover: none) { .shot-stack { opacity: 1; transform: none; } }
+.shot { transition: opacity .3s, filter .3s; }
+.shot.is-dim { opacity: .28; filter: grayscale(1); }
+
+/* Tech stack selector: one framed bar, a striped pill slides to the chosen tool, hovering previews the matches. */
+.stackbar-wrap { display: grid; justify-items: center; gap: 12px; margin-bottom: 40px; }
+.stackbar {
+  position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 2px;
+  padding: 6px; border: 1px solid var(--ink); background: var(--paper); box-shadow: 8px 8px 0 var(--stripe);
+  max-width: 100%;
+}
+.stackbar-pill {
+  position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 0;
+  background: repeating-linear-gradient(-45deg, var(--stripe) 0 6px, color-mix(in srgb, var(--stripe) 55%, var(--paper)) 6px 12px);
+  border: 1px solid var(--ink);
+  transition: transform .45s cubic-bezier(.3, 1.3, .5, 1), width .45s cubic-bezier(.3, 1.3, .5, 1), height .3s;
+}
+.stackbar button {
+  position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px;
+  font: 500 14px var(--text); color: var(--muted); background: transparent; border: 0; padding: 8px 11px; cursor: pointer; white-space: nowrap;
+  transition: color .2s;
+}
+.stackbar button i { font-size: 15px; transition: transform .3s; }
+.stackbar button:hover { color: var(--ink); }
+.stackbar button:hover i { transform: translateY(-2px) rotate(-8deg); }
+.stackbar button[aria-pressed="true"] { color: var(--ink); font-weight: 600; }
+.stackbar .count {
+  min-width: 18px; height: 18px; padding: 0 5px; display: inline-grid; place-items: center;
+  font-size: 12px; font-variant-numeric: tabular-nums; background: var(--chip); border-radius: 10px; color: var(--ink);
+}
+.stackbar button[aria-pressed="true"] .count { background: var(--ink); color: var(--paper); }
+.stackbar-hint { margin: 0; font-size: 14px; color: var(--muted); }
+.stackbar-hint strong { color: var(--ink); font-weight: 600; }
+@media (max-width: 560px) {
+  .stackbar { justify-content: flex-start; }
+  .stackbar button { padding: 8px 9px; gap: 6px; }
+}
 
 .shot-dialog { padding: 0; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); width: min(920px, calc(100vw - 32px)); max-height: calc(100vh - 48px); box-shadow: 14px 14px 0 var(--stripe); }
 .shot-dialog::backdrop { background: rgba(10, 20, 22, .55); backdrop-filter: blur(3px); }
@@ -265,7 +315,7 @@ body:has(dialog[open]) { overflow: hidden; }
   .tl-title strong { display: block; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .tl-card, .toggle, .toggle::after, .tl-dot, .shot-frame img { transition: none; }
+  .tl-card, .toggle, .toggle::after, .tl-dot, .shot-frame img, .shot-title strong, .shot-rule, .shot-stack, .stackbar-pill, .shot { transition: none; }
   .tl-card[open], .shot-btn:hover .shot-frame img { transform: none; }
   .shot-dialog[open] { animation: none; }
 }

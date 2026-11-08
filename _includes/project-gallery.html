@@ -4,9 +4,14 @@
     <button type="button" class="shot-btn" data-dialog="dlg-{{ p.slug }}{{ include.suffix }}" aria-haspopup="dialog">
       <span class="shot-frame">
         <img src="{{ p.image | prepend: site.github.url }}" width="{{ p.image_size[0] }}" height="{{ p.image_size[1] }}" alt="" loading="lazy" />
+        <span class="shot-veil" aria-hidden="true"></span>
+        <span class="shot-title">
+          <strong>{{ p.name }}</strong>
+          <span class="shot-rule" aria-hidden="true"></span>
+          <span class="shot-stack">{{ p.stack }}</span>
+        </span>
         <span class="shot-date">{{ p.dates }}</span>
       </span>
-      <span class="shot-cap"><strong>{{ p.name }}</strong><span>{{ p.stack }}</span></span>
     </button>
     <dialog id="dlg-{{ p.slug }}{{ include.suffix }}" class="shot-dialog" aria-labelledby="dlg-{{ p.slug }}{{ include.suffix }}-t">
       <div class="dlg-inner">

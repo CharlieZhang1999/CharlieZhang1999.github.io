@@ -50,7 +50,47 @@
         }
       });
       if (empty) empty.hidden = shown > 0;
+      var hint = scope.querySelector('[data-filter-hint]');
+      if (hint) {
+        hint.innerHTML = v
+          ? shown + (shown === 1 ? ' project' : ' projects') + ' built with <strong></strong>'
+          : 'Showing all ' + shown + ' projects';
+        if (v) hint.querySelector('strong').textContent = v;
+      }
+      movePill(group);
     });
+
+    // Hovering a technology previews which projects use it.
+    if (type === 'tag') {
+      group.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('mouseenter', function () {
+          var v = b.getAttribute('data-value');
+          Array.prototype.forEach.call(list.children, function (item) {
+            item.classList.toggle('is-dim', !!v && (item.getAttribute('data-tags') || '').split('|').indexOf(v) === -1);
+          });
+        });
+      });
+      group.addEventListener('mouseleave', function () {
+        Array.prototype.forEach.call(list.children, function (item) { item.classList.remove('is-dim'); });
+      });
+    }
+    movePill(group);
+  });
+
+  // Slide the striped pill under the selected technology.
+  function movePill(group) {
+    var pill = group.querySelector('.stackbar-pill');
+    var on = group.querySelector('[aria-pressed="true"]');
+    if (!pill || !on) return;
+    pill.style.width = on.offsetWidth + 'px';
+    pill.style.height = on.offsetHeight + 'px';
+    pill.style.transform = 'translate(' + on.offsetLeft + 'px,' + on.offsetTop + 'px)';
+  }
+  window.addEventListener('resize', function () {
+    document.querySelectorAll('.stackbar').forEach(movePill);
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () {
+    document.querySelectorAll('.stackbar').forEach(movePill);
   });
 
   // Project gallery: open a project's details in a dialog; click outside to close.

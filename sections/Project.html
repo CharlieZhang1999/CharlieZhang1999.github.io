@@ -6,9 +6,15 @@ wide: true
 centered: true
 ---
 {% assign alltags = "" | split: "" %}{% for p in site.data.projects %}{% assign alltags = alltags | concat: p.tags %}{% endfor %}{% assign alltags = alltags | uniq %}
-<div class="filters filters-center" role="group" aria-label="Filter by technology" data-filter-group="tag">
-  <button type="button" aria-pressed="true" data-value="">All</button>
-  {% for t in alltags %}<button type="button" aria-pressed="false" data-value="{{ t }}">{{ t }}</button>{% endfor %}
+<div class="stackbar-wrap">
+  <div class="stackbar" role="group" aria-label="Filter by technology" data-filter-group="tag">
+    <span class="stackbar-pill" aria-hidden="true"></span>
+    <button type="button" aria-pressed="true" data-value=""><i class="fa-solid fa-layer-group" aria-hidden="true"></i>All<span class="count">{{ site.data.projects | size }}</span></button>
+    {% for t in alltags %}{% assign n = 0 %}{% for p in site.data.projects %}{% if p.tags contains t %}{% assign n = n | plus: 1 %}{% endif %}{% endfor %}
+    <button type="button" aria-pressed="false" data-value="{{ t }}"><i class="{{ site.data.tech[t] | default: 'fa-solid fa-code' }}" aria-hidden="true"></i>{{ t }}<span class="count">{{ n }}</span></button>
+    {% endfor %}
+  </div>
+  <p class="stackbar-hint" aria-live="polite" data-filter-hint>Showing all {{ site.data.projects | size }} projects</p>
 </div>
 {% include project-gallery.html %}
 <p class="empty" hidden>No projects use that yet.</p>
