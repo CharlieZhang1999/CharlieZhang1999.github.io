@@ -1,9 +1,0 @@
-# Font Awesome icon for each technology tag in the Projects filter.
-React: fa-brands fa-react
-Socket.IO: fa-solid fa-plug
-MongoDB: fa-solid fa-leaf
-Storybook: fa-solid fa-book-open
-TDD: fa-solid fa-vial-circle-check
-TypeScript: fa-solid fa-code
-Node.js: fa-brands fa-node-js
-CI/CD: fa-solid fa-arrows-rotate

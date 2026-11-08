@@ -1,17 +1,15 @@
 ---
 layout: announcement
 title: "Experience"
-intro: "Internships, research, and teaching from UNC Chapel Hill to Amazon. Open any role to see what I worked on."
-wide: true
+intro: "Internships, research, and teaching from UNC Chapel Hill to Amazon, newest first. Open any year to read more."
+serif: true
 ---
 <div class="toolbar">
-  <div class="filters" role="group" aria-label="Filter by type" data-filter-group="kind">
+  <div class="utabs" role="group" aria-label="Filter by type" data-filter-group="kind">
     <button type="button" aria-pressed="true" data-value="">All <span>{{ site.data.experience | size }}</span></button>
-    {% assign kinds = site.data.experience | map: "kind" | uniq %}
-    {% for k in kinds %}{% assign n = site.data.experience | where: "kind", k | size %}
-    <button type="button" aria-pressed="false" data-value="{{ k }}">{{ k }} <span>{{ n }}</span></button>
-    {% endfor %}
+    {% assign kinds = site.data.experience | map: "kind" | uniq %}{% for k in kinds %}{% assign n = site.data.experience | where: "kind", k | size %}<button type="button" aria-pressed="false" data-value="{{ k }}">{{ k }} <span>{{ n }}</span></button>{% endfor %}
+    <span class="utabs-line" aria-hidden="true"></span>
   </div>
   <button type="button" class="link-btn" data-expand-all>Expand all</button>
 </div>
-{% include xp-timeline.html open_first=true %}
+{% include xp-exhibit.html open_first=true %}
