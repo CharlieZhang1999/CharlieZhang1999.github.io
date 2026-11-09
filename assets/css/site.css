@@ -251,12 +251,38 @@ summary::-webkit-details-marker { display: none; }
 .arrows button:disabled { opacity: .3; cursor: default; background: var(--paper); }
 .reel-count { margin: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
 .reel-count strong { font: 400 28px var(--serif); color: var(--ink); margin-right: 2px; }
-.reel-detail { border-top: 1px solid var(--line); padding-top: 24px; }
-.rd[hidden] { display: none; }
-.rd { display: grid; gap: 12px; max-width: 68ch; animation: rise-in .4s ease-out; }
-.rd h3 { margin: 0; font: 400 34px/1.1 var(--serif); }
-.rd-meta { margin: 0; color: var(--muted); font-size: 15px; }
-@keyframes rise-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.slide-open { position: absolute; left: 18px; top: 14px; z-index: 1; color: #fff; font-size: 13px; opacity: 0; transform: translateY(-4px); transition: opacity .3s, transform .3s; text-shadow: 0 1px 6px rgba(0, 0, 0, .4); }
+.slide-open i { font-size: 11px; margin-left: 3px; }
+.slide-pic:hover .slide-open, .slide-pic:focus-visible .slide-open { opacity: 1; transform: none; }
+
+/* Project view: the cover grows from the slide into a full page. */
+body.pv-lock { overflow: hidden; }
+.pv { position: fixed; inset: 0; z-index: 100; background: var(--paper); overflow-y: auto; overscroll-behavior: contain; }
+.pv[hidden] { display: none; }
+.pv:focus { outline: none; }
+.pv-close { position: fixed; top: max(14px, env(safe-area-inset-top, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); z-index: 3; width: 44px; height: 44px; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); font-size: 18px; cursor: pointer; transition: background-color .2s; }
+.pv-close:hover { background: var(--stripe); }
+.pv-close:focus-visible, .pv-nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.pv-hero { position: relative; height: min(62vh, 560px); overflow: hidden; background: var(--shadow); }
+.pv-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pv-hero::after { content: ""; position: absolute; inset: auto 0 0 0; height: 55%; background: linear-gradient(transparent, rgba(0, 0, 0, .55)); }
+.pv-title { position: absolute; left: max(16px, calc((100% - 760px) / 2)); right: 16px; bottom: 24px; z-index: 1; margin: 0; color: #fff; font: 400 clamp(40px, 6.4vw, 80px)/1 var(--serif); text-shadow: 0 2px 24px rgba(0, 0, 0, .4); text-wrap: balance; }
+.pv-body { max-width: 760px; margin: 0 auto; padding: 28px 16px 24px; display: grid; gap: 18px; }
+.pv-meta { margin: 0; color: var(--muted); font-size: 15px; }
+.pv-lead { margin: 0; font: italic 400 clamp(24px, 3vw, 30px)/1.25 var(--serif); }
+.pv-points { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.pv-points li { position: relative; padding-left: 24px; }
+.pv-points li::before { content: ""; position: absolute; left: 0; top: .8em; width: 12px; height: 1px; background: var(--muted); }
+.pv-nav { max-width: 760px; margin: 0 auto; padding: 18px 16px 56px; display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line); }
+.pv-nav button { font: inherit; background: none; border: 0; padding: 6px 0; color: var(--muted); cursor: pointer; text-align: left; font-size: 14px; }
+.pv-nav button:last-child { text-align: right; margin-left: auto; }
+.pv-nav button:hover { color: var(--ink); }
+.pv-nav button[hidden] { display: none; }
+.pv-nav b { display: block; font: 400 22px/1.15 var(--serif); color: var(--ink); }
+.pv-in { opacity: 0; transform: translateY(14px); }
+.pv.is-in .pv-in { opacity: 1; transform: none; transition: opacity .45s .1s, transform .45s .1s cubic-bezier(.3, .8, .3, 1); }
+.pv-ghost { position: fixed; z-index: 101; overflow: hidden; pointer-events: none; background: var(--shadow); }
+.pv-ghost img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 @media (max-width: 640px) {
   .chron-row summary { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; }
@@ -271,7 +297,7 @@ summary::-webkit-details-marker { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .reel { scroll-behavior: auto; }
   .slide, .slide-pic img, .seg-bar::after, .utabs-line, .chron-year, .toggle::after { transition: none; }
-  .rd { animation: none; }
+  .pv-in { opacity: 1; transform: none; }
 }
 
 /* Footer */

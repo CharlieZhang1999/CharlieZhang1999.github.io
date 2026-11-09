@@ -20,8 +20,9 @@
   <div class="reel" data-filter-list tabindex="0" aria-label="Projects. Scroll sideways or use the arrows.">
     {% for p in site.data.projects %}
     <article class="slide{% if forloop.first %} is-on{% endif %}" data-i="{{ forloop.index0 }}" data-tags="{{ p.tags | join: '|' }}">
-      <button type="button" class="slide-pic" aria-label="Show details for {{ p.name }}">
+      <button type="button" class="slide-pic" aria-label="Open {{ p.name }}">
         <img src="{{ p.image | prepend: site.github.url }}" width="{{ p.image_size[0] }}" height="{{ p.image_size[1] }}" alt="" loading="lazy" />
+        <span class="slide-open" aria-hidden="true">Open <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
         <span class="slide-date">{{ p.dates }}</span>
         <span class="slide-title">{{ p.name }}</span>
       </button>
@@ -36,18 +37,19 @@
     </div>
     <p class="reel-count" aria-live="polite"><strong>1</strong> / {{ site.data.projects | size }}</p>
   </div>
-  {% if include.details %}
-  <div class="reel-detail">
-    {% for p in site.data.projects %}
-    <section class="rd" data-i="{{ forloop.index0 }}"{% unless forloop.first %} hidden{% endunless %} aria-label="{{ p.name }} details">
-      <h3>{{ p.name }}</h3>
-      <p class="rd-meta">{{ p.dates }}<span class="dot-sep" aria-hidden="true"></span>{{ p.role }}</p>
-      <p class="lead">{{ p.summary }}</p>
-      <ul class="bullets">{% for b in p.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
+  {% for p in site.data.projects %}
+  <template class="pv-src" data-i="{{ forloop.index0 }}" data-slug="{{ p.slug }}">
+    <div class="pv-hero">
+      <img src="{{ p.image | prepend: site.github.url }}" width="{{ p.image_size[0] }}" height="{{ p.image_size[1] }}" alt="" />
+      <h2 class="pv-title" id="pv-title">{{ p.name }}</h2>
+    </div>
+    <div class="pv-body">
+      <p class="pv-meta">{{ p.dates }}<span class="dot-sep" aria-hidden="true"></span>{{ p.role }}</p>
+      <p class="pv-lead">{{ p.summary }}</p>
+      <ul class="pv-points">{% for b in p.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
       <ul class="chips" aria-label="Built with">{% for t in p.tags %}<li>{{ t }}</li>{% endfor %}</ul>
-    </section>
-    {% endfor %}
-  </div>
-  {% endif %}
+    </div>
+  </template>
+  {% endfor %}
   <p class="empty" hidden>No projects use that yet.</p>
 </div>
