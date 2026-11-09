@@ -1,0 +1,23 @@
+{% assign limit = include.limit | default: 99 %}
+<ol class="chron" data-filter-list>
+  {% for job in site.data.experience limit: limit %}
+  <li class="chron-item" data-kind="{{ job.kind }}">
+    <details class="chron-row"{% if include.open_first and forloop.first %} open{% endif %}>
+      <summary>
+        <span class="chron-year">{{ job.dates | slice: 0, 4 }}</span>
+        <span class="chron-head">
+          <span class="chron-org">{{ job.org }}</span>
+          <span class="chron-meta">{{ job.role }}<span class="dot-sep" aria-hidden="true"></span>{{ job.dates }}</span>
+        </span>
+        <span class="kind kind-{{ job.kind | downcase }}">{{ job.kind }}</span>
+        <span class="toggle" aria-hidden="true"></span>
+      </summary>
+      <div class="reveal">
+        <p class="lead">{{ job.summary }}{% if job.note %} {{ job.note }}{% endif %}</p>
+        <ul class="bullets">{% for b in job.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
+        {% if job.tags %}<ul class="chips" aria-label="Skills">{% for t in job.tags %}<li>{{ t }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    </details>
+  </li>
+  {% endfor %}
+</ol>

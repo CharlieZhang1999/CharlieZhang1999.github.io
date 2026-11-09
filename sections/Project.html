@@ -1,14 +1,8 @@
 ---
 layout: announcement
 title: "Projects"
-intro: "Apps I've built at Carnegie Mellon."
+intro: "Apps I've built at Carnegie Mellon, from emergency chat to Covid-19 data."
+wide: true
+sans: true
 ---
-<ol class="entries">
-  {% for p in site.data.projects %}
-  <li class="entry">
-    <p class="when">{{ p.dates }} · {{ p.stack }}</p>
-    <h2>{{ p.name }}</h2>
-    <ul>{% for b in p.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
-  </li>
-  {% endfor %}
-</ol>
+{% include project-reel.html filter=true %}

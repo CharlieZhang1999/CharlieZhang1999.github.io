@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-<div class="sheet">
+<div class="sheet{% if page.wide %} sheet-wide{% endif %}{% if page.centered %} sheet-centered{% endif %}{% if page.serif %} sheet-serif{% endif %}{% if page.sans %} sheet-sans{% endif %}">
   <header class="sheet-head">
     <h1>{{ page.title }}</h1>
     {% if page.intro %}<p>{{ page.intro }}</p>{% endif %}
