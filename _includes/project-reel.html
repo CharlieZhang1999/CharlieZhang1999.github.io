@@ -1,53 +1,48 @@
+{% comment %}Project cards: photo on top, title and short text below, swipe row. The card or "Learn more" opens the full project page.
+Set `photo:` on a project in _data/projects.yml to use a photo; otherwise its illustration is used.{% endcomment %}
 <div class="reel-block" data-reel>
   {% if include.filter %}
   {% assign alltags = "" | split: "" %}{% for p in site.data.projects %}{% assign alltags = alltags | concat: p.tags %}{% endfor %}{% assign alltags = alltags | uniq %}
-  <div class="utabs" role="group" aria-label="Filter by technology" data-filter-group="tag">
+  <div class="pills" role="group" aria-label="Filter by technology" data-filter-group="tag">
     <button type="button" aria-pressed="true" data-value="">All <span>{{ site.data.projects | size }}</span></button>
     {% for t in alltags %}{% assign n = 0 %}{% for p in site.data.projects %}{% if p.tags contains t %}{% assign n = n | plus: 1 %}{% endif %}{% endfor %}<button type="button" aria-pressed="false" data-value="{{ t }}">{{ t }} <span>{{ n }}</span></button>{% endfor %}
-    <span class="utabs-line" aria-hidden="true"></span>
   </div>
   {% endif %}
-  <nav class="segmap" aria-label="Project map" style="--n: {{ site.data.projects | size }}">
-    {% for p in site.data.projects %}
-    <button type="button" class="seg{% if forloop.first %} is-on{% endif %}" data-i="{{ forloop.index0 }}" data-tags="{{ p.tags | join: '|' }}"{% if forloop.first %} aria-current="step"{% endif %}>
-      <span class="seg-bar" aria-hidden="true"></span>
-      <span class="seg-name">{{ p.name }}</span>
-      <span class="seg-date">{{ p.dates }}</span>
-    </button>
-    {% endfor %}
-  </nav>
-  <p class="seg-label" aria-hidden="true"><strong>{{ site.data.projects[0].name }}</strong>{{ site.data.projects[0].dates }}</p>
   <div class="reel" data-filter-list tabindex="0" aria-label="Projects. Scroll sideways or use the arrows.">
-    {% for p in site.data.projects %}
-    <article class="slide{% if forloop.first %} is-on{% endif %}" data-i="{{ forloop.index0 }}" data-tags="{{ p.tags | join: '|' }}">
-      <button type="button" class="slide-pic" aria-label="Open {{ p.name }}">
-        <img src="{{ p.image | prepend: site.github.url }}" width="{{ p.image_size[0] }}" height="{{ p.image_size[1] }}" alt="" loading="lazy" />
-        <span class="slide-open" aria-hidden="true">Open <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
-        <span class="slide-date">{{ p.dates }}</span>
-        <span class="slide-title">{{ p.name }}</span>
-      </button>
-      <p class="slide-info"><span>{{ p.stack }}</span><span>{{ p.role }}</span></p>
+    {% for p in site.data.projects %}{% assign pic = p.photo | default: p.image %}
+    <article class="slide pcard{% if forloop.first %} is-on{% endif %}" data-i="{{ forloop.index0 }}" data-tags="{{ p.tags | join: '|' }}">
+      <div class="pcard-ph">
+        <img src="{{ pic | prepend: site.github.url }}" alt="" loading="lazy" />
+        <span class="pcard-date">{{ p.dates }}</span>
+      </div>
+      <h3 class="pcard-title">{{ p.name }}</h3>
+      <p class="pcard-text">{{ p.summary }}</p>
+      <button type="button" class="pcard-more" aria-label="Learn more about {{ p.name }}">Learn more <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
     </article>
     {% endfor %}
   </div>
   <div class="reel-foot">
     <div class="arrows">
-      <button type="button" data-step="-1" aria-label="Previous project"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
-      <button type="button" data-step="1" aria-label="Next project"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      <button type="button" data-step="-1" aria-label="Previous project"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+      <button type="button" data-step="1" aria-label="Next project"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
     </div>
-    <p class="reel-count" aria-live="polite"><strong>1</strong> / {{ site.data.projects | size }}</p>
+    <p class="reel-count" aria-live="polite">1 / {{ site.data.projects | size }}</p>
   </div>
-  {% for p in site.data.projects %}
+  {% for p in site.data.projects %}{% assign pic = p.photo | default: p.image %}
   <template class="pv-src" data-i="{{ forloop.index0 }}" data-slug="{{ p.slug }}">
-    <div class="pv-hero">
-      <img src="{{ p.image | prepend: site.github.url }}" width="{{ p.image_size[0] }}" height="{{ p.image_size[1] }}" alt="" />
+    <div class="pv-top">
+      <p class="pv-kick">{{ p.dates }}</p>
       <h2 class="pv-title" id="pv-title">{{ p.name }}</h2>
-    </div>
-    <div class="pv-body">
-      <p class="pv-meta">{{ p.dates }}<span class="dot-sep" aria-hidden="true"></span>{{ p.role }}</p>
       <p class="pv-lead">{{ p.summary }}</p>
+    </div>
+    <div class="pv-hero"><img src="{{ pic | prepend: site.github.url }}" alt="" /></div>
+    <div class="pv-body">
       <ul class="pv-points">{% for b in p.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
-      <ul class="chips" aria-label="Built with">{% for t in p.tags %}<li>{{ t }}</li>{% endfor %}</ul>
+      <dl class="pv-facts">
+        <div><dt>Role</dt><dd>{{ p.role }}</dd></div>
+        <div><dt>When</dt><dd>{{ p.dates }}</dd></div>
+        <div><dt>Built with</dt><dd><ul class="chips">{% for t in p.tags %}<li>{{ t }}</li>{% endfor %}</ul></dd></div>
+      </dl>
     </div>
   </template>
   {% endfor %}

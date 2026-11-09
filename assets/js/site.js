@@ -37,9 +37,9 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(allLines);
   allLines();
 
-  // Project view: clicking a slide grows its cover into a full page. Back, Esc, or × closes it.
+  // Project view: clicking a card grows its photo into a full page. Back, Esc, or the Projects button closes it.
   var view = null, viewReel = null, viewI = -1, pushed = false, lastFocus = null;
-  function rect(el) { var b = el.getBoundingClientRect(); return { left: b.left + 'px', top: b.top + 'px', width: b.width + 'px', height: b.height + 'px' }; }
+  function rect(el) { var b = el.getBoundingClientRect(); return { left: b.left + 'px', top: b.top + 'px', width: b.width + 'px', height: b.height + 'px', borderRadius: getComputedStyle(el).borderTopLeftRadius }; }
   function fly(from, to, img, ms, done) {
     if (reduce || !document.body.animate) { done(); return; }
     var g = document.createElement('div');
@@ -58,7 +58,7 @@
     view.setAttribute('role', 'dialog');
     view.setAttribute('aria-modal', 'true');
     view.setAttribute('aria-labelledby', 'pv-title');
-    view.innerHTML = '<button type="button" class="pv-close" aria-label="Close project"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button><div class="pv-content"></div>' +
+    view.innerHTML = '<div class="pv-bar"><button type="button" class="pv-close"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i> Projects</button></div><div class="pv-content"></div>' +
       '<nav class="pv-nav pv-in" aria-label="More projects"><button type="button" data-pv="-1"></button><button type="button" data-pv="1"></button></nav>';
     document.body.appendChild(view);
     view.querySelector('.pv-close').addEventListener('click', function () { closeView(); });
@@ -92,7 +92,7 @@
     [-1, 1].forEach(function (d) {
       var b = view.querySelector('[data-pv="' + d + '"]'), s = vis[pos + d];
       b.hidden = !s;
-      if (s) b.innerHTML = (d < 0 ? 'Previous' : 'Next') + '<b></b>', b.lastChild.textContent = s.querySelector('.slide-title').textContent;
+      if (s) b.innerHTML = (d < 0 ? 'Previous' : 'Next') + '<b></b>', b.lastChild.textContent = s.querySelector('.pcard-title').textContent;
     });
   }
   function openView(r, i, fromHash) {
@@ -108,7 +108,7 @@
     if (!fromHash) { history.pushState({ pv: 1 }, '', '#' + slug); pushed = true; }
     var hero = view.querySelector('.pv-hero');
     view.style.visibility = 'hidden';
-    fly(r.slides[i].querySelector('.slide-pic'), hero, hero.querySelector('img').src, 520, function () {
+    fly(r.slides[i].querySelector('.pcard-ph'), hero, hero.querySelector('img').src, 520, function () {
       view.style.visibility = '';
       requestAnimationFrame(function () { view.classList.add('is-in'); });
       view.focus({ preventScroll: true });
@@ -119,7 +119,7 @@
     if (pushed && !fromPop) { pushed = false; history.back(); return; } // popstate finishes the close
     pushed = false;
     if (!fromPop && location.hash) history.replaceState(null, '', location.pathname + location.search);
-    var hero = view.querySelector('.pv-hero'), pic = viewReel.slides[viewI].querySelector('.slide-pic');
+    var hero = view.querySelector('.pv-hero'), pic = viewReel.slides[viewI].querySelector('.pcard-ph');
     view.classList.remove('is-in');
     var heroBox = hero.getBoundingClientRect();
     var visibleHero = heroBox.bottom > 0;
@@ -127,7 +127,7 @@
       view.hidden = true;
       view.style.visibility = '';
       document.body.classList.remove('pv-lock');
-      (pic || lastFocus).focus({ preventScroll: true });
+      (viewReel.slides[viewI].querySelector('.pcard-more') || lastFocus).focus({ preventScroll: true });
     };
     if (!visibleHero) { finish(); return; }
     view.style.visibility = 'hidden';
@@ -163,7 +163,7 @@
         label.firstChild.textContent = n.querySelector('.seg-name').textContent;
         label.appendChild(document.createTextNode(n.querySelector('.seg-date').textContent));
       }
-      if (count) count.innerHTML = '<strong>' + (pos + 1) + '</strong> / ' + vis.length;
+      if (count) count.textContent = (pos + 1) + ' / ' + vis.length;
       if (prev) prev.disabled = pos <= 0;
       if (next) next.disabled = pos >= vis.length - 1;
     }
@@ -178,7 +178,12 @@
       if (vis[pos]) go(slides.indexOf(vis[pos]));
     }
     segs.forEach(function (g, i) { g.addEventListener('click', function () { go(i); }); });
-    slides.forEach(function (s, i) { s.querySelector('.slide-pic').addEventListener('click', function () { openView(r, i); }); });
+    slides.forEach(function (s, i) {
+      s.addEventListener('click', function () {
+        if (window.getSelection && String(window.getSelection())) return; // let people select text
+        openView(r, i);
+      });
+    });
     if (prev) prev.addEventListener('click', function () { step(-1); });
     if (next) next.addEventListener('click', function () { step(1); });
     reel.addEventListener('keydown', function (e) {
@@ -229,7 +234,8 @@
       reels.forEach(function (r) {
         if (!r.block.contains(list)) return;
         r.segs.forEach(function (g) { g.classList.toggle('is-hidden', !matches(g)); });
-        r.block.querySelector('.segmap').style.setProperty('--n', shown || 1);
+        var map = r.block.querySelector('.segmap');
+        if (map) map.style.setProperty('--n', shown || 1);
         var first = r.visible()[0];
         if (first) r.go(r.slides.indexOf(first), true);
       });
