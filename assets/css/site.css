@@ -20,7 +20,7 @@
   --text: "Jost", "Helvetica Neue", Arial, "PingFang SC", "Noto Sans SC", sans-serif;
   --zh: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --gutter: max(20px, 5vw);
-  --max: 1120px;
+  --max: 1360px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -42,6 +42,7 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html, body { overflow-x: clip; } /* lets the card row run to the screen edge without a sideways scrollbar */
 strong, b { font-weight: 500; }
 body {
   margin: 0;
@@ -167,7 +168,7 @@ a:hover { color: var(--accent); }
 
 /* Projects reel + segmented project map, Exhibition-style experience chronology.
    Display type for both pages is Instrument Serif at regular weight; controls are underline tabs. */
-.sheet-wide { max-width: 1040px; }
+.sheet-wide { max-width: var(--max); }
 .sheet-serif .sheet-head h1 { font: 400 clamp(50px, 8.6vw, 92px)/1 var(--serif); letter-spacing: 0; }
 .toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px 24px; margin-bottom: 28px; }
 .link-btn { font: 400 14px var(--text); background: none; border: 0; padding: 4px 0; color: var(--ink); cursor: pointer; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
@@ -207,28 +208,28 @@ summary::-webkit-details-marker { display: none; }
 .kind-teaching { color: var(--k-tea); }
 
 /* Experience: chronology wall */
-.chron { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.chron { --ycol: clamp(130px, 13vw, 190px); list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .chron-item { border-bottom: 1px solid var(--line); }
 .chron-item.is-hidden { display: none; }
-.chron-row summary { display: grid; grid-template-columns: 130px minmax(0, 1fr) auto auto; align-items: center; gap: 6px 20px; padding: 22px 0; }
-.chron-year { font: 400 56px/1 var(--serif); color: var(--accent); font-variant-numeric: lining-nums tabular-nums; transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
+.chron-row summary { display: grid; grid-template-columns: var(--ycol) minmax(0, 1fr) auto auto; align-items: center; gap: 6px 20px; padding: 22px 0; }
+.chron-year { font: 400 clamp(56px, 5.4vw, 80px)/1 var(--serif); color: var(--accent); font-variant-numeric: lining-nums tabular-nums; transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
 .chron-row summary:hover .chron-year, .chron-row[open] .chron-year { transform: translateX(6px); }
 .chron-head { display: grid; gap: 2px; min-width: 0; }
 .chron-org { font: 500 clamp(24px, 2.8vw, 31px)/1.15 var(--serif); }
 .chron-meta { font-size: 14px; color: var(--muted); }
-.chron-row .reveal { padding: 0 0 24px calc(130px + 20px); display: grid; gap: 12px; max-width: calc(130px + 20px + 64ch); }
+.chron-row .reveal { padding: 0 0 28px calc(var(--ycol) + 20px); display: grid; gap: 12px; max-width: calc(var(--ycol) + 20px + 72ch); }
 
 /* Projects: photo cards in a swipe row (Google Sans Flex), opening to a full project page */
-.reel-block { display: grid; gap: 28px; min-width: 0; font-family: var(--gsans); font-weight: 400; }
+.reel-block { display: grid; gap: 28px; min-width: 0; font-family: var(--gsans); font-weight: 400; container-type: inline-size; --cgap: clamp(20px, 3.2vw, 48px); }
 .pills { display: flex; gap: 8px; flex-wrap: wrap; }
 .pills button { font: 400 15px var(--gsans); color: var(--muted); background: var(--paper); border: 1px solid var(--gray); border-radius: 999px; padding: 7px 16px; cursor: pointer; transition: background-color .2s, color .2s; }
 .pills button:hover { background: var(--chip); color: var(--ink); }
 .pills button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 .pills span { font-size: 11px; vertical-align: super; opacity: .7; }
-.reel { display: flex; gap: clamp(20px, 4vw, 48px); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 0 8px; scrollbar-width: none; }
+.reel { display: flex; gap: var(--cgap); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 4px 0 8px; scrollbar-width: none; }
 .reel::-webkit-scrollbar { display: none; }
 .reel:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.pcard { flex: 0 0 calc((100% - 2 * clamp(20px, 4vw, 48px)) / 2.5); min-width: 240px; scroll-snap-align: start; display: flex; flex-direction: column; cursor: pointer; }
+.pcard { flex: 0 0 calc((100cqw - 2 * var(--cgap)) / 2.5); min-width: 0; scroll-snap-align: start; display: flex; flex-direction: column; cursor: pointer; }
 .pcard.is-hidden { display: none; }
 .pcard-ph { position: relative; aspect-ratio: 16 / 9; border-radius: 20px; overflow: hidden; background: var(--shadow); }
 .pcard-ph img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .7s cubic-bezier(.2, .7, .2, 1); }
@@ -247,6 +248,11 @@ summary::-webkit-details-marker { display: none; }
 .arrows button:hover { background: var(--chip); }
 .arrows button:disabled { opacity: .35; cursor: default; background: var(--paper); }
 .reel-count { margin: 0 0 0 8px; color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; }
+
+/* Card count follows the space available, and on full pages the row runs to the right edge of the screen. */
+@container (max-width: 760px) { .pcard { flex-basis: calc((100cqw - var(--cgap)) / 1.5); } }
+@container (max-width: 520px) { .pcard { flex-basis: 84cqw; } }
+.sheet-wide .reel { margin-right: calc((100% - 100vw) / 2); padding-right: var(--gutter); scroll-padding-right: var(--gutter); }
 
 /* Projects page header in the same style */
 .sheet-sans .sheet-head h1 { font: 450 clamp(40px, 5vw, 56px)/1.1 var(--gsans); letter-spacing: -.02em; }
@@ -294,7 +300,10 @@ body.pv-lock { overflow: hidden; }
   .chron-row .reveal { padding-left: 0; }
   .pills { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: calc(-1 * var(--gutter)); padding-right: var(--gutter); }
   .pills button { flex: none; }
-  .pcard { flex-basis: 84%; min-width: 0; }
+  .pcard { flex-basis: 84cqw; }
+  .topbar-inner { flex-wrap: wrap; row-gap: 6px; }
+  .topbar-inner .nav { width: 100%; justify-content: space-between; gap: 12px; }
+  .topbar-inner .nav a { font-size: 13px; letter-spacing: .04em; }
   .pv-hero img { aspect-ratio: 4 / 3; border-radius: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
