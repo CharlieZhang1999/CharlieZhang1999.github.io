@@ -1,0 +1,25 @@
+# Week tabs on /flybrain/. One entry per week, in order. See flybrain/README.md.
+#   week:    tab number
+#   title:   one-line name of that week's result
+#   dates:   shown under the tab
+#   status:  done | in progress  (in progress shows a dot on the tab)
+#   summary: one or two sentences above the demo
+#   page:    folder under flybrain/ holding a self-contained index.html
+- week: 1
+  title: A fly brain that tastes words
+  dates: Wrapped up 2026.10.24
+  status: done
+  summary: The Shiu et al. 2024 whole-brain model (127,400 neurons) rebuilt in plain NumPy and checked against the Brian2 reference. Pick a taste and watch the sugar → MN9 feeding circuit decide.
+  page: week1
+- week: 2
+  title: Connectome Graph Explorer
+  dates: Wrapped up 2026.11.03
+  status: done
+  summary: The model ported to the male brain (MaleCNS), 17 sensory words, a fix for the odor attractor, and a word readout. Explore every simulated trial on the wiring it used.
+  page: week2
+- week: 3
+  title: Five words in a row
+  dates: Started 2026.11.05
+  status: in progress
+  summary: Day 1 of closing the fly ↔ LLM loop. Five-word episodes play into one continuous simulation and each 0.5 s window is decoded back to a word.
+  page: week3

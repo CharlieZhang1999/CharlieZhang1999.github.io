@@ -1,3 +1,17 @@
+- name: flybrain
+  slug: flybrain
+  link: /flybrain/
+  image: /images/projects/flybrain.svg
+  image_size: [800, 600]
+  dates: 2026.10 – now
+  stack: Python · NumPy · Connectomics
+  tags: [Python, NumPy, Neuroscience]
+  role: Personal research project
+  summary: A whole fruit fly brain simulated from its wiring diagram, with a demo for every week.
+  bullets:
+    - Rebuilt the Shiu et al. 2024 whole-brain spiking model of the fruit fly in plain NumPy and validated it against the Brian2 reference.
+    - Ported it to the male connectome (MaleCNS), added 17 sensory words, and decoded them back from brain activity.
+    - Now closing the loop between the simulated fly and a language model.
 - name: Incident Response App
   slug: incident-response
   image: /images/projects/incident-response.svg

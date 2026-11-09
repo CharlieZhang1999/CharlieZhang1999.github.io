@@ -337,3 +337,28 @@ body.pv-lock { overflow: hidden; }
   .rows li { grid-template-columns: 1fr; }
   .rows .role { display: block; margin-left: 0; }
 }
+
+/* flybrain: week tabs over an embedded demo (flybrain/index.html, _data/flybrain_weeks.yml) */
+.fb { max-width: var(--max); margin: 0 auto; padding: clamp(32px, 6vw, 64px) var(--gutter) 56px; font-family: var(--gsans); font-weight: 400; }
+.fb-head { margin-bottom: 28px; }
+.fb-kick { margin: 0 0 10px; color: var(--muted); font-size: 15px; }
+.fb-head h1 { margin: 0; font: 450 clamp(40px, 6vw, 72px)/1.05 var(--gsans); letter-spacing: -.025em; }
+.fb-lead { margin: 14px 0 0; font-size: clamp(18px, 2vw, 22px); line-height: 1.45; color: var(--muted); max-width: 46ch; }
+.fb-tabs { position: sticky; top: var(--fb-top, 0px); z-index: 5; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 10px 0; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 92%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.fb-tabs::-webkit-scrollbar { display: none; }
+.fb-tab { flex: 0 0 auto; display: grid; gap: 2px; padding: 10px 16px; border-radius: 14px; text-decoration: none; color: var(--muted); border: 1px solid transparent; max-width: 260px; }
+.fb-tab:hover { background: var(--chip); color: var(--ink); }
+.fb-tab[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.fb-tab-n { font-weight: 500; font-size: 16px; display: inline-flex; align-items: center; gap: 7px; }
+.fb-tab-t { font-size: 13px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fb-dot { width: 7px; height: 7px; border-radius: 50%; background: #e0a100; display: inline-block; }
+.fb-panel { padding-top: 22px; }
+.fb-intro[hidden] { display: none; }
+.fb-intro { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 20px; margin-bottom: 18px; }
+.fb-meta { margin: 0; flex-basis: 100%; color: var(--muted); font-size: 14px; }
+.fb-meta b { font-weight: 500; color: #b07d00; }
+.fb-sum { margin: 0; flex: 1 1 420px; font-size: 18px; line-height: 1.55; max-width: 70ch; }
+.fb-open { font-size: 15px; color: var(--accent); white-space: nowrap; }
+.fb-open i { font-size: 12px; margin-left: 4px; }
+.fb-frame { display: block; width: 100%; height: 70vh; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); }
+a.pcard-more { text-decoration: none; }

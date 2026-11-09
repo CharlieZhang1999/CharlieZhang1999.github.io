@@ -1,0 +1,82 @@
+---
+layout: default
+title: flybrain
+body_class: page flybrain-page
+description: A connectome-constrained simulation of the fruit fly brain, with an interactive demo for each week of the project.
+---
+{% comment %}Week tabs come from _data/flybrain_weeks.yml. Each tab loads flybrain/<page>/index.html in the frame below. See flybrain/README.md.{% endcomment %}
+{% assign weeks = site.data.flybrain_weeks %}
+<div class="fb">
+  <header class="fb-head">
+    <p class="fb-kick">Research project · 2026.10 – now</p>
+    <h1>flybrain</h1>
+    <p class="fb-lead">A simulation of the whole fruit fly brain, wired neuron by neuron from its connectome. Each week adds a piece, and each tab below is that week's interactive demo.</p>
+  </header>
+
+  <nav class="fb-tabs" role="tablist" aria-label="Weeks">
+    {% for w in weeks %}
+    <a class="fb-tab" role="tab" id="tab-week-{{ w.week }}" href="#week-{{ w.week }}" data-page="{{ w.page }}/index.html" aria-selected="false" aria-controls="fb-panel">
+      <span class="fb-tab-n">Week {{ w.week }}{% if w.status != 'done' %}<i class="fb-dot" title="{{ w.status }}"></i>{% endif %}</span>
+      <span class="fb-tab-t">{{ w.title }}</span>
+    </a>
+    {% endfor %}
+  </nav>
+
+  <section class="fb-panel" id="fb-panel" role="tabpanel" aria-live="polite">
+    {% for w in weeks %}
+    <div class="fb-intro" data-week="{{ w.week }}" hidden>
+      <p class="fb-meta">{{ w.dates }}{% if w.status != 'done' %} · <b>{{ w.status }}</b>{% endif %}</p>
+      <p class="fb-sum">{{ w.summary }}</p>
+      <a class="fb-open" href="{{ w.page }}/" target="_blank" rel="noopener">Open full page <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+    </div>
+    {% endfor %}
+    <iframe class="fb-frame" id="fb-frame" title="Weekly demo" loading="eager"></iframe>
+  </section>
+</div>
+
+<script>
+(function () {
+  var tabs = [].slice.call(document.querySelectorAll('.fb-tab'));
+  var frame = document.getElementById('fb-frame');
+  var ro = null;
+  var bar = document.querySelector('.topbar');
+  function topOffset() { if (bar && getComputedStyle(bar).position === 'sticky') document.documentElement.style.setProperty('--fb-top', bar.offsetHeight + 'px'); }
+  topOffset(); window.addEventListener('resize', topOffset);
+  function fit() {
+    try {
+      var b = frame.contentDocument && frame.contentDocument.body;
+      if (!b) return;
+      var cs = frame.contentWindow.getComputedStyle(b);
+      var h = b.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom);
+      frame.style.height = Math.max(480, Math.ceil(h) + 2) + 'px';
+    } catch (e) {}
+  }
+  frame.addEventListener('load', function () {
+    fit();
+    try {
+      if (ro) ro.disconnect();
+      ro = new ResizeObserver(fit);
+      ro.observe(frame.contentDocument.body);
+    } catch (e) { frame.style.height = '85vh'; }
+  });
+  function show(n, push) {
+    var tab = tabs.filter(function (t) { return t.id === 'tab-week-' + n; })[0] || tabs[tabs.length - 1];
+    tabs.forEach(function (t) { t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); t.tabIndex = t === tab ? 0 : -1; });
+    var wk = tab.id.replace('tab-week-', '');
+    [].forEach.call(document.querySelectorAll('.fb-intro'), function (el) { el.hidden = el.dataset.week !== wk; });
+    if (frame.getAttribute('src') !== tab.dataset.page) { frame.style.height = '70vh'; frame.setAttribute('src', tab.dataset.page); }
+    if (push) history.replaceState(null, '', '#week-' + wk);
+    tab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function (e) { e.preventDefault(); show(t.id.replace('tab-week-', ''), true); });
+    t.addEventListener('keydown', function (e) {
+      var j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : -1;
+      if (j >= 0 && j < tabs.length) { e.preventDefault(); tabs[j].focus(); show(tabs[j].id.replace('tab-week-', ''), true); }
+    });
+  });
+  function fromHash() { var m = /week-(\d+)/.exec(location.hash); show(m ? m[1] : null, false); }
+  window.addEventListener('hashchange', fromHash);
+  fromHash(); // no hash: open the latest week
+})();
+</script>

@@ -1,5 +1,5 @@
 {% comment %}Project cards: photo on top, title and short text below, swipe row. The card or "Learn more" opens the full project page.
-Set `photo:` on a project in _data/projects.yml to use a photo; otherwise its illustration is used.{% endcomment %}
+Set `photo:` on a project in _data/projects.yml to use a photo; otherwise its illustration is used. Set `link:` to send the card straight to its own page (used by flybrain).{% endcomment %}
 <div class="reel-block" data-reel>
   {% if include.filter %}
   {% assign alltags = "" | split: "" %}{% for p in site.data.projects %}{% assign alltags = alltags | concat: p.tags %}{% endfor %}{% assign alltags = alltags | uniq %}
@@ -10,14 +10,14 @@ Set `photo:` on a project in _data/projects.yml to use a photo; otherwise its il
   {% endif %}
   <div class="reel" data-filter-list tabindex="0" aria-label="Projects. Scroll sideways or use the arrows.">
     {% for p in site.data.projects %}{% assign pic = p.photo | default: p.image %}
-    <article class="slide pcard{% if forloop.first %} is-on{% endif %}" data-i="{{ forloop.index0 }}" data-tags="{{ p.tags | join: '|' }}">
+    <article class="slide pcard{% if forloop.first %} is-on{% endif %}" data-i="{{ forloop.index0 }}" data-tags="{{ p.tags | join: '|' }}"{% if p.link %} data-href="{{ p.link | prepend: site.github.url }}"{% endif %}>
       <div class="pcard-ph">
         <img src="{{ pic | prepend: site.github.url }}" alt="" loading="lazy" />
         <span class="pcard-date">{{ p.dates }}</span>
       </div>
       <h3 class="pcard-title">{{ p.name }}</h3>
       <p class="pcard-text">{{ p.summary }}</p>
-      <button type="button" class="pcard-more" aria-label="Learn more about {{ p.name }}">Learn more <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      {% if p.link %}<a class="pcard-more" href="{{ p.link | prepend: site.github.url }}">Open the demos <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>{% else %}<button type="button" class="pcard-more" aria-label="Learn more about {{ p.name }}">Learn more <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>{% endif %}
     </article>
     {% endfor %}
   </div>
