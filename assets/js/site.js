@@ -181,6 +181,7 @@
     slides.forEach(function (s, i) {
       s.addEventListener('click', function () {
         if (window.getSelection && String(window.getSelection())) return; // let people select text
+        if (s.dataset.href) { location.href = s.dataset.href; return; } // projects with their own page
         openView(r, i);
       });
     });
