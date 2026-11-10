@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Flybrain Week 3: Episodes</title>
+<title>Flybrain Week 3: Loop</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -75,15 +75,83 @@ tr.cur td { font-weight: 600 }
 .notes p { margin: 0 0 10px }
 .notes p:last-child { margin: 0 }
 .tip { position: fixed; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; font-size: 12px; box-shadow: 0 6px 20px rgba(0,0,0,.18); z-index: 3; max-width: 260px }
+.day { display: grid; gap: 18px }
+.wrap > *, .day > *, .grid2 > * { min-width: 0 }
+.day[hidden] { display: none }
+.seg button:disabled { color: var(--muted) }
+.pipe { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 13px }
+.pipe span { border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; background: var(--canvas) }
+.pipe span.later { border-style: dashed; color: var(--muted) }
+.pipe b { color: var(--muted); font-weight: 400 }
+.convo { display: grid; gap: 10px; margin-top: 14px }
+.msg { border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; background: var(--canvas) }
+.msg p { margin: 4px 0 0 }
+.msg .said { font-size: clamp(16px, 2vw, 20px); min-height: 0 }
+.who { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; display: flex; flex-wrap: wrap; gap: 8px; align-items: center }
+.badge { text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 12px; color: #8a5a00; background: #fdf0d2; border: 1px solid #ecd39a; border-radius: 999px; padding: 1px 9px }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .badge { color: #f2c66d; background: #3a2e14; border-color: #5c4a20 } }
+:root[data-theme="dark"] .badge { color: #f2c66d; background: #3a2e14; border-color: #5c4a20 }
+.reply .act { font-family: var(--f-display); font-size: clamp(24px, 3.2vw, 34px); font-weight: 700; min-height: 1.2em }
+.reply .act.pending { color: var(--muted); font-weight: 500; font-size: 18px }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <p class="eyebrow">flybrain · week 3 · day 1 · 9 nov 2026 · in progress</p>
-    <h1>Can the fly read a whole sentence?</h1>
-    <p class="lede">Week 2 decoded one word at a time, from a brain at rest. Here five words play back to back into one continuous simulation of the MaleCNS brain, 0.5&nbsp;s each, then 0.5&nbsp;s of silence. A linear readout turns each 0.5&nbsp;s window of spikes back into a word. Leftover activity from earlier words is the risk, and this page shows where it bites and the fix.</p>
+    <p class="eyebrow">flybrain · week 3 · closing the fly ↔ LLM loop · days 1–2 of 7 done · in progress</p>
+    <h1>Can the fly talk to a language model?</h1>
+    <p class="lede">Week 3 rebuilds the rest of the "fly brain to ChatGPT" demo on the calibrated male brain. Words play into the simulated fly, a readout turns its spikes back into words, a language model reads them and picks an action, and (from Day 3) that action is fed back into the fly. This page grows as each day finishes.</p>
+    <div class="seg" id="days" role="tablist" aria-label="Day" style="margin-top:14px">
+      <button role="tab" data-day="day2" aria-pressed="true">Day 2 · fly → LLM</button>
+      <button role="tab" data-day="day1" aria-pressed="false">Day 1 · five words in a row</button>
+      <button disabled title="coming next" style="opacity:.45;cursor:default">Days 3–7 · LLM → fly</button>
+    </div>
   </header>
+
+  <div class="day" id="day2">
+  <section class="panel">
+    <h2>Day 2: the fly's words become a prompt</h2>
+    <p class="lede" style="margin:0 0 12px">Each episode plays its words back to back (0.5&nbsp;s each, 150&nbsp;Hz) into one continuous simulation of the calibrated MaleCNS brain with presynaptic inhibition. The readout decodes each window, the decoded words become first-person sentences, and the language model must answer with one of five actions.</p>
+    <div class="pipe" aria-label="Pipeline">
+      <span>words in</span><b>→</b><span>simulated fly brain</span><b>→</b><span>word readout</span><b>→</b><span>prompt</span><b>→</b><span>language model</span><b>→</b><span>action</span><b>→</b><span class="later">action back into the fly (Days 3–4)</span>
+    </div>
+  </section>
+
+  <section class="panel controls" aria-label="Run controls">
+    <div class="ctl"><label for="run">Run (16 logged)</label>
+      <div class="eprow">
+        <button class="btn" id="rprev" aria-label="Previous run">◀</button>
+        <select id="run"></select>
+        <button class="btn" id="rnext" aria-label="Next run">▶</button>
+        <button class="btn primary" id="rplay">▶ Play</button>
+      </div></div>
+  </section>
+
+  <section class="panel" aria-label="Run timeline">
+    <div class="stage"><svg id="tl2" viewBox="0 0 1000 300" role="img" aria-label="Timeline of the run: words, spike trace, decoded words"></svg></div>
+    <div class="convo">
+      <div class="msg"><div class="who">System</div><p id="sys"></p></div>
+      <div class="msg"><div class="who">Prompt, built from the fly's decoded words</div><p class="said" id="prompt2"></p></div>
+      <div class="msg reply"><div class="who">Reply <span class="badge" id="stub"></span></div><p class="act" id="act"></p></div>
+    </div>
+  </section>
+
+  <section class="tiles" id="tiles2" aria-label="Day 2 results"></section>
+
+  <section class="panel notes">
+    <h2>What Day 2 found</h2>
+    <p><b>The fly → LLM half works.</b> The demo episode from the plan (vinegar, ripe fruit, sugar, warm, bright → <span class="mono">vinegar · fruit · sugar · hot · looming</span>) decodes 50 of 50 words over 10 noise seeds, with every top probability at least 0.998. Six short scenarios decode 12 of 12. The readout was trained once, on isolated words, and needs no retraining for episodes on this brain model.</p>
+    <p><b>The replies are placeholders.</b> No API key is set yet, so every reply on this page comes from an offline rule-based stub (danger → turn away or stop, food → eat, attractive smells → go forward). It is there for testing and says nothing about the fly. Only the decoding is a result. The real model call (OpenAI or Claude, forced to pick from the five actions at temperature 0) is one key away.</p>
+    <p><b>Carried into Day 3.</b> Looming leaves 400–1,200 neurons firing after the episode, so the action code will start with that state present. The action readout has to be trained with that history.</p>
+  </section>
+  </div>
+
+  <div class="day" id="day1" hidden>
+  <section class="panel">
+    <p class="eyebrow">day 1 · 9 nov 2026</p>
+    <h2 style="font-size:24px">Can the fly read a whole sentence?</h2>
+    <p class="lede" style="margin:0">Week 2 decoded one word at a time, from a brain at rest. Here five words play back to back into one continuous simulation of the MaleCNS brain, 0.5&nbsp;s each, then 0.5&nbsp;s of silence. A linear readout turns each 0.5&nbsp;s window of spikes back into a word. Leftover activity from earlier words is the risk, and this page shows where it bites and the fix.</p>
+  </section>
 
   <section class="panel controls" aria-label="Episode controls">
     <div class="ctl"><label for="ep">Episode (40, same words in every model)</label>
@@ -128,6 +196,7 @@ tr.cur td { font-weight: 600 }
     <p><b>Fix: brain → sensory synapses as presynaptic inhibition.</b> In the fly, central input onto sensory terminals turns down their transmitter release; it does not make them spike. Modelling it that way (GABA-A and GABA-B traces, one constant K&nbsp;=&nbsp;0.05 fitted to keep FlyWire sugar → MN9) removes the state: 0 errors with all neurons, and the DN&nbsp;+&nbsp;MN readout rises from 82.5% to 90%.</p>
     <p><b>Still open.</b> Wind and looming leave about 450 neurons firing through a loop outside the antennal lobe. It does not confuse any word. Day 2 sends the decoded words to an LLM; Days 3–4 send its chosen action back into the fly.</p>
   </section>
+  </div>
 </div>
 <div class="tip" id="tip" hidden></div>
 <script>
@@ -319,6 +388,114 @@ const D = {"episodes":[["hot","fruit","water","cold","sugar"],["looming","cold",
   try { if (!localStorage.getItem('fb-w3')) st.ep = 27; } catch (e) { st.ep = 27; }
   renderLegend(); renderAll();
   if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', renderAll);
+})();
+</script>
+<script>
+const D2 = [{"seed":2000,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.999,0.999,1.0],"unsure":[],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":1165,"pop_10ms":[162,241,290,245,244,227,244,243,215,248,253,229,220,238,230,221,218,215,236,233,235,207,235,222,240,224,229,234,264,223,233,246,223,199,243,229,246,248,226,200,238,217,206,220,223,235,249,227,205,228,262,235,234,275,301,254,258,285,319,257,270,261,292,308,260,291,254,289,309,308,270,270,280,248,280,280,290,273,311,228,299,260,260,283,258,291,289,305,296,260,243,255,243,267,239,249,249,297,286,282,71,52,50,68,67,90,62,76,71,62,74,75,67,52,74,99,55,59,79,92,89,59,89,80,76,86,74,73,103,95,75,76,69,66,80,89,112,110,92,55,78,78,85,53,83,67,70,66,70,77,28,10,16,26,19,59,52,51,42,46,55,53,66,60,78,84,55,45,50,36,33,17,33,33,56,35,60,87,84,45,37,66,77,53,55,97,82,49,18,20,40,53,80,34,33,16,40,26,73,52,725,1134,1298,1213,1149,1286,1237,1152,1161,1256,1209,1245,1237,1169,1129,1161,1175,1118,1169,1142,1198,1190,1209,1248,1220,1273,1247,1163,1258,1150,1282,1171,1116,1257,1157,1183,1228,1209,1248,1297,1117,1156,1255,1119,1133,1359,1212,1180,1254,1269,595,212,138,48,95,147,160,162,243,164,285,190,230,149,61,197,113,195,224,207,313,117,137,137,232,228,216,191,146,313,125,157,239,201,254,154,240,84,161,134,220,242,121,220,119,158,270,166,187,159]},{"seed":2001,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.999,0.998,1.0],"unsure":[],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":1152,"pop_10ms":[182,271,275,264,264,240,253,246,218,208,214,244,193,244,241,228,241,253,200,235,251,230,181,243,245,236,247,230,244,208,212,204,222,258,225,260,251,253,206,227,240,253,252,252,229,239,226,227,227,232,240,241,302,248,260,293,269,270,275,292,280,278,269,286,259,289,277,273,299,285,284,304,265,296,294,263,245,257,283,244,244,288,290,238,270,263,300,297,268,288,272,292,257,261,242,265,277,237,266,289,82,62,77,64,74,88,65,62,81,88,70,78,70,68,65,85,72,76,83,79,73,73,76,76,93,95,64,63,47,41,63,114,97,88,73,35,36,63,71,82,98,49,57,69,76,76,73,54,63,69,44,35,33,28,28,33,57,58,47,40,69,51,44,38,35,84,52,38,29,24,23,20,57,74,47,67,29,36,24,54,39,46,80,60,45,41,32,30,53,54,54,68,42,50,55,54,37,32,48,33,685,1156,1324,1236,1310,1265,1302,1202,1237,1238,1247,1459,1349,1243,1242,1300,1296,1419,1297,1354,1475,1319,1311,1287,1396,1442,1421,1457,1319,1547,1383,1253,1351,1278,1435,1375,1410,1206,1360,1374,1342,1293,1416,1388,1460,1427,1511,1290,1350,1468,637,232,141,215,141,147,164,194,188,184,259,98,182,137,256,127,200,176,251,133,269,174,279,102,171,238,238,127,191,159,247,188,188,182,270,116,195,126,204,280,184,234,193,215,211,181,188,229,247,188]},{"seed":2002,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.998,0.999,1.0],"unsure":[],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":520,"pop_10ms":[186,246,252,248,241,237,223,237,246,226,231,249,238,247,219,219,249,228,219,245,204,231,230,205,262,227,204,210,231,269,229,214,238,218,223,217,218,203,190,224,213,252,215,240,245,249,227,237,221,264,271,237,262,242,279,275,295,275,282,266,276,279,257,287,273,291,257,296,269,277,277,241,316,277,296,266,271,283,241,270,251,258,288,276,277,294,248,260,244,266,304,249,244,275,271,246,274,298,288,276,72,69,64,66,75,75,86,64,80,56,56,71,75,79,84,52,63,87,85,60,50,44,62,44,42,59,89,69,58,62,63,78,73,86,79,63,55,66,80,65,60,90,90,58,50,51,94,62,61,82,45,29,33,45,54,57,39,42,39,42,88,73,42,47,68,71,43,53,55,52,37,20,21,41,53,100,82,36,66,40,45,43,32,41,33,38,62,39,32,60,53,51,56,60,47,47,63,70,58,46,687,1060,1276,1262,1185,1211,1202,1215,1310,1246,1290,1218,1205,1221,1239,1256,1274,1160,1155,1220,1120,1167,1237,1262,1187,1179,1176,1101,1247,1264,1107,1212,1152,1190,1255,1185,1164,1212,1210,1227,1259,1255,1265,1283,1124,1208,1273,1146,1272,1206,489,77,6,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3]},{"seed":2003,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.999,0.999,1.0],"unsure":[],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":482,"pop_10ms":[192,262,258,247,207,223,217,228,207,236,224,245,226,233,233,249,239,249,202,275,220,231,244,238,200,212,208,219,225,235,258,227,264,249,241,252,221,218,218,216,211,232,223,236,239,228,248,249,280,216,227,254,268,272,278,282,280,283,270,268,263,302,314,292,307,278,289,270,278,264,297,301,285,264,261,261,277,288,246,274,261,245,290,271,296,256,265,265,294,308,272,262,281,291,290,232,277,267,294,262,80,73,85,100,111,74,66,84,66,71,57,52,74,78,59,42,65,66,74,78,79,54,81,56,69,76,71,62,93,60,97,74,56,65,80,48,62,83,83,55,73,91,74,58,86,82,65,44,74,80,43,45,24,48,63,66,93,95,70,72,91,52,61,86,79,39,35,63,38,54,73,47,56,45,19,52,47,45,31,56,69,98,49,47,46,70,57,52,43,53,35,44,72,59,49,54,92,44,25,49,655,1067,1236,1267,1191,1127,1223,1255,1206,1262,1329,1184,1256,1173,1205,1204,1192,1254,1173,1230,1231,1243,1180,1206,1228,1314,1204,1183,1153,1144,1248,1206,1157,1269,1267,1283,1225,1174,1205,1217,1174,1078,1203,1199,1160,1238,1274,1285,1159,1231,466,54,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3]},{"seed":2004,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.998,0.998,1.0],"unsure":[],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":1106,"pop_10ms":[186,259,209,263,252,279,257,242,260,228,243,237,223,211,230,248,236,203,213,226,238,232,231,218,228,231,215,204,230,243,243,242,220,243,210,226,229,229,214,246,225,227,211,204,234,238,220,226,216,226,259,258,268,285,275,258,269,243,272,309,283,302,274,273,258,287,255,264,294,276,303,291,277,230,290,264,273,277,272,245,272,238,262,243,281,286,238,277,278,301,291,264,261,273,285,247,257,271,286,267,71,47,60,75,73,88,67,63,63,51,72,84,86,73,82,90,71,53,57,63,64,74,57,88,66,47,91,66,62,89,83,74,55,68,85,90,74,51,65,78,74,55,45,57,74,81,66,56,60,65,12,27,18,37,40,33,60,33,60,81,51,90,55,27,40,56,91,80,73,50,39,42,35,43,42,63,42,30,48,37,45,38,58,36,33,20,19,35,40,22,32,57,59,80,59,33,13,15,26,34,650,1063,1283,1182,1181,1215,1275,1192,1179,1213,1258,1168,1151,1251,1226,1170,1214,1125,1206,1241,1243,1122,1250,1163,1210,1267,1189,1208,1230,1221,1173,1150,1150,1282,1212,1281,1227,1208,1207,1159,1158,1199,1181,1275,1223,1107,1144,1231,1253,1253,650,86,67,80,103,109,121,55,93,200,161,196,281,155,235,91,194,172,242,181,233,156,197,158,236,150,239,183,169,184,276,253,111,220,100,237,141,154,253,158,203,198,179,287,240,247,101,224,129,269]},{"seed":2005,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.999,0.999,1.0],"unsure":[],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":1120,"pop_10ms":[179,276,272,246,213,281,232,245,212,223,201,201,231,218,229,233,239,236,237,249,247,229,244,232,248,214,181,236,233,219,191,226,212,176,201,204,232,232,241,234,233,221,235,240,222,249,228,207,267,242,257,265,280,296,310,284,269,283,308,265,271,267,258,265,282,250,272,247,271,269,282,289,299,274,268,263,290,274,239,260,294,259,301,304,278,308,267,265,265,255,262,313,303,261,277,262,248,279,298,312,61,48,77,82,95,67,64,84,101,70,86,92,68,62,72,70,78,87,78,74,70,76,86,80,58,49,36,66,51,86,91,72,83,84,85,79,92,79,80,80,108,52,72,56,90,88,55,63,77,71,31,33,53,78,106,76,53,42,50,40,39,58,80,60,35,29,47,57,61,57,31,26,33,42,57,83,47,52,51,27,65,68,65,73,94,60,25,30,46,27,46,78,111,78,49,33,20,24,36,35,674,1101,1246,1158,1274,1178,1272,1214,1129,1291,1202,1208,1293,1247,1188,1190,1110,1165,1210,1190,1224,1216,1197,1166,1185,1204,1192,1214,1157,1263,1093,1141,1252,1217,1131,1162,1134,1256,1160,1138,1365,1293,1190,1244,1228,1345,1451,1289,1362,1466,596,243,132,169,206,138,185,203,187,224,192,224,208,208,163,185,163,242,207,236,230,194,170,160,299,146,217,243,174,125,150,195,245,270,213,139,230,145,291,179,294,118,175,166,298,203,244,102,160,259]},{"seed":2006,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.999,0.999,1.0],"unsure":[],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":406,"pop_10ms":[182,243,288,265,244,230,203,235,225,198,224,265,196,278,218,230,217,250,233,237,269,230,231,244,203,249,218,200,215,210,220,229,246,223,223,246,205,202,249,213,224,233,223,214,239,225,255,218,219,232,264,243,246,272,286,263,270,253,286,281,283,265,279,298,302,280,295,301,275,293,281,274,296,274,277,307,297,292,286,282,272,257,274,255,247,241,259,269,272,267,287,284,243,259,281,298,286,280,277,248,52,53,76,87,96,72,53,68,88,81,89,82,93,80,38,45,69,43,52,47,55,79,80,49,34,47,63,93,58,57,66,63,69,49,30,64,89,89,91,94,71,112,68,73,79,76,55,90,97,95,46,22,37,49,38,40,55,57,36,58,79,64,48,48,28,30,52,44,59,71,75,94,43,52,45,51,37,30,68,53,31,34,22,22,40,54,77,97,66,51,38,41,51,65,37,32,54,64,67,41,648,1123,1310,1206,1178,1125,1228,1212,1227,1189,1198,1117,1141,1220,1209,1168,1147,1136,1257,1288,1189,1123,1185,1157,1277,1346,1224,1214,1162,1223,1217,1178,1201,1193,1249,1183,1224,1255,1146,1256,1216,1250,1124,1146,1097,1154,1162,1235,1183,1250,393,47,5,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3]},{"seed":2007,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.998,0.999,1.0,1.0],"unsure":[],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":465,"pop_10ms":[178,253,237,272,209,256,224,289,217,272,239,221,204,238,230,235,245,248,219,242,283,228,227,198,220,206,234,238,213,244,192,209,207,243,244,247,212,238,222,257,234,231,246,247,232,235,240,225,228,186,242,266,270,274,269,269,262,285,260,240,252,268,280,251,296,283,266,268,260,267,222,216,295,281,283,249,271,234,267,280,261,281,262,266,273,265,270,299,254,288,274,277,273,278,258,289,274,299,276,263,99,43,69,68,76,115,82,71,69,70,52,73,80,74,76,65,60,46,54,47,95,96,68,59,47,62,75,74,65,72,67,72,92,60,78,70,57,97,72,48,82,60,73,74,71,77,73,45,81,100,34,27,48,49,52,54,68,56,55,79,38,49,50,86,56,35,55,42,53,44,84,73,51,67,36,70,101,76,54,43,61,61,63,63,43,55,31,56,96,97,46,51,45,40,47,52,59,88,111,88,740,1094,1179,1234,1262,1179,1191,1227,1104,1124,1178,1185,1203,1182,1299,1155,1195,1170,1228,1144,1198,1146,1223,1212,1226,1214,1229,1167,1232,1312,1195,1266,1263,1246,1217,1180,1256,1252,1189,1154,1119,1290,1225,1191,1244,1245,1198,1255,1181,1248,472,27,4,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4]},{"seed":2008,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.998,0.999,1.0],"unsure":[],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":1162,"pop_10ms":[218,266,275,234,221,245,229,213,236,224,207,202,219,216,209,224,239,257,225,222,234,227,246,241,210,193,215,246,245,249,205,242,238,233,221,250,221,247,265,255,235,212,192,198,249,253,241,244,200,246,266,236,257,275,295,279,266,301,255,287,266,277,300,287,294,282,287,273,274,307,290,288,287,285,272,289,273,293,287,305,264,286,312,278,277,306,301,273,302,286,295,288,294,280,269,283,253,271,299,282,90,43,77,82,100,59,63,78,74,87,66,68,62,49,47,60,58,69,89,85,54,67,78,68,98,67,47,45,76,59,60,62,70,50,65,83,61,80,56,76,59,80,56,65,78,62,60,70,79,49,25,52,42,26,13,17,33,54,59,52,105,85,35,20,20,20,22,42,51,30,40,40,39,85,63,57,98,60,29,34,52,106,52,79,48,77,74,71,68,75,63,66,78,36,34,42,56,58,38,57,726,1053,1211,1202,1221,1097,1180,1233,1217,1261,1235,1310,1219,1168,1209,1185,1252,1122,1223,1233,1218,1169,1266,1317,1405,1220,1283,1278,1312,1385,1299,1247,1283,1287,1333,1345,1321,1292,1290,1265,1376,1305,1441,1341,1441,1314,1342,1322,1456,1264,718,224,160,184,173,216,114,197,160,138,182,175,311,186,317,99,159,178,231,184,174,181,240,168,98,207,175,271,154,208,207,127,223,186,239,156,217,144,246,177,260,157,210,212,237,260,105,144,179,145]},{"seed":2009,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.999,0.999,1.0],"unsure":[],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":603,"pop_10ms":[207,279,279,248,244,240,228,245,247,232,199,221,240,222,245,197,224,230,228,188,237,257,206,203,225,246,213,265,226,230,263,227,249,224,230,241,210,216,244,203,223,241,251,243,253,242,242,211,235,200,271,254,265,277,258,275,269,305,297,278,288,278,287,252,280,299,250,255,287,250,313,271,257,243,265,270,265,297,256,269,255,280,291,265,319,271,262,260,256,271,267,294,258,256,258,292,264,317,290,263,83,60,81,92,55,60,89,54,72,41,92,94,78,67,67,56,47,45,71,78,82,79,56,78,70,74,80,61,61,68,57,47,44,75,68,76,95,57,49,88,67,74,78,60,75,77,67,92,75,60,23,48,51,51,34,27,20,35,69,72,71,47,60,44,52,53,53,26,71,78,94,57,74,78,52,50,35,32,44,44,72,77,52,38,65,58,47,48,80,50,50,79,70,62,34,31,25,61,44,44,653,1081,1220,1177,1182,1260,1241,1153,1212,1149,1168,1210,1225,1134,1322,1199,1123,1225,1243,1185,1175,1212,1188,1180,1090,1166,1192,1176,1188,1129,1214,1220,1160,1121,1190,1213,1316,1235,1155,1124,1261,1157,1254,1265,1164,1256,1227,1133,1174,1162,550,138,25,21,20,24,16,19,23,23,22,18,26,20,18,21,20,23,22,25,21,16,23,18,29,19,26,20,16,21,19,27,19,25,23,15,21,20,29,17,25,21,16,22,18,28,19,23,25,21]},{"seed":3000,"true":["sugar","water"],"decoded":["sugar","water"],"p_top":[0.999,0.992],"unsure":[],"prompt":"I taste sugar. I taste water. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"eat","llm_raw":"eat","tail_neurons":7,"pop_10ms":[34,49,51,67,92,79,64,81,66,81,88,73,61,67,80,63,63,83,64,74,69,75,81,67,64,50,75,58,75,104,73,56,72,76,76,51,61,57,76,88,74,73,82,60,64,70,55,95,70,60,62,50,42,26,26,39,24,37,23,33,45,28,40,42,26,31,36,41,29,34,28,19,29,49,29,26,42,29,36,34,33,30,31,43,36,41,34,32,34,31,36,37,22,25,26,26,37,35,23,19,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"seed":3000,"true":["bitter","mold"],"decoded":["bitter","mold"],"p_top":[0.999,0.999],"unsure":[],"prompt":"I taste something bitter. I smell mould. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"stop","llm_raw":"stop","tail_neurons":28,"pop_10ms":[59,91,129,120,136,127,159,137,144,129,139,123,117,124,141,116,122,144,136,116,125,124,125,158,115,122,114,132,116,139,131,137,113,135,114,136,142,143,128,123,106,114,124,141,130,138,152,124,134,107,113,84,87,78,84,106,79,95,88,85,101,121,100,118,93,104,93,96,113,105,138,101,115,99,111,109,102,96,77,108,91,88,94,99,105,111,94,94,95,116,94,104,96,91,127,95,102,90,88,95,21,11,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"seed":3000,"true":["vinegar","pheromone"],"decoded":["vinegar","pheromone"],"p_top":[0.999,1.0],"unsure":[],"prompt":"I smell vinegar. I smell another fly. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"go forward","llm_raw":"go forward","tail_neurons":174,"pop_10ms":[164,226,267,235,209,234,215,200,224,206,231,217,254,230,209,228,254,222,214,229,251,214,221,231,230,210,258,286,232,234,226,233,203,230,205,233,229,217,250,184,250,216,216,208,238,211,235,245,234,238,603,641,700,679,830,800,728,699,770,762,709,741,724,765,763,682,759,769,692,746,780,776,708,691,737,754,747,786,713,791,764,714,745,783,740,722,753,730,772,726,812,719,733,767,714,713,724,723,696,679,160,19,7,3,1,1,3,4,1,1,2,3,3,1,2,2,1,3,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"seed":3000,"true":["co2","hot"],"decoded":["co2","hot"],"p_top":[0.999,0.999],"unsure":[],"prompt":"I smell CO2. It feels hot. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"stop","llm_raw":"stop","tail_neurons":73,"pop_10ms":[82,116,111,123,140,115,110,123,114,98,126,109,127,101,103,114,121,111,117,111,115,126,112,107,123,138,112,101,115,122,125,134,120,125,92,108,106,97,111,133,104,114,97,117,125,138,112,109,113,126,15,13,31,40,51,71,46,29,24,13,14,49,52,52,56,62,55,89,87,88,68,88,66,70,86,50,34,41,45,32,30,53,33,44,60,40,24,39,54,49,44,79,59,67,72,67,43,23,47,100,60,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"seed":3000,"true":["sound","wind"],"decoded":["sound","wind"],"p_top":[0.999,1.0],"unsure":[],"prompt":"I hear a sound. I feel wind. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"stop","llm_raw":"stop","tail_neurons":646,"pop_10ms":[202,281,266,289,313,261,297,297,250,295,274,274,302,263,297,269,279,283,313,268,326,253,315,273,259,296,278,270,264,308,257,279,252,247,285,275,286,276,324,292,337,270,296,292,245,271,285,241,296,309,708,818,787,887,948,986,996,996,1025,936,971,1022,1020,1056,1004,988,1019,1004,920,918,1025,1051,1017,961,1028,1068,946,973,962,1044,1047,1020,931,1018,1010,1031,995,928,1037,1046,877,929,867,939,865,1025,1046,1005,1088,1024,350,233,148,158,164,123,160,185,140,199,212,203,139,115,155,228,221,209,158,156,191,215,200,182,193,179,213,201,192,130,136,170,183,194,239,149,175,158,218,211,190,240,119,165,206,163,203,166,81,149]},{"seed":3000,"true":["fruit","looming"],"decoded":["fruit","looming"],"p_top":[0.999,1.0],"unsure":[],"prompt":"I smell ripe fruit. Something is looming toward me. What should I do?","system":"You are a fruit fly. You are told what you sense, in the order you sensed it. Choose exactly one action: turn left, turn right, go forward, stop, eat.","llm_provider":"stub","llm_model":"rules-v1","llm_action":"turn left","llm_raw":"turn left","tail_neurons":616,"pop_10ms":[208,285,285,271,281,254,295,259,278,263,295,274,295,254,255,265,266,272,292,259,299,301,288,239,257,251,277,254,260,303,249,278,293,231,269,274,297,253,297,302,302,280,262,273,237,243,239,264,270,303,736,1177,1234,1096,1170,1173,1202,1144,1163,1182,1191,1116,1275,1180,1183,1095,1295,1233,1260,1114,1055,1206,1234,1273,1177,1209,1244,1173,1256,1132,1178,1189,1163,1243,1184,1194,1280,1236,1361,1189,1179,1306,1239,1101,1288,1126,1164,1119,1189,1212,565,96,15,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3]}];
+(function () {
+  const $ = id => document.getElementById(id);
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  // day switcher
+  const days = document.querySelectorAll('#days button[data-day]');
+  function showDay(d) {
+    days.forEach(b => b.setAttribute('aria-pressed', b.dataset.day === d));
+    ['day1', 'day2'].forEach(id => $(id).hidden = id !== d);
+    try { localStorage.setItem('fb-w3-day', d); } catch (e) {}
+  }
+  days.forEach(b => b.onclick = () => showDay(b.dataset.day));
+  let startDay = 'day2'; try { startDay = localStorage.getItem('fb-w3-day') || 'day2'; } catch (e) {}
+  showDay(startDay);
+
+  const MOD = { sugar:'taste', bitter:'taste', water:'taste', salt:'taste', umami:'taste',
+    vinegar:'smell', fruit:'smell', co2:'smell', mold:'smell', pheromone:'smell',
+    hot:'therm', cold:'therm', dry:'therm', humid:'therm', sound:'mech', wind:'mech', looming:'vis', none:'none' };
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (t, a, txt) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; };
+  const runs = D2.map((r, i) => ({ ...r, label: r.true.length === 5 ? `Demo episode · seed ${r.seed}` : `Scenario ${i - 9} · ${r.true.join(' + ')}` }));
+  let cur = 0, raf = 0, playT = null, playhead = null;
+  const sel = $('run');
+  runs.forEach((r, i) => { const o = document.createElement('option'); o.value = i; o.textContent = `${r.label}  →  ${r.llm_action}`; sel.appendChild(o); });
+
+  const sentences = r => r.prompt.replace(/\s*What should I do\?$/, '').match(/[^.]+\./g) || [];
+  function render() {
+    const r = runs[cur], n = r.true.length, T = n * 0.5 + 0.5, svg = $('tl2');
+    sel.value = cur; svg.innerHTML = '';
+    const X0 = 70, X1 = 985, xs = t => X0 + (X1 - X0) * t / T;
+    r.true.concat(['none']).forEach((w, k) => {
+      const x = xs(k * .5), wd = xs(.5) - X0, col = css('--m-' + MOD[w]);
+      svg.appendChild(el('rect', { x: x + 1, y: 20, width: wd - 2, height: 26, rx: 5, fill: col, opacity: w === 'none' ? .25 : .9 }));
+      svg.appendChild(el('text', { x: x + wd / 2, y: 38, 'text-anchor': 'middle', 'font-size': 13, fill: w === 'none' ? css('--muted') : '#fff', 'font-weight': 500 }, w === 'none' ? 'silence' : w));
+      svg.appendChild(el('text', { x: x + wd / 2, y: 14, 'text-anchor': 'middle', 'font-size': 10, fill: css('--muted') }, k < n ? `word ${k + 1}` : 'after'));
+    });
+    const pop = r.pop_10ms, pmax = Math.max(300, ...pop), yb = 190, yt = 62, ys = v => yb - (yb - yt) * v / pmax;
+    [0, pmax / 2, pmax].forEach(v => {
+      svg.appendChild(el('line', { x1: X0, x2: X1, y1: ys(v), y2: ys(v), stroke: css('--line'), 'stroke-dasharray': v ? '2 4' : '' }));
+      svg.appendChild(el('text', { x: X0 - 6, y: ys(v) + 4, 'text-anchor': 'end', 'font-size': 10, fill: css('--muted') }, Math.round(v)));
+    });
+    svg.appendChild(el('text', { x: 6, y: yt - 6, 'font-size': 10, fill: css('--muted') }, 'spikes / 10 ms'));
+    let d = `M${xs(0)},${yb}`; pop.forEach((v, i) => d += `L${xs((i + .5) * .01)},${ys(v)}`); d += `L${xs(pop.length * .01)},${yb}Z`;
+    svg.appendChild(el('path', { d, fill: css('--trace'), opacity: .12 }));
+    let d2 = ''; pop.forEach((v, i) => d2 += `${i ? 'L' : 'M'}${xs((i + .5) * .01)},${ys(v)}`);
+    svg.appendChild(el('path', { d: d2, fill: 'none', stroke: css('--trace'), 'stroke-width': 1.2, opacity: .85 }));
+    for (let t = 0; t <= T + 1e-9; t += .5) svg.appendChild(el('text', { x: xs(t), y: yb + 14, 'text-anchor': 'middle', 'font-size': 10, fill: css('--muted') }, t + ' s'));
+    svg.appendChild(el('text', { x: 6, y: 236, 'font-size': 10, fill: css('--muted') }, 'decoded'));
+    svg.appendChild(el('text', { x: 6, y: 272, 'font-size': 10, fill: css('--muted') }, 'neurons'));
+    svg.appendChild(el('text', { x: 6, y: 284, 'font-size': 10, fill: css('--muted') }, 'firing'));
+    r.decoded.forEach((w, k) => {
+      const cx = xs(k * .5 + .25), ok = w === r.true[k], g = el('g', { class: 'dec2', 'data-k': k });
+      const wd = Math.min(180, xs(.5) - X0 - 8);
+      g.appendChild(el('rect', { x: cx - wd / 2, y: 220, width: wd, height: 24, rx: 12, fill: 'none', stroke: ok ? css('--good') : css('--bad'), 'stroke-width': 1.5 }));
+      g.appendChild(el('text', { x: cx, y: 236, 'text-anchor': 'middle', 'font-size': 12, fill: ok ? css('--good') : css('--bad'), 'font-weight': 500 }, `${ok ? '✓' : '✗'} ${w} p=${r.p_top[k].toFixed(3)}`));
+      svg.appendChild(g);
+    });
+    const cxT = xs(n * .5 + .25);
+    svg.appendChild(el('text', { x: cxT, y: 278, 'text-anchor': 'middle', 'font-size': 13, fill: r.tail_neurons > 100 ? css('--bad') : css('--ink') }, r.tail_neurons.toLocaleString()));
+    svg.appendChild(el('text', { x: cxT, y: 292, 'text-anchor': 'middle', 'font-size': 10, fill: css('--muted') }, 'still firing at end'));
+    playhead = el('line', { x1: X0, x2: X0, y1: 16, y2: 196, stroke: css('--accent'), 'stroke-width': 2, opacity: 0 });
+    svg.appendChild(playhead);
+    $('sys').textContent = r.system;
+    $('stub').textContent = r.llm_provider === 'stub' ? `offline rule-based stub (${r.llm_model}), not a real LLM: no API key yet` : `${r.llm_provider} · ${r.llm_model}`;
+    show(99);
+  }
+  function show(t) {
+    const r = runs[cur], n = r.true.length, S = sentences(r);
+    $('prompt2').innerHTML = S.map((s, k) => `<span class="${t >= k * .5 + .5 ? '' : 'ghost'}">${s.trim()}</span>`).join(' ') +
+      ` <span class="${t >= n * .5 + .5 ? '' : 'ghost'}">What should I do?</span>`;
+    document.querySelectorAll('.dec2').forEach(g => g.style.opacity = t >= (+g.dataset.k) * .5 + .5 ? 1 : .15);
+    const a = $('act'), done = t >= n * .5 + .5;
+    a.textContent = done ? r.llm_action : 'waiting for the fly…'; a.className = 'act' + (done ? '' : ' pending');
+  }
+  function stop() { cancelAnimationFrame(raf); playT = null; $('rplay').textContent = '▶ Play'; if (playhead) playhead.setAttribute('opacity', 0); }
+  function play() {
+    if (playT != null) { stop(); show(99); return; }
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { show(99); return; }
+    const r = runs[cur], T = r.true.length * .5 + .5, X0 = 70, X1 = 985, t0 = performance.now(), SLOW = 2.2;
+    playT = 0; $('rplay').textContent = '■ Stop';
+    const tick = now => {
+      playT = (now - t0) / 1000 / SLOW;
+      if (playT > T) { stop(); show(99); return; }
+      const x = X0 + (X1 - X0) * playT / T; playhead.setAttribute('x1', x); playhead.setAttribute('x2', x); playhead.setAttribute('opacity', 1);
+      show(playT); raf = requestAnimationFrame(tick);
+    };
+    show(0); raf = requestAnimationFrame(tick);
+  }
+  sel.onchange = e => { cur = +e.target.value; stop(); render(); };
+  $('rprev').onclick = () => { cur = (cur + runs.length - 1) % runs.length; stop(); render(); };
+  $('rnext').onclick = () => { cur = (cur + 1) % runs.length; stop(); render(); };
+  $('rplay').onclick = play;
+  // tiles
+  const demo = runs.filter(r => r.true.length === 5), sc = runs.filter(r => r.true.length !== 5);
+  const right = rs => rs.reduce((s, r) => s + r.decoded.filter((w, k) => w === r.true[k]).length, 0);
+  const words = rs => rs.reduce((s, r) => s + r.true.length, 0);
+  const minp = Math.min(...runs.flatMap(r => r.p_top)), tails = demo.map(r => r.tail_neurons);
+  $('tiles2').innerHTML = [
+    ['Demo episode words right', `${right(demo)} / ${words(demo)}`, `${demo.length} seeds, all episodes perfect`],
+    ['Scenario words right', `${right(sc)} / ${words(sc)}`, `${sc.length} two-word scenarios`],
+    ['Lowest top probability', minp.toFixed(3), 'over all ' + words(runs) + ' decoded words'],
+    ['Still firing after demo', `${Math.min(...tails)}–${Math.max(...tails).toLocaleString()}`, 'neurons, the looming tail'],
+  ].map(([k, v, s]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('');
+  render();
+  if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
 })();
 </script>
 </body>

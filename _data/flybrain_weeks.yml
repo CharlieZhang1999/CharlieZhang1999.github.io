@@ -18,8 +18,8 @@
   summary: The model ported to the male brain (MaleCNS), 17 sensory words, a fix for the odor attractor, and a word readout. Explore every simulated trial on the wiring it used.
   page: week2
 - week: 3
-  title: Five words in a row
-  dates: Started 2026.11.05
+  title: The fly talks to an LLM
+  dates: Started 2026.11.05 · Days 1–2 of 7 done
   status: in progress
-  summary: Day 1 of closing the fly ↔ LLM loop. Five-word episodes play into one continuous simulation and each 0.5 s window is decoded back to a word.
+  summary: Closing the fly ↔ LLM loop. Day 1 plays five words in a row into one continuous simulation and decodes each one. Day 2 turns the decoded words into a prompt for a language model, which picks an action (replies come from an offline stub for now).
   page: week3
