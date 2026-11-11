@@ -19,7 +19,7 @@
   page: week2
 - week: 3
   title: The fly talks to an LLM
-  dates: Started 2026.11.05 · Days 1–2 of 7 done
+  dates: Started 2026.11.05 · Days 1–5 of 7 done
   status: in progress
-  summary: Closing the fly ↔ LLM loop. Day 1 plays five words in a row into one continuous simulation and decodes each one. Day 2 turns the decoded words into a prompt for a language model, which picks an action. You can type your own words; an LLM matches them to the fly's 17 senses and recorded responses play back.
+  summary: The fly ↔ LLM loop, closed. Words play into the simulated fly and are decoded, a language model picks an action, and the action goes back into the same brain as a code on its hearing neurons, read off the descending neurons. Three rounds run in one continuous simulation (words 60/60, actions 12/12). You can also type your own words for the fly. Replies still come from an offline stand-in.
   page: week3
