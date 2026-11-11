@@ -1,0 +1,49 @@
+{%- assign song = site.data.song -%}
+{%- capture song_line -%}{{ song.title }} · {{ song.artist }}{%- endcapture -%}
+<figure class="album" data-look="{{ song.look | default: 'sleeve' }}"
+  data-spotify="{{ song.spotify }}"
+  data-src="{% if song.src != '' %}{{ site.github.url }}{{ song.src }}{% endif %}"
+  {% if song.cover != '' %}style="--cover-img: url('{{ site.github.url }}{{ song.cover }}')"{% endif %}>
+  <div class="al-stage">
+    <div class="al-cover" aria-hidden="true">
+      <span class="al-cover-text">{{ song.title }}<br>{{ song.artist }}</span>
+    </div>
+    <div class="al-disc" aria-hidden="true"><span class="al-label"></span></div>
+    <div class="al-arm" aria-hidden="true"><span class="al-arm-head"></span></div>
+    <svg class="al-ring" viewBox="0 0 200 200" aria-hidden="true">
+      <defs><path id="al-ring-path" d="M100,100 m-88,0 a88,88 0 1,1 176,0 a88,88 0 1,1 -176,0" /></defs>
+      <text><textPath href="#al-ring-path" textLength="548" lengthAdjust="spacing">{{ song_line }} ✦ {{ song_line }} ✦ {{ song_line }} ✦</textPath></text>
+    </svg>
+    <div class="al-tape" aria-hidden="true">
+      <div class="al-tape-label">
+        <span class="al-tape-title">{{ song.title }}</span>
+        <span class="al-tape-artist">{{ song.artist }}</span>
+        <div class="al-tape-window"><i class="al-reel"></i><i class="al-reel"></i></div>
+      </div>
+    </div>
+    <button class="al-play" type="button" aria-pressed="false" aria-label="Play {{ song.title }} by {{ song.artist }}">
+      <svg class="al-ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" /></svg>
+      <svg class="al-ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /></svg>
+    </button>
+  </div>
+  <figcaption class="al-meta">
+    <span class="al-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="al-now">Now playing</span>
+    <span class="al-title">{{ song.title }}</span>
+    <span class="al-artist">{{ song.artist }}</span>
+    {%- if song.placeholder %} <span class="al-ph">placeholder</span>{% endif %}
+  </figcaption>
+  {%- if song.spotify != '' %}
+  <div class="al-spotify"><div id="al-spotify-embed"></div></div>
+  {%- endif %}
+  {%- if song.picker %}
+  <div class="al-picker" role="radiogroup" aria-label="Album design">
+    <span class="al-picker-k">Design</span>
+    {%- assign looks = "sleeve,turntable,orbit,cassette,disc" | split: "," -%}
+    {%- for l in looks %}
+    <button type="button" role="radio" data-pick="{{ l }}" aria-checked="false">{{ l | capitalize }}</button>
+    {%- endfor %}
+  </div>
+  {%- endif %}
+</figure>
+<script src="{{ site.github.url }}/assets/js/album.js" defer></script>
