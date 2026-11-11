@@ -1,9 +1,11 @@
-# The song on the home page hero (_includes/album-hero.html).
-# PLACEHOLDER: swap in the real favorite song.
-placeholder: true            # set to false once the real song is in
-title: "Favorite Song"       # PLACEHOLDER title
-artist: "Artist Name"        # PLACEHOLDER artist
-src: ""                      # audio file, e.g. /assets/audio/favorite.mp3 (empty plays a soft synth loop)
+# The song on the home page hero (_includes/album-hero.html, assets/js/album.js).
+title: "All For Nothing"
+artist: "TAEYEON"
+# Spotify track link (Share > Copy song link), e.g. https://open.spotify.com/track/XXXXXXXX
+# Played through Spotify's iFrame API: full song for visitors logged into Spotify, 30s preview for others.
+spotify: ""
+placeholder: false           # set to true to tag the title as a placeholder
+src: ""                      # optional own audio file, used only when spotify is empty (empty plays a soft synth loop)
 cover: ""                    # optional square cover image, e.g. /images/cover.jpg (empty uses drawn artwork)
 look: sleeve                 # default design: sleeve, turntable, orbit, cassette, disc
 picker: true                 # show the design picker under the album

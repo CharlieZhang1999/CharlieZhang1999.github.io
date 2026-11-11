@@ -1,6 +1,7 @@
 {%- assign song = site.data.song -%}
 {%- capture song_line -%}{{ song.title }} · {{ song.artist }}{%- endcapture -%}
 <figure class="album" data-look="{{ song.look | default: 'sleeve' }}"
+  data-spotify="{{ song.spotify }}"
   data-src="{% if song.src != '' %}{{ site.github.url }}{{ song.src }}{% endif %}"
   {% if song.cover != '' %}style="--cover-img: url('{{ site.github.url }}{{ song.cover }}')"{% endif %}>
   <div class="al-stage">
@@ -32,6 +33,9 @@
     <span class="al-artist">{{ song.artist }}</span>
     {%- if song.placeholder %} <span class="al-ph">placeholder</span>{% endif %}
   </figcaption>
+  {%- if song.spotify != '' %}
+  <div class="al-spotify"><div id="al-spotify-embed"></div></div>
+  {%- endif %}
   {%- if song.picker %}
   <div class="al-picker" role="radiogroup" aria-label="Album design">
     <span class="al-picker-k">Design</span>

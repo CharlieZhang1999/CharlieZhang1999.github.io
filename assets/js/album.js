@@ -113,20 +113,82 @@
     target = on ? 1 : IDLE;
     if (!reduce) ease();
   }
-  btn.addEventListener('click', function () {
-    if (!playing) {
-      setPlaying(true);
-      if (audio) {
-        var p = audio.play();
-        if (p && p.catch) p.catch(function () { if (audio && audio.error) return; setPlaying(false); });
-      } else {
-        synth = synth || makeSynth();
-        if (synth) synth.play(); else setPlaying(false);
-      }
+  function playOwn() {
+    if (audio) {
+      var p = audio.play();
+      if (p && p.catch) p.catch(function () { if (audio && audio.error) return; setPlaying(false); });
     } else {
-      setPlaying(false);
-      if (audio) audio.pause();
-      if (synth) synth.pause();
+      synth = synth || makeSynth();
+      if (synth) synth.play(); else setPlaying(false);
     }
+  }
+  function pauseOwn() { if (audio) audio.pause(); if (synth) synth.pause(); }
+
+  // Spotify: the iFrame API embed plays the track (full song when the visitor is logged into Spotify,
+  // a 30s preview otherwise). Its playback events drive the album, so its own controls stay in sync.
+  var spotify = null, spotifyUri = toUri(fig.dataset.spotify || '');
+  function toUri(s) {
+    var m = s.match(/(track|album|playlist)[\/:]([A-Za-z0-9]{22})/);
+    return m ? 'spotify:' + m[1] + ':' + m[2] : '';
+  }
+  if (spotifyUri) {
+    window.onSpotifyIframeApiReady = function (IFrameAPI) {
+      var el = document.getElementById('al-spotify-embed');
+      if (!el) return;
+      IFrameAPI.createController(el, { uri: spotifyUri, width: '100%', height: 80 }, function (c) {
+        spotify = c;
+        c.addListener('playback_update', function (e) {
+          var paused = !e.data || e.data.isPaused;
+          if (!paused) heard = true;
+          if (paused === playing) setPlaying(!paused);
+        });
+        if (wanted) c.play();
+      });
+    };
+    var tag = document.createElement('script');
+    tag.src = 'https://open.spotify.com/embed/iframe-api/v1';
+    tag.async = true;
+    tag.onerror = function () { spotifyUri = ''; if (wanted) playOwn(); }; // blocked or offline: fall back
+    document.head.appendChild(tag);
+  }
+
+  var wanted = false, heard = false;
+  function startSong() {
+    wanted = true;
+    if (spotifyUri) {
+      setPlaying(true); heard = false;
+      if (spotify) spotify.play();
+      // If Spotify never reports playing (the browser blocked it), stop the spin so the button reads Play again.
+      setTimeout(function () { if (spotifyUri && wanted && !heard) { wanted = false; setPlaying(false); } }, 6000);
+      return;
+    }
+    setPlaying(true); playOwn();
+  }
+  function stopSong() {
+    wanted = false;
+    setPlaying(false);
+    if (spotify) spotify.pause(); else pauseOwn();
+  }
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (playing) stopSong(); else startSong();
   });
+
+  // Browsers don't allow sound before the visitor interacts, so the song starts on their first
+  // click, tap, Enter or Space anywhere on the page (unless that was the play button itself).
+  var started = false;
+  function firstGesture(e) {
+    if (started) return;
+    if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+    started = true;
+    off();
+    if (e.target.closest && e.target.closest('.al-play, .al-picker')) return;
+    if (!playing) startSong();
+  }
+  function off() {
+    document.removeEventListener('pointerdown', firstGesture, true);
+    document.removeEventListener('keydown', firstGesture, true);
+  }
+  document.addEventListener('pointerdown', firstGesture, true);
+  document.addEventListener('keydown', firstGesture, true);
 })();
