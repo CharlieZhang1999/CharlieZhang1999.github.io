@@ -1,0 +1,9 @@
+# The song on the home page hero (_includes/album-hero.html).
+# PLACEHOLDER: swap in the real favorite song.
+placeholder: true            # set to false once the real song is in
+title: "Favorite Song"       # PLACEHOLDER title
+artist: "Artist Name"        # PLACEHOLDER artist
+src: ""                      # audio file, e.g. /assets/audio/favorite.mp3 (empty plays a soft synth loop)
+cover: ""                    # optional square cover image, e.g. /images/cover.jpg (empty uses drawn artwork)
+look: sleeve                 # default design: sleeve, turntable, orbit, cassette, disc
+picker: true                 # show the design picker under the album
