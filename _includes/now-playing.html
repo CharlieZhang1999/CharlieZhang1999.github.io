@@ -1,0 +1,31 @@
+{%- assign song = site.data.song -%}
+<div class="np" data-style="{{ song.style | default: 'eq' }}" data-spotify="{{ song.spotify }}"
+  data-src="{% if song.src != '' %}{{ site.github.url }}{{ song.src }}{% endif %}">
+  <button class="np-row" type="button" aria-pressed="false" aria-label="Play {{ song.title }} by {{ song.artist }}">
+    <span class="np-ico" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span class="np-kick">Now playing</span>
+    <span class="np-track">
+      <span class="np-run">
+        <span class="np-title">{{ song.title }}</span><span class="np-by">by</span><span class="np-artist">{{ song.artist }}</span>
+      </span>
+      <span class="np-run np-dup" aria-hidden="true">
+        <span class="np-title">{{ song.title }}</span><span class="np-by">by</span><span class="np-artist">{{ song.artist }}</span>
+      </span>
+    </span>
+    <span class="np-state" aria-hidden="true"></span>
+    <span class="np-bar" aria-hidden="true"></span>
+  </button>
+  {%- if song.spotify != '' %}
+  <div class="np-player"><div id="np-spotify"></div></div>
+  {%- endif %}
+</div>
+{%- if song.picker %}
+<div class="np-picker" role="radiogroup" aria-label="Song line style">
+  <span class="np-picker-k">Song line</span>
+  {%- assign styles = "eq:Equalizer,ticker:Ticker,type:Typewriter,wave:Wave,line:Progress" | split: "," -%}
+  {%- for s in styles %}{% assign kv = s | split: ":" %}
+  <button type="button" role="radio" data-pick="{{ kv[0] }}" aria-checked="false">{{ kv[1] }}</button>
+  {%- endfor %}
+</div>
+{%- endif %}
+<script src="{{ site.github.url }}/assets/js/now-playing.js" defer></script>

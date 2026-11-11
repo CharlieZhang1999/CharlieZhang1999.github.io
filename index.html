@@ -6,6 +6,7 @@ image: /images/avatar.jpg
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-text">
+      {% include now-playing.html %}
       <p class="hello">Hi, I'm</p>
       <h1 class="name">Qiuyang</h1>
       <p class="tags">Software Engineering <span aria-hidden="true">|</span> Computer Vision <span aria-hidden="true">|</span> AI for Mental Health</p>
@@ -15,7 +16,9 @@ image: /images/avatar.jpg
         <a class="btn btn-line" href="#about">Learn more</a>
       </div>
     </div>
-    {% include album-hero.html %}
+    <figure class="hero-photo">
+      <img src="{{ site.github.url }}/images/avatar.jpg" width="974" height="1541" alt="Qiuyang standing in a courtyard of the Forbidden City in Beijing" />
+    </figure>
   </div>
 </section>
 
