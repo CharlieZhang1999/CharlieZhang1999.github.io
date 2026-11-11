@@ -1,0 +1,16 @@
+{%- assign song = site.data.song -%}
+<div class="np" data-spotify="{{ song.spotify }}"
+  data-src="{% if song.src != '' %}{{ site.github.url }}{{ song.src }}{% endif %}">
+  <span class="np-line">
+    <span class="np-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span class="np-kick">Now playing</span>
+    <span class="np-title">{{ song.title }}</span><span class="np-by">by</span><span class="np-artist">{{ song.artist }}</span>
+  </span>
+  <button class="np-play" type="button" aria-pressed="false" aria-label="Play {{ song.title }} by {{ song.artist }}">
+    <span class="np-ico" aria-hidden="true"></span><span class="np-lbl">Play song</span>
+  </button>
+  {%- if song.spotify != '' %}
+  <div class="np-player"><div id="np-spotify"></div></div>
+  {%- endif %}
+</div>
+<script src="{{ site.github.url }}/assets/js/now-playing.js" defer></script>

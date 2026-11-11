@@ -1,11 +1,7 @@
-# The song on the home page hero (_includes/album-hero.html, assets/js/album.js).
+# The song line on the home page hero (_includes/now-playing.html, assets/js/now-playing.js).
 title: "All For Nothing"
 artist: "TAEYEON"
-# Spotify track link (Share > Copy song link), e.g. https://open.spotify.com/track/XXXXXXXX
-# Played through Spotify's iFrame API: full song for visitors logged into Spotify, 30s preview for others.
-spotify: ""
-placeholder: false           # set to true to tag the title as a placeholder
-src: ""                      # optional own audio file, used only when spotify is empty (empty plays a soft synth loop)
-cover: ""                    # optional square cover image, e.g. /images/cover.jpg (empty uses drawn artwork)
-look: sleeve                 # default design: sleeve, turntable, orbit, cassette, disc
-picker: true                 # show the design picker under the album
+# Spotify track link (Share > Copy song link). Played through Spotify's iFrame API:
+# full song for visitors logged into Spotify, a 30s preview for everyone else.
+spotify: "https://open.spotify.com/track/6kniGjw06j9O7GFgEFwu8v"
+src: ""                      # optional own audio file, used only if Spotify can't load
