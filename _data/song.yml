@@ -5,5 +5,3 @@ artist: "TAEYEON"
 # full song for visitors logged into Spotify, a 30s preview for everyone else.
 spotify: "https://open.spotify.com/track/6kniGjw06j9O7GFgEFwu8v"
 src: ""                      # optional own audio file, used only if Spotify can't load
-style: eq                    # default row style: eq, ticker, type, wave, line
-picker: true                 # show the style picker at the bottom of the page
