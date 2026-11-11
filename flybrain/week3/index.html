@@ -122,6 +122,9 @@ dialog::backdrop { background: rgba(10, 14, 12, .45) }
 .map.out { color: var(--muted) }
 .map.out s { text-decoration-thickness: 1.5px }
 .map.extra { opacity: .55 }
+video.demo { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 10px; background: #000; margin: 4px 0 6px }
+iframe.player { display: block; width: 100%; height: 820px; border: 1px solid var(--line); border-radius: 10px; background: var(--canvas) }
+@media (max-width: 860px) { iframe.player { height: 1180px } }
 .rounds { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 12px; margin-top: 14px }
 .rcard { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: var(--canvas); display: grid; gap: 8px; align-content: start; transition: opacity .2s }
 .rcard.ghost { opacity: .3 }
@@ -139,18 +142,64 @@ dialog::backdrop { background: rgba(10, 14, 12, .45) }
 <body>
 <div class="wrap">
   <header>
-    <p class="eyebrow">flybrain · week 3 · closing the fly ↔ LLM loop · days 1–5 of 7 done · in progress</p>
+    <p class="eyebrow">flybrain · week 3 · closing the fly ↔ LLM loop · days 1–6 of 7 done · in progress</p>
     <h1>Can the fly talk to a language model?</h1>
     <p class="lede">Week 3 rebuilds the rest of the "fly brain to ChatGPT" demo on the calibrated male brain. Words play into the simulated fly, a readout turns its spikes back into words, a language model reads them and picks an action, and (from Day 3) that action is fed back into the fly. This page grows as each day finishes.</p>
     <div class="seg" id="days" role="tablist" aria-label="Day" style="margin-top:14px">
-      <button role="tab" data-day="day5" aria-pressed="true">Days 3–5 · the closed loop</button>
+      <button role="tab" data-day="day6" aria-pressed="true">Day 6 · watch the loop</button>
+      <button role="tab" data-day="day5" aria-pressed="false">Days 3–5 · the closed loop</button>
       <button role="tab" data-day="day2" aria-pressed="false">Day 2 · fly → LLM</button>
       <button role="tab" data-day="day1" aria-pressed="false">Day 1 · five words in a row</button>
-      <button disabled title="coming next" style="opacity:.45;cursor:default">Days 6–7 · loop view, write-up</button>
+      <button disabled title="coming next" style="opacity:.45;cursor:default">Day 7 · write-up</button>
     </div>
   </header>
 
-  <div class="day" id="day5">
+  <div class="day" id="day6">
+  <section class="panel">
+    <p class="eyebrow">day 6 · 11 nov 2026</p>
+    <h2 style="font-size:24px">Watch the fly and the language model take turns</h2>
+    <p class="lede" style="margin:0">The same three-round loop, now shown spike by spike. On the left, the fly's neurons fire as each word plays in, then as the action code plays back on its hearing neurons. On the right, the conversation: the decoded words, the sentence sent to the language model, its reply, and the action read back off the descending neurons.</p>
+  </section>
+
+  <section class="panel">
+    <h2>The video</h2>
+    <video class="demo" controls preload="metadata" playsinline poster="loop_poster.jpg" aria-label="Video of the three-round fly and language model loop">
+      <source src="loop_demo.mp4" type="video/mp4">
+    </video>
+    <p class="sub">61 seconds. The real wiring, run seed 4000, shown at 0.2× brain speed. Each frame was rendered from the saved spikes, not screen-captured. The replies come from the offline rule-based stand-in, not a real language model.</p>
+  </section>
+
+  <section class="panel">
+    <div class="who" style="margin-bottom:8px">Interactive player <span class="badge">replies: offline stand-in (rules-v1), not a real LLM</span><a class="btn llmbtn" href="loop/index.html" target="_blank" rel="noopener">Open full screen ↗</a></div>
+    <p class="sub" style="margin:0 0 10px">Pick any of the 4 runs, change the speed, or drag through time. The raster shows the most active neurons of each stimulus, the antennal lobe, the central brain and the descending neurons.</p>
+    <iframe class="player" id="player6" src="loop/index.html" title="Interactive loop player" loading="lazy"></iframe>
+    <script>
+    (function () { // size the player to its content (same origin); falls back to the CSS height
+      const f = document.getElementById('player6');
+      function fit() { try { const d = f.contentDocument, kids = [...d.body.children].filter(c => c.offsetHeight);
+        const h = Math.max(...kids.map(c => c.getBoundingClientRect().bottom)) + d.defaultView.scrollY + 24;
+        if (h > 200 && Math.abs(h - f.clientHeight) > 4) f.style.height = Math.ceil(h) + 'px'; } catch (e) {} }
+      f.addEventListener('load', () => { fit(); try { new ResizeObserver(fit).observe(f.contentDocument.body); } catch (e) {} });
+    })();
+    </script>
+  </section>
+
+  <section class="tiles" id="tiles6" aria-label="Day 6 results">
+    <div class="tile"><div class="k">One 3-round loop</div><div class="v">5–7.5 min</div><div class="s">of computing, down from about 20 (goal: 10)</div></div>
+    <div class="tile"><div class="k">Words, Day 6 runs</div><div class="v">60 / 60</div><div class="s">4 runs × 3 rounds × 5 words</div></div>
+    <div class="tile"><div class="k">Actions, Day 6 runs</div><div class="v">12 / 12</div><div class="s">read back from descending neurons</div></div>
+    <div class="tile"><div class="k">Shuffled-brain confidence</div><div class="v">0.81–0.93</div><div class="s">against 0.84–1.00 with the real wiring</div></div>
+  </section>
+
+  <section class="panel notes">
+    <h2>What Day 6 found</h2>
+    <p><b>The loop is now fast enough.</b> The simulator can save its state and resume it, so each round continues the same brain instead of replaying from the start. A 3-round loop now takes 5–7.5 minutes instead of about 20, which meets the 10-minute goal. Resumed runs are spike-for-spike identical to one long run, and the results match Day 5 exactly.</p>
+    <p><b>The shuffled brain passes too.</b> All 4 runs, including the one with shuffled wiring, decode 15 of 15 words and read back 3 of 3 actions. The shuffled brain does it with lower confidence. So the loop shows that the readout pipeline works, but not, on its own, that the real wiring is needed.</p>
+    <p><b>Still a stand-in, still labels.</b> The replies come from an offline rule-based stand-in, not a real language model, and the action codes are arbitrary patterns on the hearing neurons, not natural steering commands. Day 7 is the write-up.</p>
+  </section>
+  </div>
+
+  <div class="day" id="day5" hidden>
   <section class="panel">
     <p class="eyebrow">days 3–5 · 10–11 nov 2026</p>
     <h2 style="font-size:24px">The loop closes: the fly's action goes back into the fly</h2>
@@ -203,7 +252,7 @@ dialog::backdrop { background: rgba(10, 14, 12, .45) }
     <p><b>"Turn left" is a label, not a steering command.</b> The codes are carried mainly by the giant fiber (DNp01) and a few other descending neurons (DNg33, DNp12, DNp11). The steering neurons DNa01–DNa03 stay at or below about 3&nbsp;Hz for every code. So the fly's brain reliably carries which code it got, but it does not turn.</p>
     <p><b>The right ear was missing from the wiring map.</b> In MaleCNS the right JO neurons make 34% of the left side's output synapses, and only about 5% for JO-A. Many right JO neurons have no synapses at all. FlyWire, a different fly, is balanced, so this looks like an incomplete reconstruction, not biology. Before the fix, right-side codes reached no descending neuron at all. An optional mirror calibration gives each right JO neuron its left partner's outputs, and that is what makes "turn right" work.</p>
     <p><b>A shuffled brain closes the loop too.</b> A brain with shuffled wiring still reads back 36 of 37 held-out actions and all 12 loop actions, with lower confidence (0.81–0.93 against mostly 0.97 or more). Reading back a pattern we injected ourselves works with almost any wiring. What the real wiring changes is reach: the codes drive 445 descending neurons in the real brain and 24 in the shuffled one.</p>
-    <p><b>Still open.</b> The replies are still the offline rule-based stand-in, not a real language model. A run takes 18–23 minutes of computing, against a goal of about 10, because the simulator cannot yet save and resume its state. Day 6 builds the loop view and video, and Day 7 the write-up.</p>
+    <p><b>Still open after Day 5.</b> The replies are still the offline rule-based stand-in, not a real language model. A run took 18–23 minutes of computing, against a goal of about 10, because the simulator could not save and resume its state. Day 6 fixed that (5–7.5 minutes per run).</p>
   </section>
   </div>
 
@@ -535,12 +584,12 @@ const SEGS = [{"w":"hot","prev":"","k":0,"dec":"hot","p":0.999,"pop":[11,37,14,3
   const days = document.querySelectorAll('#days button[data-day]');
   function showDay(d) {
     days.forEach(b => b.setAttribute('aria-pressed', b.dataset.day === d));
-    ['day1', 'day2', 'day5'].forEach(id => $(id).hidden = id !== d);
-    try { localStorage.setItem('fb-w3-tab', d); } catch (e) {}
+    ['day1', 'day2', 'day5', 'day6'].forEach(id => $(id).hidden = id !== d);
+    try { localStorage.setItem('fb-w3-tab6', d); } catch (e) {}
   }
   days.forEach(b => b.onclick = () => showDay(b.dataset.day));
-  let startDay = 'day5'; try { startDay = localStorage.getItem('fb-w3-tab') || 'day5'; } catch (e) {}
-  if (!$(startDay)) startDay = 'day5';
+  let startDay = 'day6'; try { startDay = localStorage.getItem('fb-w3-tab6') || 'day6'; } catch (e) {}
+  if (!$(startDay)) startDay = 'day6';
   showDay(startDay);
 
   const MOD = { sugar:'taste', bitter:'taste', water:'taste', salt:'taste', umami:'taste',
