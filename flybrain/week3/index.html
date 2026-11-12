@@ -166,11 +166,11 @@ iframe.player { display: block; width: 100%; height: 820px; border: 1px solid va
     <video class="demo" controls preload="metadata" playsinline poster="loop_poster.jpg" aria-label="Video of the three-round fly and language model loop">
       <source src="loop_demo.mp4" type="video/mp4">
     </video>
-    <p class="sub">61 seconds. The real wiring, run seed 4000, shown at 0.2× brain speed. Each frame was rendered from the saved spikes, not screen-captured. The replies come from the offline rule-based stand-in, not a real language model.</p>
+    <p class="sub">61 seconds. The real wiring, run seed 4000, shown at 0.2× brain speed. Each frame was rendered from the saved spikes, not screen-captured. Every reply is a real one from Claude (claude-sonnet-5-5), called live in each round while the brain was being simulated.</p>
   </section>
 
   <section class="panel">
-    <div class="who" style="margin-bottom:8px">Interactive player <span class="badge">replies: offline stand-in (rules-v1), not a real LLM</span><a class="btn llmbtn" href="loop/index.html" target="_blank" rel="noopener">Open full screen ↗</a></div>
+    <div class="who" style="margin-bottom:8px">Interactive player <span class="badge live">replies: Claude (claude-sonnet-5-5), live</span><a class="btn llmbtn" href="loop/index.html" target="_blank" rel="noopener">Open full screen ↗</a></div>
     <p class="sub" style="margin:0 0 10px">Pick any of the 4 runs, change the speed, or drag through time. The raster shows the most active neurons of each stimulus, the antennal lobe, the central brain and the descending neurons.</p>
     <iframe class="player" id="player6" src="loop/index.html" title="Interactive loop player" loading="lazy"></iframe>
     <script>
@@ -188,14 +188,15 @@ iframe.player { display: block; width: 100%; height: 820px; border: 1px solid va
     <div class="tile"><div class="k">One 3-round loop</div><div class="v">5–7.5 min</div><div class="s">of computing, down from about 20 (goal: 10)</div></div>
     <div class="tile"><div class="k">Words, Day 6 runs</div><div class="v">60 / 60</div><div class="s">4 runs × 3 rounds × 5 words</div></div>
     <div class="tile"><div class="k">Actions, Day 6 runs</div><div class="v">12 / 12</div><div class="s">read back from descending neurons</div></div>
-    <div class="tile"><div class="k">Shuffled-brain confidence</div><div class="v">0.81–0.93</div><div class="s">against 0.84–1.00 with the real wiring</div></div>
+    <div class="tile"><div class="k">Shuffled-brain confidence</div><div class="v">0.81–0.91</div><div class="s">against 0.96–1.00 with the real wiring</div></div>
   </section>
 
   <section class="panel notes">
     <h2>What Day 6 found</h2>
     <p><b>The loop is now fast enough.</b> The simulator can save its state and resume it, so each round continues the same brain instead of replaying from the start. A 3-round loop now takes 5–7.5 minutes instead of about 20, which meets the 10-minute goal. Resumed runs are spike-for-spike identical to one long run, and the results match Day 5 exactly.</p>
+    <p><b>A real language model is now in the loop.</b> Claude (claude-sonnet-5-5) answers each round live, through the Claude Code command line, and its choice is played straight back into the brain. Its choices: real wiring seed 4000 turn left, go forward, eat (the same as the old stand-in); seed 4001 stop, eat, eat; seed 4002 turn left, turn left, eat; shuffled wiring turn left, turn left, eat. It disagreed with the old rule-based stand-in in 4 of 12 rounds. Claude is not deterministic: the identical round-1 sentence got "turn left" three times and "stop" once. A different reply also changes the brain going into the next round, and every run still decoded all 15 words and read back all 3 actions.</p>
     <p><b>The shuffled brain passes too.</b> All 4 runs, including the one with shuffled wiring, decode 15 of 15 words and read back 3 of 3 actions. The shuffled brain does it with lower confidence. So the loop shows that the readout pipeline works, but not, on its own, that the real wiring is needed.</p>
-    <p><b>Still a stand-in, still labels.</b> The replies come from an offline rule-based stand-in, not a real language model, and the action codes are arbitrary patterns on the hearing neurons, not natural steering commands. Day 7 is the write-up.</p>
+    <p><b>Still labels.</b> The action codes are arbitrary patterns on the hearing neurons, not natural steering commands. Day 7 is the write-up.</p>
   </section>
   </div>
 
@@ -252,7 +253,7 @@ iframe.player { display: block; width: 100%; height: 820px; border: 1px solid va
     <p><b>"Turn left" is a label, not a steering command.</b> The codes are carried mainly by the giant fiber (DNp01) and a few other descending neurons (DNg33, DNp12, DNp11). The steering neurons DNa01–DNa03 stay at or below about 3&nbsp;Hz for every code. So the fly's brain reliably carries which code it got, but it does not turn.</p>
     <p><b>The right ear was missing from the wiring map.</b> In MaleCNS the right JO neurons make 34% of the left side's output synapses, and only about 5% for JO-A. Many right JO neurons have no synapses at all. FlyWire, a different fly, is balanced, so this looks like an incomplete reconstruction, not biology. Before the fix, right-side codes reached no descending neuron at all. An optional mirror calibration gives each right JO neuron its left partner's outputs, and that is what makes "turn right" work.</p>
     <p><b>A shuffled brain closes the loop too.</b> A brain with shuffled wiring still reads back 36 of 37 held-out actions and all 12 loop actions, with lower confidence (0.81–0.93 against mostly 0.97 or more). Reading back a pattern we injected ourselves works with almost any wiring. What the real wiring changes is reach: the codes drive 445 descending neurons in the real brain and 24 in the shuffled one.</p>
-    <p><b>Still open after Day 5.</b> The replies are still the offline rule-based stand-in, not a real language model. A run took 18–23 minutes of computing, against a goal of about 10, because the simulator could not save and resume its state. Day 6 fixed that (5–7.5 minutes per run).</p>
+    <p><b>Still open after Day 5.</b> The replies are still the offline rule-based stand-in, not a real language model. A run took 18–23 minutes of computing, against a goal of about 10, because the simulator could not save and resume its state. Day 6 fixed both: runs take 5–7.5 minutes, and Claude now gives the replies.</p>
   </section>
   </div>
 

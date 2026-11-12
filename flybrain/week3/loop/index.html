@@ -133,7 +133,7 @@ function b64u16(s){const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.le
 async function init(){
   const idx=await (await fetch('data/index.json')).json();
   const name=r=>(r.cfg==='real'?'Real connectome':'Shuffled wiring (control)')+' · seed '+r.seed;
-  idx.sort((a,b)=>(a.cfg>b.cfg?1:-1)||a.seed-b.seed);
+  idx.sort((a,b)=>a.cfg.localeCompare(b.cfg)||a.seed-b.seed);
   $('#run').innerHTML=idx.map(r=>`<option value="${r.key}">${name(r)}</option>`).join('');
   $('#run').onchange=()=>load($('#run').value);
   await load(idx[0].key);
@@ -144,7 +144,7 @@ async function load(key){
   $('#rounds').innerHTML=D.rounds.map((r,i)=>`<button data-i="${i}"><div class="fill"></div><span>Round ${i+1} · ${r.t_start.toFixed(1)}–${r.t_end.toFixed(1)} s</span></button>`).join('');
   $('#rounds').querySelectorAll('button').forEach(b=>b.onclick=()=>{T=D.rounds[+b.dataset.i].t_start;lastKey='';if(stage!=='play'){stage='play';$('#card').hidden=true}draw()});
   const wc=D.rounds.reduce((a,r)=>a+r.words_correct,0),ac=D.rounds.filter(r=>r.action_ok).length;
-  $('#foot').innerHTML=`${D.n_active.toLocaleString()} neurons fired in this run; the raster shows ${D.n_rows} of them (the most active in each group) and ${D.n_spikes_shown.toLocaleString()} of ${D.n_spikes_total.toLocaleString()} spikes. Words are decoded from all non-sensory neurons; the action is decoded from descending neurons only. LLM replies here come from ${D.rounds[0].llm_provider==='stub'?'an offline rule-based stand-in, not a real LLM':D.rounds[0].llm_provider+' ('+D.rounds[0].llm_model+')'}. Run total: words ${wc}/${D.rounds.length*5}, actions ${ac}/${D.rounds.length}.`;
+  $('#foot').innerHTML=`${D.n_active.toLocaleString()} neurons fired in this run; the raster shows ${D.n_rows} of them (the most active in each group) and ${D.n_spikes_shown.toLocaleString()} of ${D.n_spikes_total.toLocaleString()} spikes. Words are decoded from all non-sensory neurons; the action is decoded from descending neurons only. LLM replies here come from ${D.rounds[0].llm_provider==='stub'?'an offline rule-based stand-in, not a real LLM':'Claude ('+D.rounds[0].llm_model+'), called live during the run through the Claude Code CLI'}. Run total: words ${wc}/${D.rounds.length*5}, actions ${ac}/${D.rounds.length}.`;
   D.score=`words ${wc}/${D.rounds.length*5} · actions ${ac}/${D.rounds.length}`;
   T=0;lastKey='';buildOff();draw();
 }
@@ -227,7 +227,7 @@ function feed(){
     key+=done?'p':'';
     if(T>=r.t_words+0.06){key+='l';
       const stub=r.llm_provider==='stub';
-      items.push(`<div class="msg llm"><div class="who">Language model</div><div class="act">${r.action[0].toUpperCase()+r.action.slice(1)}.</div><span class="tag">${stub?'offline stand-in · '+r.llm_model:r.llm_provider+' · '+r.llm_model}</span></div>`);}
+      items.push(`<div class="msg llm"><div class="who">Language model</div><div class="act">${r.action[0].toUpperCase()+r.action.slice(1)}.</div><span class="tag">${stub?'offline stand-in · '+r.llm_model:'Claude · '+r.llm_model}</span></div>`);}
     if(T>=r.t_words+0.15){key+='s';items.push(`<div class="sys">↓ “${r.action}” → spike code <b>${r.code}</b> into the fly's hearing neurons (${CODE_DESC[r.code]||''})</div>`);}
     if(T>=r.t_words+0.5){key+='a';
       items.push(`<div class="msg fly"><div class="who">Fly brain · descending neurons</div>Heard: <span class="act">${r.action_decoded}</span> <span class="mono">${Math.round(r.action_p*100)}%</span> ${r.action_ok?'<span class="ok">✓ matches</span>':'<span class="no">✗ mismatch</span>'}</div>`);}
@@ -244,7 +244,7 @@ function tick(now){
 function showEnd(){
   const wc=D.rounds.reduce((a,r)=>a+r.words_correct,0),ac=D.rounds.filter(r=>r.action_ok).length;
   $('#cardTitle').textContent=`${wc} of ${D.rounds.length*5} words, ${ac} of ${D.rounds.length} actions`;
-  $('#cardText').innerHTML=`Every word the fly “said” was read from its spikes, and every action the language model chose was read back from its descending neurons. ${D.rounds[0].llm_provider==='stub'?'In this run the language model is an offline rule-based stand-in.':''}`;
+  $('#cardText').innerHTML=`Every word the fly “said” was read from its spikes, and every action the language model chose was read back from its descending neurons. ${D.rounds[0].llm_provider==='stub'?'In this run the language model is an offline rule-based stand-in.':'Each action was chosen live by Claude ('+D.rounds[0].llm_model+').'}`;
   $('#cardPlay').textContent='Replay';$('#card').hidden=false;stage='end';
 }
 function start(){if(T>=D.t_total)T=0,lastKey='';stage='play';$('#card').hidden=true;playing=true;$('#play').textContent='Pause'}
