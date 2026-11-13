@@ -15,7 +15,7 @@ description: A connectome-constrained simulation of the fruit fly brain, with an
 
   <nav class="fb-tabs" role="tablist" aria-label="Weeks">
     {% for w in weeks %}
-    <a class="fb-tab" role="tab" id="tab-week-{{ w.week }}" href="#week-{{ w.week }}" data-page="{{ w.page }}/index.html" aria-selected="false" aria-controls="fb-panel">
+    <a class="fb-tab" role="tab" id="tab-week-{{ w.week }}" href="#week-{{ w.week }}" data-page="{{ w.page }}/index.html?v={{ site.time | date: '%s' }}" aria-selected="false" aria-controls="fb-panel">
       <span class="fb-tab-n">Week {{ w.week }}{% if w.status != 'done' %}<i class="fb-dot" title="{{ w.status }}"></i>{% endif %}</span>
       <span class="fb-tab-t">{{ w.title }}</span>
     </a>
