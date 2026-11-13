@@ -122,23 +122,162 @@ dialog::backdrop { background: rgba(10, 14, 12, .45) }
 .map.out { color: var(--muted) }
 .map.out s { text-decoration-thickness: 1.5px }
 .map.extra { opacity: .55 }
+.yt { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #000; margin: 4px 0 6px }
+.yt iframe, .yt button { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; padding: 0; background: #000; cursor: pointer }
+.yt img { width: 100%; height: 100%; object-fit: cover; display: block }
+.yt-btn { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); opacity: .9; transition: opacity .15s, transform .15s }
+.yt button:hover .yt-btn, .yt button:focus-visible .yt-btn { opacity: 1; transform: translate(-50%, -50%) scale(1.08) }
+.yt button:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px }
+iframe.player { display: block; width: 100%; height: 820px; border: 1px solid var(--line); border-radius: 10px; background: var(--canvas) }
+@media (max-width: 860px) { iframe.player { height: 1180px } }
+.rounds { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 12px; margin-top: 14px }
+.rcard { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: var(--canvas); display: grid; gap: 8px; align-content: start; transition: opacity .2s }
+.rcard.ghost { opacity: .3 }
+.rcard h3 { font-family: var(--f-display); font-weight: 500; font-size: 17px; margin: 0; display: flex; justify-content: space-between; gap: 8px; align-items: baseline }
+.rcard h3 small { font-family: var(--f-mono); font-size: 11px; color: var(--muted); font-weight: 400 }
+.wchips { display: flex; flex-wrap: wrap; gap: 4px }
+.wchips b { font: 500 11.5px var(--f-mono); color: #fff; border-radius: 999px; padding: 1px 8px }
+.rcard .q { font-size: 13px; color: var(--muted); margin: 0 }
+.rcard .a { font-family: var(--f-display); font-size: 22px; font-weight: 700; line-height: 1.15 }
+.rcard .step { font-size: 13px; margin: 0 }
+.rcard .ok { color: var(--good); font-weight: 600 }
 .reply .act.pending { color: var(--muted); font-weight: 500; font-size: 18px }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <p class="eyebrow">flybrain · week 3 · closing the fly ↔ LLM loop · days 1–2 of 7 done · in progress</p>
+    <p class="eyebrow">flybrain · week 3 · closing the fly ↔ LLM loop · days 1–6 of 7 done · in progress</p>
     <h1>Can the fly talk to a language model?</h1>
     <p class="lede">Week 3 rebuilds the rest of the "fly brain to ChatGPT" demo on the calibrated male brain. Words play into the simulated fly, a readout turns its spikes back into words, a language model reads them and picks an action, and (from Day 3) that action is fed back into the fly. This page grows as each day finishes.</p>
     <div class="seg" id="days" role="tablist" aria-label="Day" style="margin-top:14px">
-      <button role="tab" data-day="day2" aria-pressed="true">Day 2 · fly → LLM</button>
+      <button role="tab" data-day="day6" aria-pressed="true">Day 6 · watch the loop</button>
+      <button role="tab" data-day="day5" aria-pressed="false">Days 3–5 · the closed loop</button>
+      <button role="tab" data-day="day2" aria-pressed="false">Day 2 · fly → LLM</button>
       <button role="tab" data-day="day1" aria-pressed="false">Day 1 · five words in a row</button>
-      <button disabled title="coming next" style="opacity:.45;cursor:default">Days 3–7 · LLM → fly</button>
+      <button disabled title="coming next" style="opacity:.45;cursor:default">Day 7 · write-up</button>
     </div>
   </header>
 
-  <div class="day" id="day2">
+  <div class="day" id="day6">
+  <section class="panel">
+    <p class="eyebrow">day 6 · 11 nov 2026</p>
+    <h2 style="font-size:24px">Watch the fly and the language model take turns</h2>
+    <p class="lede" style="margin:0">The same three-round loop, now shown spike by spike. On the left, the fly's neurons fire as each word plays in, then as the action code plays back on its hearing neurons. On the right, the conversation: the decoded words, the sentence sent to the language model, its reply, and the action read back off the descending neurons.</p>
+  </section>
+
+  <section class="panel">
+    <h2>The video</h2>
+    <div class="yt" id="yt6">
+      <button type="button" class="yt-play" aria-label="Play the video (loads YouTube)">
+        <img src="loop_poster.jpg" alt="Spike raster of the fly brain on the left, the conversation with Claude on the right" width="1280" height="720">
+        <span class="yt-btn" aria-hidden="true"><svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3.3 34 .3 34 .3s-21.3 0-26.5 1.4a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6C12.7 47.7 34 47.7 34 47.7s21.3 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#f00"/><path d="M45 24 27 14v20z" fill="#fff"/></svg></span>
+      </button>
+    </div>
+    <script>
+    (function () { // load YouTube only when the visitor presses play (privacy-enhanced domain)
+      const box = document.getElementById('yt6');
+      box.querySelector('button').onclick = () => {
+        const f = document.createElement('iframe');
+        f.src = 'https://www.youtube-nocookie.com/embed/PkqWC-2eWS4?autoplay=1&rel=0&playsinline=1';
+        f.title = 'Fly brain and Claude loop video'; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
+        f.referrerPolicy = 'strict-origin-when-cross-origin';
+        box.replaceChildren(f);
+      };
+    })();
+    </script>
+    <p class="sub">61 seconds. The real wiring, run seed 4000, shown at 0.2× brain speed. Each frame was rendered from the saved spikes, not screen-captured. Every reply is a real one from Claude (claude-sonnet-5-5), called live in each round while the brain was being simulated. <a href="https://youtu.be/PkqWC-2eWS4" target="_blank" rel="noopener">Watch on YouTube ↗</a></p>
+  </section>
+
+  <section class="panel">
+    <div class="who" style="margin-bottom:8px">Interactive player <span class="badge live">replies: Claude (claude-sonnet-5-5), live</span><a class="btn llmbtn" href="loop/index.html" target="_blank" rel="noopener">Open full screen ↗</a></div>
+    <p class="sub" style="margin:0 0 10px">Pick any of the 4 runs, change the speed, or drag through time. The raster shows the most active neurons of each stimulus, the antennal lobe, the central brain and the descending neurons.</p>
+    <iframe class="player" id="player6" src="loop/index.html" title="Interactive loop player" loading="lazy"></iframe>
+    <script>
+    (function () { // size the player to its content (same origin); falls back to the CSS height
+      const f = document.getElementById('player6');
+      function fit() { try { const d = f.contentDocument, kids = [...d.body.children].filter(c => c.offsetHeight);
+        const h = Math.max(...kids.map(c => c.getBoundingClientRect().bottom)) + d.defaultView.scrollY + 24;
+        if (h > 200 && Math.abs(h - f.clientHeight) > 4) f.style.height = Math.ceil(h) + 'px'; } catch (e) {} }
+      f.addEventListener('load', () => { fit(); try { new ResizeObserver(fit).observe(f.contentDocument.body); } catch (e) {} });
+    })();
+    </script>
+  </section>
+
+  <section class="tiles" id="tiles6" aria-label="Day 6 results">
+    <div class="tile"><div class="k">One 3-round loop</div><div class="v">5–7.5 min</div><div class="s">of computing, down from about 20 (goal: 10)</div></div>
+    <div class="tile"><div class="k">Words, Day 6 runs</div><div class="v">60 / 60</div><div class="s">4 runs × 3 rounds × 5 words</div></div>
+    <div class="tile"><div class="k">Actions, Day 6 runs</div><div class="v">12 / 12</div><div class="s">read back from descending neurons</div></div>
+    <div class="tile"><div class="k">Shuffled-brain confidence</div><div class="v">0.81–0.91</div><div class="s">against 0.96–1.00 with the real wiring</div></div>
+  </section>
+
+  <section class="panel notes">
+    <h2>What Day 6 found</h2>
+    <p><b>The loop is now fast enough.</b> The simulator can save its state and resume it, so each round continues the same brain instead of replaying from the start. A 3-round loop now takes 5–7.5 minutes instead of about 20, which meets the 10-minute goal. Resumed runs are spike-for-spike identical to one long run, and the results match Day 5 exactly.</p>
+    <p><b>A real language model is now in the loop.</b> Claude (claude-sonnet-5-5) answers each round live, through the Claude Code command line, and its choice is played straight back into the brain. Its choices: real wiring seed 4000 turn left, go forward, eat (the same as the old stand-in); seed 4001 stop, eat, eat; seed 4002 turn left, turn left, eat; shuffled wiring turn left, turn left, eat. It disagreed with the old rule-based stand-in in 4 of 12 rounds. Claude is not deterministic: the identical round-1 sentence got "turn left" three times and "stop" once. A different reply also changes the brain going into the next round, and every run still decoded all 15 words and read back all 3 actions.</p>
+    <p><b>The shuffled brain passes too.</b> All 4 runs, including the one with shuffled wiring, decode 15 of 15 words and read back 3 of 3 actions. The shuffled brain does it with lower confidence. So the loop shows that the readout pipeline works, but not, on its own, that the real wiring is needed.</p>
+    <p><b>Still labels.</b> The action codes are arbitrary patterns on the hearing neurons, not natural steering commands. Day 7 is the write-up.</p>
+  </section>
+  </div>
+
+  <div class="day" id="day5" hidden>
+  <section class="panel">
+    <p class="eyebrow">days 3–5 · 10–11 nov 2026</p>
+    <h2 style="font-size:24px">The loop closes: the fly's action goes back into the fly</h2>
+    <p class="lede" style="margin:0 0 12px">Each run is three rounds in <b>one continuous simulation</b> (10.5&nbsp;s of brain time) of the calibrated MaleCNS brain. In each round, five words play in, the readout decodes them, and the language model picks an action. The action is then played back into the brain as a pattern on its hearing neurons, and a second readout reads it off the descending neurons, the brain's outputs to the body. The next round starts in the same brain, with the earlier rounds' activity still present.</p>
+    <div class="pipe" aria-label="Pipeline">
+      <span>words in</span><b>→</b><span>fly brain</span><b>→</b><span>word readout</span><b>→</b><span>prompt</span><b>→</b><span>language model</span><b>→</b><span>action code on hearing neurons</span><b>→</b><span>descending-neuron readout</span><b>→</b><span>next round</span>
+    </div>
+  </section>
+
+  <section class="panel controls" aria-label="Loop run controls">
+    <div class="ctl"><span>Run (4 logged)</span><div class="seg" id="c-run5"></div></div>
+    <div class="ctl"><span>&nbsp;</span><button class="btn primary" id="play5">▶ Play</button></div>
+  </section>
+
+  <section class="panel" aria-label="Loop timeline">
+    <div class="stage"><svg id="tl5" viewBox="0 0 1000 300" role="img" aria-label="Timeline of the three-round loop: words, action codes, spike trace, readouts"></svg></div>
+    <div class="legend" id="lg5"></div>
+    <div class="rounds" id="rounds5"></div>
+  </section>
+
+  <section class="tiles" id="tiles5" aria-label="Days 3 to 5 results"></section>
+
+  <section class="grid2">
+    <div class="panel">
+      <h2>The five action codes</h2>
+      <p class="sub" style="margin:0 0 8px">Each action is 0.5&nbsp;s of drive on Johnston's organ (JO), the fly's hearing neurons. The pairing is arbitrary (Day 3).</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Action</th><th>Code</th><th>Neurons driven</th></tr></thead>
+        <tbody id="codes5"></tbody>
+      </table></div>
+    </div>
+    <div class="panel">
+      <h2>Reading the action back (Day 4)</h2>
+      <p class="sub" style="margin:0 0 8px">37 new trials, each a code played right after a 5-word episode. The readout sees only the 0.5&nbsp;s code window.</p>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Brain</th><th>Readout</th><th class="n">Held-out right</th><th class="n">Neurons firing</th></tr></thead>
+        <tbody>
+          <tr><td>real</td><td>descending neurons</td><td class="n"><b>37 / 37</b></td><td class="n">445</td></tr>
+          <tr><td>real</td><td>all non-sensory</td><td class="n">37 / 37</td><td class="n">3,361</td></tr>
+          <tr><td>shuffled</td><td>descending neurons</td><td class="n">36 / 37</td><td class="n">24</td></tr>
+          <tr><td>shuffled</td><td>all non-sensory</td><td class="n">37 / 37</td><td class="n">1,049</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <section class="panel notes">
+    <h2>What Days 3–5 found</h2>
+    <p><b>The loop works end to end.</b> Over 4 runs of 3 rounds, all 60 words are decoded and all 12 actions are read back correctly from the descending neurons, inside one continuous simulation. When the runner replays the simulation from the start at each step, the earlier spikes come out identical every time (8 of 8 checks).</p>
+    <p><b>"Turn left" is a label, not a steering command.</b> The codes are carried mainly by the giant fiber (DNp01) and a few other descending neurons (DNg33, DNp12, DNp11). The steering neurons DNa01–DNa03 stay at or below about 3&nbsp;Hz for every code. So the fly's brain reliably carries which code it got, but it does not turn.</p>
+    <p><b>The right ear was missing from the wiring map.</b> In MaleCNS the right JO neurons make 34% of the left side's output synapses, and only about 5% for JO-A. Many right JO neurons have no synapses at all. FlyWire, a different fly, is balanced, so this looks like an incomplete reconstruction, not biology. Before the fix, right-side codes reached no descending neuron at all. An optional mirror calibration gives each right JO neuron its left partner's outputs, and that is what makes "turn right" work.</p>
+    <p><b>A shuffled brain closes the loop too.</b> A brain with shuffled wiring still reads back 36 of 37 held-out actions and all 12 loop actions, with lower confidence (0.81–0.93 against mostly 0.97 or more). Reading back a pattern we injected ourselves works with almost any wiring. What the real wiring changes is reach: the codes drive 445 descending neurons in the real brain and 24 in the shuffled one.</p>
+    <p><b>Still open after Day 5.</b> The replies are still the offline rule-based stand-in, not a real language model. A run took 18–23 minutes of computing, against a goal of about 10, because the simulator could not save and resume its state. Day 6 fixed both: runs take 5–7.5 minutes, and Claude now gives the replies.</p>
+  </section>
+  </div>
+
+  <div class="day" id="day2" hidden>
   <section class="panel">
     <h2>Day 2: the fly's words become a prompt</h2>
     <p class="lede" style="margin:0 0 12px">Each episode plays its words back to back (0.5&nbsp;s each, 150&nbsp;Hz) into one continuous simulation of the calibrated MaleCNS brain with presynaptic inhibition. The readout decodes each window, the decoded words become first-person sentences, and the language model must answer with one of five actions.</p>
@@ -466,11 +605,12 @@ const SEGS = [{"w":"hot","prev":"","k":0,"dec":"hot","p":0.999,"pop":[11,37,14,3
   const days = document.querySelectorAll('#days button[data-day]');
   function showDay(d) {
     days.forEach(b => b.setAttribute('aria-pressed', b.dataset.day === d));
-    ['day1', 'day2'].forEach(id => $(id).hidden = id !== d);
-    try { localStorage.setItem('fb-w3-day', d); } catch (e) {}
+    ['day1', 'day2', 'day5', 'day6'].forEach(id => $(id).hidden = id !== d);
+    try { localStorage.setItem('fb-w3-tab6', d); } catch (e) {}
   }
   days.forEach(b => b.onclick = () => showDay(b.dataset.day));
-  let startDay = 'day2'; try { startDay = localStorage.getItem('fb-w3-day') || 'day2'; } catch (e) {}
+  let startDay = 'day6'; try { startDay = localStorage.getItem('fb-w3-tab6') || 'day6'; } catch (e) {}
+  if (!$(startDay)) startDay = 'day6';
   showDay(startDay);
 
   const MOD = { sugar:'taste', bitter:'taste', water:'taste', salt:'taste', umami:'taste',
@@ -791,6 +931,116 @@ const SEGS = [{"w":"hot","prev":"","k":0,"dec":"hot","p":0.999,"pop":[11,37,14,3
     ['Scenario words right', `${right(sc)} / ${words(sc)}`, `${sc.length} two-word scenarios`],
     ['Lowest top probability', minp.toFixed(3), 'over all ' + words(runs) + ' decoded words'],
     ['Still firing after demo', `${Math.min(...tails)}–${Math.max(...tails).toLocaleString()}`, 'neurons, the looming tail'],
+  ].map(([k, v, s]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('');
+  render();
+  if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
+})();
+</script>
+<script>
+const D5 = [{"cfg":"real","seed":4000,"t_total":10.5,"pop":[194,248,270,276,263,253,218,274,216,244,218,253,201,245,220,238,226,228,232,193,232,244,206,237,245,221,230,195,205,255,256,244,214,223,251,253,248,249,264,260,229,234,210,249,205,221,229,254,239,213,274,226,235,274,284,281,276,265,289,308,352,310,278,290,269,278,296,276,287,285,307,283,235,272,293,264,273,293,283,294,240,267,284,309,236,244,268,260,269,293,279,314,247,270,275,287,261,243,263,272,83,71,84,57,81,64,61,70,87,85,68,59,38,77,75,75,29,47,67,78,83,62,83,75,68,84,67,53,52,60,67,60,93,81,80,75,62,76,68,68,70,79,91,68,52,56,102,63,70,51,30,24,65,53,34,36,52,57,26,28,60,81,78,53,30,36,42,35,42,70,60,35,64,57,38,79,84,68,65,44,37,45,46,37,55,71,27,25,40,33,49,55,41,13,20,50,46,54,51,48,682,1095,1177,1188,1244,1183,1250,1176,1249,1282,1228,1101,1168,1209,1193,1392,1230,1244,1308,1388,1255,1467,1183,1250,1433,1341,1326,1272,1269,1324,1311,1380,1342,1402,1330,1378,1226,1406,1246,1344,1439,1400,1351,1253,1341,1257,1391,1395,1330,1281,677,302,242,195,199,272,205,241,227,253,239,289,347,230,281,195,295,183,249,197,346,205,239,258,210,251,241,297,261,286,208,234,253,238,318,248,233,210,218,313,273,326,314,271,241,179,323,245,279,239,300,159,189,149,164,241,197,291,126,228,242,235,121,197,161,257,203,165,184,164,265,269,286,68,165,180,229,220,269,179,69,161,174,155,225,230,200,92,201,176,220,147,293,156,197,166,262,209,300,98,775,918,1253,1189,1194,1297,1312,1202,1143,1416,1211,1202,1361,1147,1264,1239,1333,1124,1201,1357,1213,1310,1199,1245,1240,1325,1288,1118,1200,1353,1404,1061,1212,1171,1240,1312,1251,1355,1170,1362,1163,1251,1311,1196,1217,1224,1145,1372,1292,1216,560,385,421,490,431,355,388,490,408,466,345,450,396,465,389,431,344,489,396,330,514,369,419,451,307,476,377,443,423,508,505,371,389,426,409,515,300,485,391,463,496,285,453,447,458,399,290,496,358,335,445,350,424,334,404,229,320,410,308,527,399,385,294,227,355,277,416,501,375,480,268,406,469,399,382,390,368,328,450,340,392,383,411,324,418,385,433,469,414,304,404,360,401,479,305,433,396,410,364,322,659,651,771,668,665,671,598,736,710,641,771,687,777,676,749,651,633,492,551,397,599,490,570,571,527,542,603,680,460,540,481,516,564,441,499,493,480,632,597,580,503,560,456,570,559,478,613,535,520,539,440,480,355,515,474,467,524,373,417,474,545,553,395,473,438,473,408,475,435,609,486,473,413,442,524,489,551,387,449,489,542,457,404,561,359,424,439,406,516,499,541,473,447,444,508,503,515,606,408,465,406,530,466,577,581,685,531,494,515,518,624,539,489,412,556,493,601,508,630,454,574,529,548,454,464,578,472,562,518,490,594,546,615,498,529,505,512,541,532,609,487,595,407,518,567,492,677,447,493,518,239,326,173,198,175,169,247,116,179,166,338,127,218,163,275,178,146,194,113,281,192,211,180,171,189,140,307,138,216,118,212,225,252,252,58,159,159,230,209,152,252,213,155,184,167,242,168,234,118,202,419,491,491,445,466,525,486,474,454,432,426,396,486,583,468,574,459,476,498,511,395,458,476,501,426,477,520,454,562,373,463,465,543,397,569,475,473,497,358,437,472,539,521,345,481,369,446,535,461,525,210,330,184,199,204,215,305,206,164,143,184,116,148,121,171,223,228,255,290,170,228,203,310,183,201,311,244,284,175,299,289,268,224,208,263,195,293,157,138,167,175,131,198,229,118,146,144,216,185,273,869,1206,1148,1278,1197,1184,1186,1249,1240,1427,1209,1288,1142,1190,1241,1448,1138,1316,1221,1371,1196,1320,1203,1221,1276,1228,1319,1251,1353,1255,1262,1301,1254,1194,1321,1094,1279,1246,1341,1118,1131,1349,1228,1288,1263,1282,1215,1239,1397,1106,456,340,180,221,188,264,142,251,174,305,230,360,126,165,301,257,244,232,243,230,279,192,269,187,201,201,298,321,240,214,195,300,145,246,256,252,162,277,218,265,170,214,241,184,212,193,327,280,265,130,215,241,284,347,208,297,181,396,330,247,249,231,244,316,254,313,321,249,309,267,418,256,187,272,231,331,309,277,291,330,282,247,251,340,317,321,216,326,208,222,292,320,361,254,411,271,299,335,388,285,431,592,219,184,305,552,443,208,437,466,385,169,325,530,252,266,391,610,276,258,342,516,323,91,439,544,418,112,400,489,289,279,312,551,266,179,427,499,365,152,426,408,350,183,428,504,338,243,279,441,274,140,325,109,202,168,159,257,191,234,193,255,151,126,293,175,118,85,189,53,60,69,80,174,127,105,209,91,98,61,153,98,124,200,142,165,159,170,233,238,277,97,234,247,190,258,58,58,148,120],"rounds":[{"round":1,"t_start":0.0,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.999,0.999,1.0],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"turn left","code":"B-L","action_decoded":"turn left","action_p":0.978,"action_ok":true,"firing_before_code":1868,"prefix_identical":null},{"round":2,"t_start":3.5,"true":["wind","cold","humid","sound","fruit"],"decoded":["wind","cold","humid","sound","fruit"],"p_top":[1.0,0.994,0.993,0.998,0.999],"prompt":"I feel wind. It feels cold. The air feels humid. I hear a sound. I smell ripe fruit. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"go forward","code":"A+B","action_decoded":"go forward","action_p":0.996,"action_ok":true,"firing_before_code":829,"prefix_identical":true},{"round":3,"t_start":7.0,"true":["fruit","umami","wind","water","cold"],"decoded":["fruit","umami","wind","water","cold"],"p_top":[0.999,0.998,1.0,0.994,0.999],"prompt":"I smell ripe fruit. I taste something savory. I feel wind. I taste water. It feels cold. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"eat","code":"A-pulse","action_decoded":"eat","action_p":0.975,"action_ok":true,"firing_before_code":741,"prefix_identical":true}]},{"cfg":"real","seed":4001,"t_total":10.5,"pop":[186,259,272,264,212,226,218,282,251,225,220,241,229,206,254,226,199,259,205,247,250,234,196,217,226,198,217,268,221,241,245,300,208,249,249,216,248,239,237,227,222,226,232,238,236,222,220,221,234,207,286,258,254,253,282,260,338,270,272,263,278,291,302,265,265,261,287,312,282,279,286,282,304,258,268,292,254,259,249,292,274,281,256,261,283,286,278,264,265,255,270,249,261,278,245,309,271,245,273,262,69,62,65,71,93,86,52,51,66,57,50,71,78,106,92,80,63,62,82,71,60,48,80,71,72,70,57,59,74,77,60,84,96,68,80,81,67,59,69,93,67,74,86,87,94,83,34,53,81,79,45,30,62,49,54,67,59,74,82,59,25,39,26,37,40,59,53,48,44,45,52,87,60,50,16,18,24,32,18,21,52,45,68,61,39,38,45,49,49,61,55,54,48,38,43,77,69,39,18,43,643,1118,1240,1101,1226,1181,1237,1229,1248,1249,1166,1231,1206,1163,1173,1198,1193,1188,1223,1242,1220,1263,1137,1163,1212,1249,1237,1158,1189,1203,1148,1321,1320,1233,1185,1201,1195,1236,1167,1106,1132,1216,1215,1343,1232,1232,1171,1199,1215,1198,545,97,91,68,91,73,80,57,102,76,93,83,80,101,77,92,95,56,84,68,81,94,92,90,72,76,81,89,75,88,72,98,108,101,89,84,107,73,79,80,92,84,97,80,98,82,85,83,93,75,36,17,22,26,15,20,21,28,18,21,19,23,19,19,26,20,22,17,19,26,21,23,21,21,17,21,18,24,25,18,21,19,25,21,18,26,24,20,19,24,19,20,24,26,17,19,19,24,22,21,46,64,75,56,73,58,99,89,85,85,75,65,85,112,95,68,97,82,90,110,85,84,84,83,85,86,86,84,97,96,120,67,59,81,113,87,72,95,118,105,81,85,79,88,81,77,90,75,93,102,645,773,807,799,737,754,775,769,784,792,742,747,772,812,721,770,759,744,788,729,789,765,794,736,738,704,773,726,776,768,781,790,753,772,718,776,730,728,754,778,763,778,741,711,846,822,774,714,772,796,223,74,63,69,74,72,69,74,73,73,87,87,96,91,81,81,93,88,85,78,78,63,71,89,73,80,70,86,107,97,89,94,87,90,91,91,94,71,84,83,82,64,93,83,70,95,79,84,89,79,107,103,112,100,113,127,117,111,113,115,113,122,118,125,102,128,145,131,105,135,122,107,127,135,114,132,132,132,128,122,134,141,116,139,127,136,119,98,111,122,122,131,120,117,124,136,129,97,108,109,80,110,96,99,99,82,73,119,104,80,100,85,91,98,91,79,111,95,89,78,89,80,92,82,98,74,67,87,75,87,93,111,85,79,70,116,84,80,66,94,91,87,76,50,65,79,102,87,87,95,97,82,86,83,73,90,81,59,88,78,87,94,90,88,85,81,84,98,79,58,65,89,99,87,80,99,103,107,88,79,99,58,55,87,90,66,85,96,81,70,97,97,79,86,87,96,74,81,88,88,30,22,20,20,21,20,20,25,18,20,18,24,19,22,24,20,18,19,26,20,20,22,22,21,20,22,18,21,23,18,24,19,22,18,24,23,19,19,25,22,22,18,24,20,19,18,24,24,18,21,53,62,58,66,72,56,72,70,72,69,73,74,71,61,64,61,57,64,64,70,66,65,56,80,68,69,70,70,80,68,71,65,76,69,44,76,70,67,52,71,59,58,67,55,90,67,62,75,58,77,119,130,103,100,98,133,94,108,112,122,122,114,123,142,117,142,117,122,130,127,128,125,127,118,129,101,114,138,116,131,119,117,126,119,110,105,112,134,130,145,120,117,113,119,107,115,119,124,114,116,64,57,69,85,96,77,95,95,92,85,88,106,116,91,84,74,93,91,98,101,112,111,83,105,93,79,99,78,87,98,92,91,90,93,124,87,85,91,67,71,63,69,95,82,88,72,62,76,90,104,80,59,61,60,65,51,46,70,52,43,53,60,49,51,53,47,53,58,55,51,50,64,68,58,70,51,51,45,60,54,49,50,71,46,42,44,44,67,40,46,50,62,46,43,69,59,51,57,55,47,68,103,88,102,107,96,90,111,81,94,90,67,96,112,93,93,83,108,90,86,76,90,96,71,93,81,55,96,67,101,90,110,109,85,92,78,96,71,102,100,81,101,93,85,76,86,96,105,71,72,87,88,65,98,102,66,55,66,82,96,75,72,68,93,73,80,97,84,77,96,66,81,104,71,67,86,84,69,82,104,70,77,83,86,93,102,105,85,69,72,78,77,80,75,127,84,87,93,81,95,52,30,17,21,15,26,17,20,20,23,16,19,28,18,22,18,24,22,14,23,23,22,15,21,23,16,26,19,23,12,25,19,16,24,21,21,15,24,20,17,27,19,19,18,24,18,17,25,20,23],"rounds":[{"round":1,"t_start":0.0,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.999,0.999,1.0],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"turn left","code":"B-L","action_decoded":"turn left","action_p":0.972,"action_ok":true,"firing_before_code":1575,"prefix_identical":null},{"round":2,"t_start":3.5,"true":["humid","pheromone","dry","mold","sugar"],"decoded":["humid","pheromone","dry","mold","sugar"],"p_top":[0.999,1.0,0.997,0.998,0.998],"prompt":"The air feels humid. I smell another fly. The air feels dry. I smell mould. I taste sugar. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"turn right","code":"B-R","action_decoded":"turn right","action_p":0.869,"action_ok":true,"firing_before_code":125,"prefix_identical":true},{"round":3,"t_start":7.0,"true":["umami","mold","humid","water","sugar"],"decoded":["umami","mold","humid","water","sugar"],"p_top":[0.997,0.998,0.998,0.995,0.997],"prompt":"I taste something savory. I smell mould. The air feels humid. I taste water. I taste sugar. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"turn right","code":"B-R","action_decoded":"turn right","action_p":0.842,"action_ok":true,"firing_before_code":139,"prefix_identical":true}]},{"cfg":"real","seed":4002,"t_total":10.5,"pop":[177,235,247,270,225,243,238,235,203,224,221,210,250,235,236,204,219,255,225,231,232,223,241,210,217,234,214,213,220,238,239,230,244,240,234,234,238,221,235,230,224,219,226,215,231,247,219,225,234,235,271,237,271,278,279,298,294,264,296,269,291,312,277,273,284,250,278,330,293,297,307,276,284,308,281,279,284,304,303,266,237,290,296,258,279,302,269,240,303,274,246,250,286,277,283,301,259,234,282,271,66,42,69,76,91,96,49,44,71,74,44,70,81,72,85,71,72,60,60,66,86,69,111,65,79,44,53,75,99,51,72,93,96,79,65,56,49,64,97,77,51,83,81,43,43,59,74,82,70,95,25,37,50,50,41,30,52,90,73,92,44,70,55,59,37,18,11,18,24,40,47,45,29,33,58,82,50,64,45,27,53,82,59,47,41,42,81,46,39,34,68,57,76,83,56,24,36,30,35,22,710,1118,1222,1144,1120,1224,1187,1142,1231,1294,1266,1254,1189,1180,1303,1147,1223,1194,1222,1172,1175,1160,1307,1283,1213,1211,1200,1254,1199,1206,1245,1212,1114,1145,1198,1154,1158,1200,1137,1202,1243,1098,1157,1187,1207,1276,1266,1261,1193,1182,571,98,82,83,57,63,59,64,95,58,60,70,77,73,51,65,73,71,50,65,59,77,72,60,66,68,84,100,56,53,71,72,65,92,75,78,69,68,62,70,73,67,49,57,65,89,73,51,79,71,6,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,254,297,397,358,338,370,388,377,352,380,378,351,369,329,382,346,341,351,372,387,331,357,393,351,366,370,334,322,343,389,370,338,378,352,367,372,342,381,340,350,356,323,362,368,332,382,370,329,366,418,116,71,49,54,58,44,64,44,78,73,62,69,77,68,72,69,73,52,73,85,66,47,64,67,83,66,56,54,62,78,53,64,57,62,77,58,58,75,68,73,65,53,64,60,61,64,60,78,68,79,28,22,15,29,37,51,30,17,30,33,59,73,68,94,69,61,45,47,63,58,46,45,70,71,40,36,29,30,61,84,83,45,56,46,25,43,44,76,53,58,47,43,28,37,42,32,49,51,59,48,95,86,114,99,110,100,93,82,79,105,116,104,103,105,110,102,108,94,107,108,74,98,117,118,109,103,107,108,106,99,105,120,94,109,114,92,97,113,107,111,103,126,95,104,112,111,108,110,107,116,117,127,111,146,145,124,112,126,137,135,158,101,98,143,144,145,146,130,168,132,108,114,117,125,125,156,159,141,125,149,119,115,141,117,133,141,128,123,125,150,140,136,143,113,108,143,139,132,147,129,366,420,44,6,305,432,120,10,267,414,87,6,300,390,90,16,303,404,88,5,297,375,77,4,288,457,77,7,330,357,63,11,270,397,106,3,285,410,101,6,318,393,103,4,269,395,80,3,287,469,113,7,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,189,268,259,256,207,252,240,261,270,241,231,259,255,276,276,254,240,213,210,281,243,245,249,210,228,230,231,194,247,216,222,216,236,226,239,218,259,247,251,199,226,262,230,210,237,227,251,221,194,215,615,643,723,721,831,819,725,740,761,771,743,731,761,753,771,769,755,819,756,733,657,725,738,714,712,723,770,748,759,708,796,734,718,770,773,743,730,735,735,771,756,707,756,716,734,792,731,810,733,764,214,105,59,66,74,99,73,57,74,61,97,76,53,47,45,63,76,67,59,90,84,67,82,80,46,70,61,81,86,100,57,71,84,68,69,62,60,71,89,82,91,68,65,70,83,55,65,67,77,94,56,39,61,48,60,53,61,71,52,66,66,59,43,46,56,58,74,80,61,62,58,64,66,75,75,73,40,49,66,67,53,42,65,86,77,67,58,46,52,63,55,50,70,53,70,46,53,65,62,60,68,53,71,75,70,54,54,68,46,74,61,59,61,60,43,56,59,68,62,58,67,55,69,59,55,68,70,70,61,55,56,87,48,67,44,56,64,89,64,67,60,58,51,51,54,58,32,60,65,65,195,300,115,9,179,337,143,10,205,299,109,8,211,308,106,4,204,300,118,13,209,309,115,14,171,246,79,9,185,284,125,7,202,302,99,7,209,298,108,9,212,345,94,14,186,308,102,3,176,275,105,16,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,3,3],"rounds":[{"round":1,"t_start":0.0,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.999,0.999,1.0],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"turn left","code":"B-L","action_decoded":"turn left","action_p":0.974,"action_ok":true,"firing_before_code":1503,"prefix_identical":null},{"round":2,"t_start":3.5,"true":["sound","dry","hot","mold","bitter"],"decoded":["sound","dry","hot","mold","bitter"],"p_top":[1.0,0.996,0.998,0.998,0.999],"prompt":"I hear a sound. The air feels dry. It feels hot. I smell mould. I taste something bitter. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"stop","code":"B-pulse","action_decoded":"stop","action_p":0.975,"action_ok":true,"firing_before_code":184,"prefix_identical":true},{"round":3,"t_start":7.0,"true":["vinegar","pheromone","sugar","humid","salt"],"decoded":["vinegar","pheromone","sugar","humid","salt"],"p_top":[0.999,1.0,0.998,0.998,0.998],"prompt":"I smell vinegar. I smell another fly. I taste sugar. The air feels humid. I taste salt. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"eat","code":"A-pulse","action_decoded":"eat","action_p":0.988,"action_ok":true,"firing_before_code":90,"prefix_identical":true}]},{"cfg":"shuffle","seed":4000,"t_total":10.5,"pop":[167,198,243,244,225,228,205,234,203,217,211,212,200,224,202,214,212,201,198,184,212,212,201,209,227,206,208,175,214,216,232,224,215,206,223,248,208,242,233,235,207,219,201,230,191,213,215,231,236,199,242,230,231,253,281,293,272,237,261,292,355,311,284,281,258,275,275,260,271,274,302,277,235,255,283,265,268,291,286,296,266,273,293,286,264,231,242,251,257,293,270,323,261,276,255,298,248,252,281,289,70,34,45,28,34,31,32,36,36,54,49,36,28,52,42,33,21,38,44,34,43,38,45,49,34,34,45,38,52,38,35,37,40,50,53,43,45,53,31,37,49,49,31,51,36,34,35,48,48,22,8,17,40,42,17,45,31,25,13,18,39,61,57,16,15,24,26,21,24,47,21,24,55,16,18,50,36,37,37,12,17,34,25,25,27,33,15,13,29,19,27,41,11,12,14,28,33,38,22,26,463,538,588,631,639,681,632,675,629,689,630,617,576,640,622,684,624,632,675,681,649,656,632,603,675,641,690,677,612,666,589,594,616,691,675,584,624,652,607,636,678,645,628,641,565,639,584,678,621,593,136,53,45,44,46,42,46,49,43,41,56,56,36,46,48,41,57,46,53,61,47,39,44,45,56,37,40,37,53,36,43,47,44,52,48,53,51,39,43,53,43,40,41,43,54,50,52,46,35,42,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,474,490,585,525,503,545,541,513,528,569,560,577,591,521,550,538,544,516,542,550,544,547,558,552,572,519,562,517,541,537,565,528,468,530,554,578,538,545,558,614,557,539,563,554,529,523,552,580,552,521,61,55,82,46,72,32,74,79,75,35,66,96,62,69,57,42,41,63,44,48,41,71,41,58,60,80,76,52,56,68,77,55,40,45,109,76,58,33,64,53,68,106,67,106,97,58,57,73,54,80,52,16,39,38,72,71,40,44,42,54,26,32,35,23,33,22,31,47,30,58,22,39,33,29,42,28,46,32,28,37,20,27,34,15,24,23,19,60,43,32,45,40,32,25,38,36,33,27,30,22,203,204,221,230,207,234,214,217,214,224,274,243,225,250,222,255,224,224,221,219,224,199,254,209,237,204,240,252,216,215,253,214,244,206,178,234,223,250,237,242,237,201,232,250,225,231,232,229,228,253,227,256,248,263,261,271,247,295,289,253,259,277,253,263,285,271,238,241,276,261,302,286,257,273,261,281,298,257,267,288,287,265,259,266,248,249,268,234,303,260,293,287,297,256,264,317,338,256,265,297,245,206,203,241,230,267,270,212,234,234,255,232,190,226,225,242,243,235,219,217,237,222,246,218,223,229,232,211,208,231,255,222,238,224,212,221,215,215,239,234,216,242,238,227,239,226,260,200,212,226,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,204,240,248,262,280,262,256,270,241,246,268,223,262,248,325,319,274,280,293,315,296,257,274,264,284,260,309,294,285,288,258,314,278,250,263,278,283,272,252,260,271,265,268,257,273,262,269,256,298,269,65,40,31,38,33,28,35,37,43,46,44,33,35,38,28,31,45,38,43,27,35,31,26,40,33,35,36,49,32,38,26,42,36,33,29,31,39,36,24,30,33,34,37,34,30,33,38,55,21,29,522,530,561,529,534,515,543,553,575,608,548,577,525,538,560,601,532,571,557,555,535,583,536,541,555,522,523,552,563,542,561,572,542,547,573,530,546,545,533,531,509,569,552,584,527,567,567,573,574,499,48,30,21,30,27,30,27,31,24,34,25,28,19,22,22,31,20,22,22,28,24,22,23,25,26,26,22,31,18,21,25,26,21,24,26,24,30,26,26,33,24,28,25,34,26,27,30,18,26,21,34,81,51,69,36,20,36,81,135,70,75,81,70,57,32,86,93,97,66,108,103,34,53,47,98,112,62,59,80,113,54,86,72,67,34,67,50,72,66,63,70,94,73,111,103,90,99,65,75,40,159,201,20,0,145,215,23,0,133,212,28,0,156,217,42,0,137,190,50,0,147,185,34,0,159,223,47,0,170,203,31,0,155,193,29,0,170,201,28,0,153,193,31,0,154,219,22,0,156,200,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"rounds":[{"round":1,"t_start":0.0,"true":["vinegar","fruit","sugar","hot","looming"],"decoded":["vinegar","fruit","sugar","hot","looming"],"p_top":[0.999,0.999,0.996,0.998,1.0],"prompt":"I smell vinegar. I smell ripe fruit. I taste sugar. It feels hot. Something is looming toward me. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"turn left","code":"B-L","action_decoded":"turn left","action_p":0.811,"action_ok":true,"firing_before_code":1291,"prefix_identical":null},{"round":2,"t_start":3.5,"true":["wind","cold","humid","sound","fruit"],"decoded":["wind","cold","humid","sound","fruit"],"p_top":[0.999,0.999,0.997,0.998,0.999],"prompt":"I feel wind. It feels cold. The air feels humid. I hear a sound. I smell ripe fruit. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"go forward","code":"A+B","action_decoded":"go forward","action_p":0.878,"action_ok":true,"firing_before_code":490,"prefix_identical":true},{"round":3,"t_start":7.0,"true":["fruit","umami","wind","water","cold"],"decoded":["fruit","umami","wind","water","cold"],"p_top":[0.999,0.995,0.999,0.97,0.999],"prompt":"I smell ripe fruit. I taste something savory. I feel wind. I taste water. It feels cold. What should I do?","llm_provider":"stub","llm_model":"rules-v1","action":"eat","code":"A-pulse","action_decoded":"eat","action_p":0.931,"action_ok":true,"firing_before_code":207,"prefix_identical":true}]}];
+(function () {
+  const $ = id => document.getElementById(id);
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (t, a, txt) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; };
+  const MOD = { sugar:'taste', bitter:'taste', water:'taste', salt:'taste', umami:'taste',
+    vinegar:'smell', fruit:'smell', co2:'smell', mold:'smell', pheromone:'smell',
+    hot:'therm', cold:'therm', dry:'therm', humid:'therm', sound:'mech', wind:'mech', looming:'vis', none:'none' };
+  const CODES = [['turn left', 'B-L', 'JO-B left, 150 Hz'], ['turn right', 'B-R', 'JO-B right (mirrored), 150 Hz'], ['go forward', 'A+B', 'all JO-A and JO-B, 150 Hz'],
+    ['stop', 'B-pulse', 'all JO-B, 20 ms pulses at 300 Hz'], ['eat', 'A-pulse', 'all JO-A, 20 ms pulses at 300 Hz']];
+  const CODE = Object.fromEntries(CODES.map(c => [c[1], c[2]]));
+  const esc = s => String(s).replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
+  $('codes5').innerHTML = CODES.map(([a, c, n]) => `<tr><td>${a}</td><td class="mono">${c}</td><td>${n}</td></tr>`).join('');
+  const label = r => `${r.cfg === 'real' ? 'real' : 'shuffled'} · seed ${r.seed}`;
+  let cur = 0, raf = 0, playT = null, playhead = null;
+  function seg() {
+    $('c-run5').innerHTML = D5.map((r, i) => `<button aria-pressed="${i === cur}" data-i="${i}">${label(r)}</button>`).join('');
+    $('c-run5').querySelectorAll('button').forEach(b => b.onclick = () => { cur = +b.dataset.i; stop(); render(); });
+  }
+  const X0 = 70, X1 = 985;
+  function render() {
+    seg();
+    const r = D5[cur], T = r.t_total, xs = t => X0 + (X1 - X0) * t / T, svg = $('tl5'), w5 = xs(.5) - X0;
+    svg.innerHTML = '';
+    r.rounds.forEach(rd => {
+      const t0 = rd.t_start;
+      svg.appendChild(el('line', { x1: xs(t0), x2: xs(t0), y1: 4, y2: 262, stroke: css('--line'), 'stroke-width': 1 }));
+      svg.appendChild(el('text', { x: xs(t0) + 4, y: 14, 'font-size': 11, fill: css('--muted') }, `round ${rd.round}`));
+      rd.true.forEach((w, k) => {
+        const x = xs(t0 + k * .5);
+        const g = el('g', {}); g.appendChild(el('title', {}, w));
+        g.appendChild(el('rect', { x: x + 1, y: 22, width: w5 - 2, height: 22, rx: 4, fill: css('--m-' + MOD[w]), opacity: .9 }));
+        g.appendChild(el('text', { x: x + w5 / 2, y: 37, 'text-anchor': 'middle', 'font-size': 9.5, fill: '#fff' }, w.length > 6 ? w.slice(0, 5) + '…' : w));
+        svg.appendChild(g);
+      });
+      const xc = xs(t0 + 2.5);
+      svg.appendChild(el('rect', { x: xc + 1, y: 22, width: w5 - 2, height: 22, rx: 4, fill: 'none', stroke: css('--accent'), 'stroke-width': 2 }));
+      svg.appendChild(el('text', { x: xc + w5 / 2, y: 37, 'text-anchor': 'middle', 'font-size': rd.code.length > 4 ? 8 : 9.5, fill: css('--accent'), 'font-weight': 600 }, rd.code));
+      svg.appendChild(el('rect', { x: xs(t0 + 3) + 1, y: 22, width: w5 - 2, height: 22, rx: 4, fill: css('--m-none'), opacity: .25 }));
+      // readouts
+      rd.decoded.forEach((w, k) => {
+        const ok = w === rd.true[k], cx = xs(t0 + k * .5 + .25);
+        svg.appendChild(el('text', { class: 'r5', 'data-t': t0 + k * .5 + .5, x: cx, y: 228, 'text-anchor': 'middle', 'font-size': 12, fill: ok ? css('--good') : css('--bad') }, ok ? '✓' : '✗'));
+      });
+      const ok = rd.action_ok, cx = xs(t0 + 2.75), g = el('g', { class: 'r5', 'data-t': t0 + 3 });
+      g.appendChild(el('rect', { x: cx - 62, y: 238, width: 124, height: 22, rx: 11, fill: 'none', stroke: ok ? css('--good') : css('--bad'), 'stroke-width': 1.5 }));
+      g.appendChild(el('text', { x: cx, y: 253, 'text-anchor': 'middle', 'font-size': 11, fill: ok ? css('--good') : css('--bad'), 'font-weight': 500 }, `${ok ? '✓' : '✗'} ${rd.action_decoded} ${rd.action_p.toFixed(2)}`));
+      svg.appendChild(g);
+    });
+    svg.appendChild(el('text', { x: 6, y: 37, 'font-size': 10, fill: css('--muted') }, 'input'));
+    svg.appendChild(el('text', { x: 6, y: 228, 'font-size': 10, fill: css('--muted') }, 'words'));
+    svg.appendChild(el('text', { x: 6, y: 253, 'font-size': 10, fill: css('--muted') }, 'action'));
+    const pop = r.pop, pmax = Math.max(...pop), yb = 196, yt = 76, ys = v => yb - (yb - yt) * v / pmax;
+    [0, pmax / 2, pmax].forEach(v => {
+      svg.appendChild(el('line', { x1: X0, x2: X1, y1: ys(v), y2: ys(v), stroke: css('--line'), 'stroke-dasharray': v ? '2 4' : '' }));
+      svg.appendChild(el('text', { x: X0 - 6, y: ys(v) + 4, 'text-anchor': 'end', 'font-size': 10, fill: css('--muted') }, Math.round(v)));
+    });
+    svg.appendChild(el('text', { x: 6, y: yt - 14, 'font-size': 10, fill: css('--muted') }, 'spikes / 10 ms'));
+    let d = `M${xs(0)},${yb}`; pop.forEach((v, i) => d += `L${xs((i + .5) * .01)},${ys(v)}`); d += `L${xs(pop.length * .01)},${yb}Z`;
+    svg.appendChild(el('path', { d, fill: css('--trace'), opacity: .12 }));
+    let d2 = ''; pop.forEach((v, i) => d2 += `${i ? 'L' : 'M'}${xs((i + .5) * .01)},${ys(v)}`);
+    svg.appendChild(el('path', { d: d2, fill: 'none', stroke: css('--trace'), 'stroke-width': 1, opacity: .85 }));
+    for (let t = 0; t <= T + 1e-9; t += 1.5) svg.appendChild(el('text', { x: xs(t), y: yb + 14, 'text-anchor': t > T - .1 ? 'end' : 'middle', 'font-size': 10, fill: css('--muted') }, (+t.toFixed(1)) + ' s'));
+    playhead = el('line', { x1: X0, x2: X0, y1: 18, y2: 200, stroke: css('--accent'), 'stroke-width': 2, opacity: 0 });
+    svg.appendChild(playhead);
+    $('lg5').innerHTML = [['--m-taste', 'taste'], ['--m-smell', 'smell'], ['--m-therm', 'temperature / humidity'], ['--m-mech', 'hearing / wind'], ['--m-vis', 'vision']]
+      .map(([v, n]) => `<span><i class="sw" style="background:var(${v})"></i>${n}</span>`).join('') +
+      '<span><i class="sw" style="border:2px solid var(--accent)"></i>action code</span><span><i class="sw" style="background:var(--m-none);opacity:.35"></i>silence</span>';
+    $('rounds5').innerHTML = r.rounds.map(rd => `<div class="rcard" data-t="${rd.t_start}">
+      <h3>Round ${rd.round} <small>${rd.t_start.toFixed(1)}–${(rd.t_start + 3.5).toFixed(1)} s</small></h3>
+      <div class="wchips">${rd.true.map(w => `<b style="background:var(--m-${MOD[w]})">${w}</b>`).join('')}</div>
+      <p class="q">Decoded ${rd.decoded.filter((w, k) => w === rd.true[k]).length} of 5 (lowest p = ${Math.min(...rd.p_top).toFixed(3)}). Prompt: “${esc(rd.prompt)}”</p>
+      <div><div class="who">Reply <span class="badge">offline stand-in (${esc(rd.llm_model)}), not a real LLM</span></div><div class="a">${esc(rd.action)}</div></div>
+      <p class="step">Into the fly as <span class="mono">${rd.code}</span>: ${CODE[rd.code] || ''}. ${rd.firing_before_code.toLocaleString()} neurons were still firing when it started.</p>
+      <p class="step">Read back from descending neurons: <span class="${rd.action_ok ? 'ok' : 'err'}">${rd.action_ok ? '✓' : '✗'} ${rd.action_decoded}</span>, p = ${rd.action_p.toFixed(3)}</p>
+    </div>`).join('');
+    show(99);
+  }
+  function show(t) {
+    document.querySelectorAll('#tl5 .r5').forEach(g => g.style.opacity = t >= +g.dataset.t ? 1 : .12);
+    document.querySelectorAll('#rounds5 .rcard').forEach(c => c.classList.toggle('ghost', t < +c.dataset.t));
+  }
+  function stop() { cancelAnimationFrame(raf); playT = null; $('play5').textContent = '▶ Play'; if (playhead) playhead.setAttribute('opacity', 0); show(99); }
+  function play() {
+    if (playT != null) { stop(); return; }
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { show(99); return; }
+    const T = D5[cur].t_total, t0 = performance.now(), SLOW = 1.6;
+    playT = 0; $('play5').textContent = '■ Stop';
+    const tick = now => {
+      playT = (now - t0) / 1000 / SLOW;
+      if (playT > T) { stop(); return; }
+      const x = X0 + (X1 - X0) * playT / T; playhead.setAttribute('x1', x); playhead.setAttribute('x2', x); playhead.setAttribute('opacity', 1);
+      show(playT); raf = requestAnimationFrame(tick);
+    };
+    show(0); raf = requestAnimationFrame(tick);
+  }
+  $('play5').onclick = play;
+  const all = D5.flatMap(r => r.rounds), words = all.reduce((s, rd) => s + rd.decoded.filter((w, k) => w === rd.true[k]).length, 0);
+  $('tiles5').innerHTML = [
+    ['Words decoded in the loop', `${words} / ${all.length * 5}`, `${D5.length} runs × 3 rounds`],
+    ['Actions read back in the loop', `${all.filter(rd => rd.action_ok).length} / ${all.length}`, 'from descending neurons only'],
+    ['Held-out actions (Day 4)', '37 / 37', 'shuffled brain: 36 / 37'],
+    ['Descending neurons reached', '445', 'by the codes; 24 in the shuffled brain'],
   ].map(([k, v, s]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('');
   render();
   if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
