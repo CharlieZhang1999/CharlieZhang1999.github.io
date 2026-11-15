@@ -147,19 +147,47 @@ iframe.player { display: block; width: 100%; height: 820px; border: 1px solid va
 <body>
 <div class="wrap">
   <header>
-    <p class="eyebrow">flybrain · week 3 · closing the fly ↔ LLM loop · days 1–6 of 7 done · in progress</p>
+    <p class="eyebrow">flybrain · week 3 · closing the fly ↔ LLM loop · all 7 days done · 13 nov 2026</p>
     <h1>Can the fly talk to a language model?</h1>
-    <p class="lede">Week 3 rebuilds the rest of the "fly brain to ChatGPT" demo on the calibrated male brain. Words play into the simulated fly, a readout turns its spikes back into words, a language model reads them and picks an action, and (from Day 3) that action is fed back into the fly. This page grows as each day finishes.</p>
+    <p class="lede">Week 3 rebuilds the rest of the "fly brain to ChatGPT" demo on the calibrated male brain. Words play into the simulated fly, a readout turns its spikes back into words, a language model reads them and picks an action, and (from Day 3) that action is fed back into the fly. Each tab is one step, newest first.</p>
     <div class="seg" id="days" role="tablist" aria-label="Day" style="margin-top:14px">
-      <button role="tab" data-day="day6" aria-pressed="true">Day 6 · watch the loop</button>
+      <button role="tab" data-day="day7" aria-pressed="true">Day 7 · the report</button>
+      <button role="tab" data-day="day6" aria-pressed="false">Day 6 · watch the loop</button>
       <button role="tab" data-day="day5" aria-pressed="false">Days 3–5 · the closed loop</button>
       <button role="tab" data-day="day2" aria-pressed="false">Day 2 · fly → LLM</button>
       <button role="tab" data-day="day1" aria-pressed="false">Day 1 · five words in a row</button>
-      <button disabled title="coming next" style="opacity:.45;cursor:default">Day 7 · write-up</button>
     </div>
   </header>
 
-  <div class="day" id="day6">
+  <div class="day" id="day7">
+  <section class="panel">
+    <p class="eyebrow">day 7 · 13 nov 2026</p>
+    <h2 style="font-size:24px">Week 3 in one report</h2>
+    <p class="lede" style="margin:0">The whole week written up: a connectome-constrained LIF simulation of the male fly brain with a trained readout, in a closed loop with Claude. What is fixed by the wiring and what is learned, what the shuffled brain can also do, and where the real wiring shows.</p>
+  </section>
+  <section class="tiles">
+    <div class="tile"><div class="k">Words, live loop</div><div class="v">60 / 60</div><div class="s">4 runs × 3 rounds, Claude choosing</div></div>
+    <div class="tile"><div class="k">Actions, live loop</div><div class="v">12 / 12</div><div class="s">read back from descending neurons</div></div>
+    <div class="tile"><div class="k">Descending neurons reached</div><div class="v">445 vs 24</div><div class="s">real vs shuffled wiring</div></div>
+    <div class="tile"><div class="k">Action confidence</div><div class="v">0.96–1.00</div><div class="s">vs 0.81–0.91 with shuffled wiring</div></div>
+  </section>
+  <section class="panel">
+    <div class="who" style="margin-bottom:8px">Week 3 report<a class="btn llmbtn" href="report.html" target="_blank" rel="noopener">Open full page ↗</a></div>
+    <p class="sub" style="margin:0 0 10px">The headline: real and shuffled wiring differ in how the action reaches the brain's outputs and how sure the readout is, not in whether the loop works. Only the two linear readouts are trained. The connectome weights are never changed.</p>
+    <iframe class="player" id="report7" src="report.html" title="Week 3 report" loading="lazy"></iframe>
+    <script>
+    (function () {
+      const f = document.getElementById('report7');
+      function fit() { try { const d = f.contentDocument, kids = [...d.body.children].filter(c => c.offsetHeight);
+        const h = Math.max(...kids.map(c => c.getBoundingClientRect().bottom)) + d.defaultView.scrollY + 32;
+        if (h > 200 && Math.abs(h - f.clientHeight) > 4) f.style.height = Math.ceil(h) + 'px'; } catch (e) {} }
+      f.addEventListener('load', () => { fit(); try { new ResizeObserver(fit).observe(f.contentDocument.body); } catch (e) {} });
+    })();
+    </script>
+  </section>
+  </div>
+
+  <div class="day" id="day6" hidden>
   <section class="panel">
     <p class="eyebrow">day 6 · 11 nov 2026</p>
     <h2 style="font-size:24px">Watch the fly and the language model take turns</h2>
@@ -605,12 +633,12 @@ const SEGS = [{"w":"hot","prev":"","k":0,"dec":"hot","p":0.999,"pop":[11,37,14,3
   const days = document.querySelectorAll('#days button[data-day]');
   function showDay(d) {
     days.forEach(b => b.setAttribute('aria-pressed', b.dataset.day === d));
-    ['day1', 'day2', 'day5', 'day6'].forEach(id => $(id).hidden = id !== d);
-    try { localStorage.setItem('fb-w3-tab6', d); } catch (e) {}
+    ['day1', 'day2', 'day5', 'day6', 'day7'].forEach(id => $(id).hidden = id !== d);
+    try { localStorage.setItem('fb-w3-tab7', d); } catch (e) {}
   }
   days.forEach(b => b.onclick = () => showDay(b.dataset.day));
-  let startDay = 'day6'; try { startDay = localStorage.getItem('fb-w3-tab6') || 'day6'; } catch (e) {}
-  if (!$(startDay)) startDay = 'day6';
+  let startDay = 'day7'; try { startDay = localStorage.getItem('fb-w3-tab7') || 'day7'; } catch (e) {}
+  if (!$(startDay)) startDay = 'day7';
   showDay(startDay);
 
   const MOD = { sugar:'taste', bitter:'taste', water:'taste', salt:'taste', umami:'taste',
