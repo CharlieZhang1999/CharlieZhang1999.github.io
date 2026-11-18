@@ -27,5 +27,5 @@
   title: The whole male CNS, simulated
   dates: Started 2026.11.15
   status: in progress
-  summary: The full male CNS model (165,122 neurons) in PyTorch on CPU and GPU. The GPU track starts by working out where each 2 ms simulation step goes and what to cut first.
+  summary: The full male CNS model (165,122 neurons) in PyTorch on CPU and GPU. The GPU track starts by working out where the time goes, about 2 ms of wall time per 0.1 ms simulated step, and what to cut first.
   page: week4
