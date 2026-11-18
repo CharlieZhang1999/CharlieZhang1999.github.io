@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flybrain Week 4</title>
+<style>
+/* Layout: single reading column like Week 1; tables scroll sideways on narrow screens */
+:root{
+  --bg:#faf9f6; --fg:#23251f; --muted:#6b6e62; --line:#e2e0d6;
+  --card:#f1efe7; --accent:#4a7a3d; --code:#eceade;
+  --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#191b16; --fg:#e4e3da; --muted:#9a9d8e; --line:#33362c;
+  --card:#20231c; --accent:#8fbf7f; --code:#23261e;
+  color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#191b16; --fg:#e4e3da; --muted:#9a9d8e; --line:#33362c;
+  --card:#20231c; --accent:#8fbf7f; --code:#23261e;
+  color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 Georgia,'Times New Roman',serif;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 48px}
+main{max-width:760px;margin:0 auto}
+h1{font-size:2rem;line-height:1.15;text-wrap:balance;margin:40px 0 4px}
+h2{font-size:1.25rem;margin:40px 0 10px;text-wrap:balance}
+h3{font-size:1.02rem;margin:28px 0 8px}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+p,li{margin:.5em 0}
+.lede{font-size:1.06rem;color:var(--muted)}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:6px 12px 6px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td.n,th.n{text-align:right;padding-right:16px;white-space:nowrap}
+tr.total td{font-weight:bold;border-bottom:2px solid var(--fg)}
+code{font-family:var(--mono);font-size:.84em;background:var(--code);border-radius:4px;padding:1px 5px}
+figure{margin:16px 0;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px}
+figure img{display:block;width:100%;height:auto}
+figcaption{font-size:.85rem;color:#6b6e62;padding:6px 4px 2px}
+.note{font-size:.88rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<p class="eyebrow">Flybrain · Week 4 · in progress</p>
+<h1>The whole male CNS, simulated</h1>
+<p class="lede">Week 4 runs the full male CNS model (165,122 neurons, 24.5 million synapses) in PyTorch, on CPU and on a GPU. This page collects the work as it lands, starting with the GPU performance track.</p>
+
+<section id="gpu-track">
+<h2>GPU track</h2>
+<p class="eyebrow">Day 3 · where the GPU step goes</p>
+<p>One simulated 0.1 ms step took about 2 ms on an RTX 5060 Ti (under WSL), three times slower than the same step on 6 CPU threads (0.66 ms). The question was why. We timed the building blocks one by one (launching a tiny GPU kernel, waiting for the GPU, small copies), counted how often a real step uses each, and added them up.</p>
+<p>The step is held up by the host, not by GPU arithmetic. It launches about 106 tiny kernels and makes the CPU wait for the GPU 10 times. Adding up those costs predicts the measured step time to within 20% for both random-number modes in the run below. Across five repeat runs it holds in four, when stall steps are left out.</p>
+
+<h3>Budget per step (ms)</h3>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Category</th><th class="n">numpy rng</th><th class="n">torch rng</th></tr></thead>
+<tbody>
+<tr><td>Python + PyTorch dispatch (117 ops × 1.4 µs)</td><td class="n">0.17</td><td class="n">0.17</td></tr>
+<tr><td>Kernel launches, at the GPU's pace (~106 × 10 µs)</td><td class="n">1.08</td><td class="n">1.10</td></tr>
+<tr><td>Waiting for GPU results (5–6 round trips)</td><td class="n">0.62</td><td class="n">0.71</td></tr>
+<tr><td>Hidden copies from <code>x[idx] = constant</code> (4 per step)</td><td class="n">0.15</td><td class="n">0.15</td></tr>
+<tr><td>Uploading random input from NumPy</td><td class="n">0.02</td><td class="n">0</td></tr>
+<tr class="total"><td>Predicted</td><td class="n">2.04</td><td class="n">2.12</td></tr>
+<tr><td>Measured, all steps</td><td class="n">1.86</td><td class="n">2.04</td></tr>
+<tr><td>Measured, without stalls</td><td class="n">1.74</td><td class="n">1.98</td></tr>
+</tbody>
+</table>
+</div>
+
+<figure>
+<img src="gpu_budget.png" alt="Stacked bars of predicted milliseconds per step by category for rng numpy (2.04 ms) and rng torch (2.12 ms), with measured markers at 1.86 and 2.04 ms. Kernel launches are the largest segment, then waiting for GPU results." width="1200" height="510">
+<figcaption>Predicted cost per step by category. The solid line is the measured mean; the dashed line leaves out stall steps.</figcaption>
+</figure>
+
+<h3>What this means for Week 5</h3>
+<ul>
+<li><strong>Remove the 10 waits per step</strong>, about −0.8 ms per step. Four of them are simple assignments such as <code>v[idx] = v_rst</code>, which quietly copy the constant to the GPU and wait.</li>
+<li><strong>Then record the whole step as a CUDA graph.</strong> A graph replays 50 tiny kernels 2–4× faster than launching them one by one. The target is 0.5 ms per step or less, which would beat the CPU.</li>
+<li><strong>Fusing kernels is the other lever.</strong> Each kernel removed saves about 10 µs.</li>
+<li><strong>Python overhead is small</strong> (0.17 ms), so rewriting the loop in C++ would not pay off.</li>
+<li><strong>Stalls.</strong> Under WSL some steps take about 11 ms instead of 2 ms. How often this happens changes from run to run, and it is outside the model.</li>
+</ul>
+<p class="note">Measured 2026-11-18 on an RTX 5060 Ti, driver 610.88, WSL 3.0.5, PyTorch 2.11 (CUDA 12.8), float64, looming stimulus, averaged over 1,990 warm steps. GPU timings on this machine vary by up to several times between runs; the full numbers and repeat runs are in the flybrain repo under <code>perf/week04_day3.md</code>.</p>
+</section>
+</main>
+</body>
+</html>
