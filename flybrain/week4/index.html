@@ -60,6 +60,7 @@ td.n, th.n { text-align: right }
 .sub { font-size: 12.5px; color: var(--muted); margin: 4px 0 0 }
 code { font-family: var(--f-mono); font-size: .86em; background: var(--code); border-radius: 4px; padding: 1px 5px }
 figcaption code, .sub code { overflow-wrap: anywhere }
+figcaption code { background: #eceee9; color: #1d2320 } /* the figure card stays white in dark mode */
 figure { margin: 16px 0; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 8px }
 figure img { display: block; width: 100%; height: auto }
 figure.sq { max-width: 560px }
@@ -159,7 +160,7 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
     <p>Bristles are touch receptors that respond when they are bent. A steady hum on all of them at once is closer to touching the whole body than to rest. So this is mainly an artifact of the stimulus design, amplified by a nerve cord whose balance of excitation and inhibition was never calibrated.</p>
 
     <h3>2. Who the 1,040 abdominal sensors are</h3>
-    <p>682 of them already carry a type from MANC, an earlier nerve-cord connectome, but types whose sense is marked unknown. A newer female brain-and-nerve-cord connectome (BANC) labels those same types. Mapped through it, 494 are abdominal bristles and 18 are oxygen sensors. A separate check on our own wiring data agrees: one cluster of 740 of them (71%) has wiring partners that resemble those of touch bristles. No source we read supports a steady resting rate for this group.</p>
+    <p>682 of them already carry a type from MANC, an earlier nerve-cord connectome, but types whose sense is marked unknown. A newer female brain-and-nerve-cord connectome (BANC) labels those same types. A first mapping through it, not yet fully checked, puts 494 of them as abdominal bristles and 18 as oxygen sensors; some of its other labels, such as a bitter-taste group, are unverified. A separate check on our own wiring data agrees: one cluster of 740 of them (71%) has wiring partners that resemble those of touch bristles. No source we read supports a steady resting rate for this group.</p>
 
     <h3>3. Charlie's choices for the background</h3>
     <div class="tablewrap"><table>
@@ -175,15 +176,15 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
     <p>At 3&nbsp;Hz this leaves 8–13 MN spikes per run against 544–745 with the old all-sensory background. At 1&nbsp;Hz no MN fires in any of three seeds.</p>
 
     <h3>4. The wind loop</h3>
-    <p>After the wind stimulus, five types of descending neurons in the GNG (the region under the brain that links it to the nerve cord) kept exciting each other: DNge027, GNG423, DNg21, DNg62 and DNge044. With no further input, the state lasted from 0.44&nbsp;s to 1&nbsp;s or more. The search for a cause found no mislabelled neuron: all five are cholinergic (excitatory) in MaleCNS and in FlyWire, the wiring is symmetric, and the model build removed no inhibition from the loop. The wiring is therefore most likely genuine strong mutual excitation, which runs on in a model without adaptation.</p>
-    <p>Charlie chose to scale the synapses among the five types by 0.3. Over 30 wind episodes, the tail after wind is 0.15&nbsp;s or less in 22 and above 0.3&nbsp;s in 1 (0.314&nbsp;s). Runs without wind stay spike-for-spike identical. The cost: motor output during wind falls by 10–29% (median 15%).</p>
+    <p>After the wind stimulus, five types of descending neurons in the GNG (the region under the brain that links it to the nerve cord) kept exciting each other: DNge027, GNG423, DNg21, DNg62 and DNge044. With no further input, the state lasted from 0.44&nbsp;s to 1&nbsp;s or more. The search for a cause found no mislabelled neuron: all five are cholinergic (excitatory) in MaleCNS (the male brain and nerve cord connectome this model is built from) and in FlyWire (an independent connectome of a female brain), the wiring is symmetric, and the model build removed no inhibition from the loop. The wiring is therefore most likely genuine strong mutual excitation, which runs on in a model without adaptation.</p>
+    <p>Charlie chose to scale the synapses among the five types by 0.3. Over 30 wind episodes, the tail after wind is 0.15&nbsp;s or less in 22 and above 0.3&nbsp;s in 1 (0.314&nbsp;s). Runs without wind stayed spike-for-spike identical in the runs tested. In the full dataset run there was one exception: the background-only episode ep206 diverged from 2.33&nbsp;s, when a spontaneous DNg62 spike no longer recruited two other loop neurons. The cost: motor output during wind falls by 10–29% (median 15%).</p>
 
     <h3>5. The dataset</h3>
     <p>200 mixture episodes and 10 background-only episodes, 2.5&nbsp;s each, run with the real and with the shuffled wiring: 420 runs, all valid. They took 5.92&nbsp;h for 1,050 simulated seconds (median 20.8&nbsp;s of wall time per simulated second). Looming is in 28 of the 200 mixtures, wind in 102.</p>
   </section>
   <section class="panel notes">
     <h2>What Day 5 found</h2>
-    <p><b>The resting fly is quiet now.</b> With the new background, MN output at 3&nbsp;Hz is 1.7% of what it was. Background-only episodes give 1% of the dataset's motor variance (298 against 29,336&nbsp;Hz²), so the variance comes from the stimuli.</p>
+    <p><b>The resting fly is quiet now.</b> With the new background, MN output at 3&nbsp;Hz is 1.7% of what it was. Background-only episodes give 1% of the dataset's motor variance (298 against 29,336&nbsp;Hz²; variance of a firing rate is measured in Hz²), so the variance comes from the stimuli.</p>
     <p><b>The real wiring varies far more.</b> 205 of 349 pools vary (variance above 1&nbsp;Hz² in 10&nbsp;ms bins) with the real wiring, against 30 shuffled. Without the looming episodes it is 144 against 24. The summed variance is 79× higher (29,336 against 372&nbsp;Hz²).</p>
     <p><b>Looming and wind drive most of it.</b> Looming episodes are 14% of the time bins but hold 55% of the variance, and 88% of the variance of the jump and flight power pools (TTMn and DLMn). Wind episodes hold 58% of the variance in 51% of the bins, mostly in the steering MNs.</p>
     <p><b>Known leftovers.</b> One wind tail reaches 0.51&nbsp;s. The antennal lobe still fires occasional synchronous bursts (52 eligible events in the real-wiring mixtures); they were accepted, not fixed. Neither tripped a stop condition.</p>
@@ -231,7 +232,7 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
       <li><b>MDN passes.</b> It drives the hind legs about 60× more than the front legs, as expected for backward walking.</li>
       <li><b>DNg100 partly passes.</b> It reaches all three leg pairs, but also drives some wing MNs, which we did not expect. There is no rhythm, because the model has no pattern generator.</li>
       <li><b>DNa02 cannot be tested yet.</b> In the fly it changes the stepping of a fly that is already walking. Without ongoing walking, one-sided drive gives weak and inconsistent asymmetry.</li>
-      <li><b>Looming gives a takeoff-like pattern only with the real wiring.</b> The shuffled wiring reaches 11 MNs and none of the jump or flight power MNs.</li>
+      <li><b>Looming gives a takeoff-like pattern only with the real wiring.</b> The shuffled wiring reaches 11 MNs and no jump (TTMn) or DLMn flight power MNs.</li>
     </ul>
     <h3>Two calibrations</h3>
     <ul>
@@ -241,8 +242,8 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
   </section>
   <section class="panel notes">
     <h2>What Day 3 found</h2>
-    <p><b>After looming, the brain stayed on.</b> About 530 brain neurons kept firing after the stimulus ended, centred on the central complex, the brain's navigation centre. All 46 EPG neurons in all 16 glomeruli were active: the whole compass ring locked on, not a single heading bump. The fly does enter a lasting defensive state after looming, but this was a runaway, not biology.</p>
-    <p><b>Two neuron types had the wrong sign.</b> The ring was held on by input from GLNO and LPsP. In MaleCNS their transmitter is unclear (GLNO) or predicted acetylcholine (LPsP), so the model made them excitatory. FlyWire and the literature say GABA or glutamate, so both are now inhibitory.</p>
+    <p><b>After looming, the brain stayed on.</b> About 530 brain neurons kept firing after the stimulus ended, centred on the central complex, the brain's navigation centre. All 46 EPG neurons (the compass neurons that track the fly's heading) in all 16 glomeruli (the compartments the compass is divided into) were active: the whole compass ring locked on, not a single heading bump. The fly does enter a lasting defensive state after looming, but this was a runaway, not biology.</p>
+    <p><b>Two neuron types had the wrong sign.</b> The ring was held on by input from GLNO and LPsP. In MaleCNS, the male connectome the model is built from, their transmitter is unclear (GLNO) or predicted acetylcholine (LPsP), so the model made them excitatory. FlyWire (a female brain connectome) and the literature say GABA or glutamate, so both are now inhibitory.</p>
     <p><b>Two small loops were damped.</b> A pair of DNg33 neurons and a quartet of IN19B040 neurons excite each other and run forever in a model without adaptation. Their synapses with each other are scaled ×0.3. This corrects a model limitation; it is not a claim about the connectome.</p>
     <p><b>Result.</b> After looming, the whole CNS now returns to silence within 100&nbsp;ms of the stimulus ending. The descending-neuron panel is unchanged, and Week 3's words give the same spike counts (correlation 0.9965–1.0000). Still open: a different 11-neuron loop in the brain-only model, in 2 of about 20 runs; it did not appear in any of 19 full-CNS runs.</p>
   </section>
@@ -272,7 +273,7 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
   <section class="panel">
     <p class="eyebrow">day 1 · 16 nov 2026</p>
     <h2 class="big">The whole central nervous system, in PyTorch</h2>
-    <p class="lede" style="margin:0">Weeks 1–3 simulated the brain only; the nerve cord's neurons were in the model but cut off. Day 1 connects them, using the calibrated model of Week 3, and ports the simulator to PyTorch. The traced MaleCNS set has 165,122 neurons, not the 166.7k sometimes quoted, which also counts untraced fragments. The motor neurons are grouped by side and type into 349 motor pools.</p>
+    <p class="lede" style="margin:0">Weeks 1–3 simulated the brain only; the nerve cord's neurons were in the model but cut off. Day 1 connects them, using the calibrated model of Week 3, and ports the simulator to PyTorch. The traced MaleCNS set (the male brain and nerve cord connectome) has 165,122 neurons, not the 166.7k sometimes quoted, which also counts untraced fragments. The motor neurons are grouped by side and type into 349 motor pools.</p>
   </section>
   <section class="tiles">
     <div class="tile"><div class="k">Neurons</div><div class="v">165,122</div><div class="s">brain + nerve cord</div></div>
@@ -291,6 +292,7 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
         <tr><td>MDN</td><td class="n">41</td><td class="n">2</td><td>hind-leg trochanter-femur 16&nbsp;Hz, thorax-coxa 6</td></tr>
         <tr><td>DNa02</td><td class="n">30</td><td class="n">2</td><td>neck 4.7&nbsp;Hz, hind/mid coxa 2–4</td></tr>
         <tr><td>sugar</td><td class="n">7</td><td class="n">1</td><td>mid leg, under 1&nbsp;Hz</td></tr>
+        <tr><td>vinegar</td><td class="n">0</td><td class="n">2</td><td>–</td></tr>
         <tr><td>giant fiber (DNp01)</td><td class="n">1</td><td class="n">0</td><td>TTM 4.4&nbsp;Hz</td></tr>
         <tr><td>none</td><td class="n">0</td><td class="n">0</td><td>–</td></tr>
       </tbody>
@@ -409,6 +411,8 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
   // day switcher, as in Week 3; the list of tabs comes from the buttons
   const btns = [...document.querySelectorAll('#days button[data-day]')];
   const ids = btns.map(b => b.dataset.day);
+  const alias = { 'gpu-track': 'gpu' };  // old link to the GPU section, from before the day tabs
+  const fromHash = () => { const h = location.hash.slice(1); return alias[h] || h; };
   function showDay(d, push) {
     btns.forEach(b => b.setAttribute('aria-pressed', b.dataset.day === d));
     ids.forEach(id => { const el = document.getElementById(id); if (el) el.hidden = id !== d; });
@@ -416,11 +420,13 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
     if (push) try { history.replaceState(null, '', '#' + d); } catch (e) {}
   }
   btns.forEach(b => b.onclick = () => showDay(b.dataset.day, true));
-  let start = location.hash.slice(1);
+  let start = fromHash();
   if (!ids.includes(start)) { try { start = localStorage.getItem('fb-w4-tab'); } catch (e) { start = null; } }
   if (!ids.includes(start)) start = ids[0];
   showDay(start, false);
-  window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (ids.includes(h)) showDay(h, false); });
+  const toAnchor = () => { const h = location.hash.slice(1); if (alias[h]) { const el = document.getElementById(h); if (el) el.scrollIntoView(); } };
+  toAnchor();
+  window.addEventListener('hashchange', () => { const h = fromHash(); if (ids.includes(h)) { showDay(h, false); toAnchor(); } });
 })();
 </script>
 </body>
