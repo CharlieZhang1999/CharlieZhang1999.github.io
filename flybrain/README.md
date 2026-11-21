@@ -11,6 +11,8 @@ flybrain/week3/index.html    Week 3: the fly ↔ LLM loop, one tab per step
 flybrain/week3/loop/         Week 3 Day 6: interactive loop player (+ data/)
 flybrain/week3/report.html   Week 3 Day 7: the full report
 flybrain/week3/loop_poster.jpg  poster frame for the Day 6 YouTube video
+flybrain/week4/index.html    Week 4: the whole male CNS, one tab per day + a GPU track tab
+flybrain/week4/*.png         Week 4 figures (ridge R², GPU budget and step anatomy)
 ```
 
 ## Week 3 page

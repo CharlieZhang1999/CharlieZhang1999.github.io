@@ -25,7 +25,7 @@
   page: week3
 - week: 4
   title: The whole male CNS, simulated
-  dates: Started 2026.11.15
-  status: in progress
-  summary: The full male CNS model (165,122 neurons) in PyTorch on CPU and GPU. The GPU track starts by working out where the time goes, about 2 ms of wall time per 0.1 ms simulated step, and what to cut first.
+  dates: Wrapped up 2026.11.20
+  status: done
+  summary: The full male CNS (165,122 neurons, brain plus nerve cord) in PyTorch, checked against known nerve-cord circuits, with a 420-run dataset. A first ridge baseline predicts motor-pool rates 100 ms ahead from brain activity, median R² 0.138 with the real wiring against 0.017 shuffled, with much of it from looming. One tab per day, plus the GPU track on where the time per step goes.
   page: week4
