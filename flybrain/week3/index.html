@@ -142,6 +142,12 @@ iframe.player { display: block; width: 100%; height: 820px; border: 1px solid va
 .rcard .step { font-size: 13px; margin: 0 }
 .rcard .ok { color: var(--good); font-weight: 600 }
 .reply .act.pending { color: var(--muted); font-weight: 500; font-size: 18px }
+/* Goal and Result at the top of each day tab: what the day set out to do and what it found, in two lines. */
+.glance { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 12px;
+  padding: 12px 16px; margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; align-items: baseline }
+.glance dt { font-family: var(--f-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 600 }
+.glance dd { margin: 0; max-width: 90ch }
+@media (max-width: 480px) { .glance { grid-template-columns: 1fr; gap: 2px } .glance dd + dt { margin-top: 8px } }
 </style>
 </head>
 <body>
@@ -160,6 +166,10 @@ iframe.player { display: block; width: 100%; height: 820px; border: 1px solid va
   </header>
 
   <div class="day" id="day7">
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Write up the whole week in one report, and say plainly what the real wiring adds.</dd>
+    <dt>Result</dt><dd>The fly ↔ LLM loop works (60 of 60 words, 12 of 12 actions). A brain with shuffled wiring passes too, so the real wiring shows in how far the action spreads (445 against 24 output neurons) and how confident the readout is, not in whether the loop works.</dd>
+  </dl>
   <section class="panel">
     <p class="eyebrow">day 7 · 13 nov 2026</p>
     <h2 style="font-size:24px">Week 3 in one report</h2>
@@ -188,6 +198,10 @@ iframe.player { display: block; width: 100%; height: 820px; border: 1px solid va
   </div>
 
   <div class="day" id="day6" hidden>
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Make the loop fast enough to run in about 10&nbsp;minutes, put a real language model (Claude) in it, and show it as a video and a player.</dd>
+    <dt>Result</dt><dd>A 3-round loop now takes 5–7.5&nbsp;minutes instead of about 20, Claude answers live in every round, and all 4 runs still decode every word and read back every action.</dd>
+  </dl>
   <section class="panel">
     <p class="eyebrow">day 6 · 11 nov 2026</p>
     <h2 style="font-size:24px">Watch the fly and the language model take turns</h2>
@@ -249,6 +263,10 @@ iframe.player { display: block; width: 100%; height: 820px; border: 1px solid va
   </div>
 
   <div class="day" id="day5" hidden>
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Close the loop: play the language model's chosen action back into the same simulated brain, and read it back off the brain's output neurons.</dd>
+    <dt>Result</dt><dd>It works end to end: all 60 words and all 12 actions come through in one continuous simulation. But the actions are labels the brain carries, not real steering, and a shuffled brain can do it too.</dd>
+  </dl>
   <section class="panel">
     <p class="eyebrow">days 3–5 · 10–11 nov 2026</p>
     <h2 style="font-size:24px">The loop closes: the fly's action goes back into the fly</h2>
@@ -306,6 +324,10 @@ iframe.player { display: block; width: 100%; height: 820px; border: 1px solid va
   </div>
 
   <div class="day" id="day2" hidden>
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Turn the fly's decoded words into a prompt for a language model, which must answer with one of five actions.</dd>
+    <dt>Result</dt><dd>The fly → LLM half works: 50 of 50 words decoded over 10 noise seeds. The replies logged that day came from an offline stand-in, not a real model; Day 6 swapped in Claude.</dd>
+  </dl>
   <section class="panel">
     <h2>Day 2: the fly's words become a prompt</h2>
     <p class="lede" style="margin:0 0 12px">Each episode plays its words back to back (0.5&nbsp;s each, 150&nbsp;Hz) into one continuous simulation of the calibrated MaleCNS brain with presynaptic inhibition. The readout decodes each window, the decoded words become first-person sentences, and the language model must answer with one of five actions.</p>
@@ -363,6 +385,10 @@ iframe.player { display: block; width: 100%; height: 820px; border: 1px solid va
   </div>
 
   <div class="day" id="day1" hidden>
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Check that five words played back to back into the fly can each still be read out correctly.</dd>
+    <dt>Result</dt><dd>Mostly yes: 95.5% of words without retraining. The errors came from a lingering “cold” state, and modelling the brain's feedback onto sensory neurons as presynaptic inhibition brought them to 0.</dd>
+  </dl>
   <section class="panel">
     <p class="eyebrow">day 1 · 9 nov 2026</p>
     <h2 style="font-size:24px">Can the fly read a whole sentence?</h2>

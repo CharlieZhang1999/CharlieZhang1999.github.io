@@ -76,6 +76,12 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
 #gpu-track tr.total td { font-weight: 600; border-bottom: 2px solid var(--ink) }
 #gpu-track .rg { display: block; color: var(--muted); font-size: .85em; white-space: nowrap }
 #gpu-track figure { max-width: 760px }
+/* Goal and Result at the top of each day tab: what the day set out to do and what it found, in two lines. */
+.glance { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 12px;
+  padding: 12px 16px; margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; align-items: baseline }
+.glance dt { font-family: var(--f-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 600 }
+.glance dd { margin: 0; max-width: 90ch }
+@media (max-width: 480px) { .glance { grid-template-columns: 1fr; gap: 2px } .glance dd + dt { margin-top: 8px } }
 </style>
 </head>
 <body>
@@ -100,6 +106,10 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
 
   <!-- ===================== Day 6–7 ===================== -->
   <div class="day" id="day67">
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Write up the week and ask a first question of the new dataset: can brain activity predict what the motor neurons do 100&nbsp;ms later?</dd>
+    <dt>Result</dt><dd>Partly, and only with the real wiring: a simple linear model scores a median R² of 0.138 against 0.017 with shuffled wiring. Much of that comes from looming, the fly's escape stimulus.</dd>
+  </dl>
   <section class="panel">
     <p class="eyebrow">days 6–7 · 20 nov 2026</p>
     <h2 class="big">Brain activity predicts the motor neurons, and the real wiring matters</h2>
@@ -143,6 +153,10 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
 
   <!-- ===================== Day 5 ===================== -->
   <div class="day" id="day5" hidden>
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Find out why the “resting” fly's motor neurons kept firing, fix it, and then generate the full training dataset.</dd>
+    <dt>Result</dt><dd>The cause was a steady hum on every touch sensor at once; turning those off cut resting motor output to 1.7% of before. A runaway loop after wind was damped, and all 420 runs finished (5.9&nbsp;h of compute).</dd>
+  </dl>
   <section class="panel">
     <p class="eyebrow">day 5 · 18–20 nov 2026</p>
     <h2 class="big">A quiet resting fly, one loop fixed, and 420 runs</h2>
@@ -193,6 +207,10 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
 
   <!-- ===================== Day 4 ===================== -->
   <div class="day" id="day4" hidden>
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Design random stimulus mixtures for the dataset, and run a small pilot to check the full set is affordable and worth running.</dd>
+    <dt>Result</dt><dd>It is: 202 of 349 motor pools vary with the real wiring against 25 shuffled, and the full set fits in about 5 hours. Two problems surfaced for Day 5: looming dominates, and the background alone makes motor neurons fire.</dd>
+  </dl>
   <section class="panel">
     <p class="eyebrow">day 4 · 17 nov 2026</p>
     <h2 class="big">Random stimulus mixtures, and a 10-episode pilot</h2>
@@ -215,6 +233,10 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
 
   <!-- ===================== Day 3 ===================== -->
   <div class="day" id="day3" hidden>
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Check the newly connected nerve cord against circuits whose effects are known from real flies.</dd>
+    <dt>Result</dt><dd>Backward walking (MDN) and a takeoff-like escape pass. Two missing pieces were added (the giant fiber's electrical synapse to the jump muscle, and motor-neuron signs), and the whole CNS now goes quiet within 100&nbsp;ms after looming.</dd>
+  </dl>
   <section class="panel">
     <p class="eyebrow">day 3 · 17 nov 2026</p>
     <h2 class="big">Checking the nerve cord against known circuits</h2>
@@ -251,6 +273,10 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
 
   <!-- ===================== Day 2 ===================== -->
   <div class="day" id="day2" hidden>
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Let the PyTorch simulator pause, save its state and carry on later, as the Week 3 simulator could.</dd>
+    <dt>Result</dt><dd>A run split into three saved-and-resumed pieces gives exactly the same spikes as one unbroken run, at no measurable extra cost.</dd>
+  </dl>
   <section class="panel">
     <p class="eyebrow">day 2 · 17 nov 2026</p>
     <h2 class="big">Save and resume in the PyTorch simulator</h2>
@@ -270,6 +296,10 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
 
   <!-- ===================== Day 1 ===================== -->
   <div class="day" id="day1" hidden>
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Connect the nerve cord to the brain model (165,122 neurons in all) and move the simulator to PyTorch.</dd>
+    <dt>Result</dt><dd>PyTorch gives identical spikes about twice as fast, the nerve cord is silent at rest, and stimuli reach up to 189 motor neurons with the real wiring against at most 13 with shuffled wiring.</dd>
+  </dl>
   <section class="panel">
     <p class="eyebrow">day 1 · 16 nov 2026</p>
     <h2 class="big">The whole central nervous system, in PyTorch</h2>
@@ -309,6 +339,10 @@ figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
 
   <!-- ===================== GPU track ===================== -->
   <div class="day" id="gpu" hidden>
+  <dl class="glance" aria-label="At a glance">
+    <dt>Goal</dt><dd>Find out why one simulated step takes longer on the GPU (about 1.7&nbsp;ms) than on the CPU (0.6&nbsp;ms). This track ran on Days 3–4.</dd>
+    <dt>Result</dt><dd>The GPU is mostly idle: each step launches about 105 tiny jobs and makes the CPU wait for the GPU 10 times. Removing those waits is the plan for Week 5.</dd>
+  </dl>
   <div class="panel">
 <section id="gpu-track">
 <h2>GPU track</h2>
