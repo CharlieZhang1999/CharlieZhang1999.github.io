@@ -13,6 +13,8 @@ flybrain/week3/report.html   Week 3 Day 7: the full report
 flybrain/week3/loop_poster.jpg  poster frame for the Day 6 YouTube video
 flybrain/week4/index.html    Week 4: the whole male CNS, one tab per day + a GPU track tab
 flybrain/week4/*.png         Week 4 figures (ridge R², GPU budget and step anatomy)
+flybrain/week5/index.html    Week 5 (in progress): GPU track tab (batched trials, perf P1)
+flybrain/week5/*.png         Week 5 figures (GPU batch scaling)
 ```
 
 ## Week 3 page

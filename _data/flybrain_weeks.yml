@@ -29,3 +29,9 @@
   status: done
   summary: The full male CNS (165,122 neurons, brain plus nerve cord) in PyTorch, checked against known nerve-cord circuits, with a 420-run dataset. A first ridge baseline predicts motor-pool rates 100 ms ahead from brain activity, median R² 0.138 with the real wiring against 0.017 shuffled, with much of it from looming. One tab per day, plus the GPU track on where the time per step goes.
   page: week4
+- week: 5
+  title: Many trials at once
+  dates: In progress
+  status: in progress
+  summary: Week 5 is under way. So far it has the GPU track, which runs many independent trials of the whole CNS side by side in one CUDA graph. Each trial gives the same spikes as when it runs alone, and throughput levels off at 8 trials.
+  page: week5

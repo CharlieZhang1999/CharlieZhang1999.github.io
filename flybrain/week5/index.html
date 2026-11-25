@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flybrain Week 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Week 5 page: same style as Week 4. For now one tab, the GPU track (perf P1).
+   Source: flybrain perf/week05_p1.md and perf/results/w5/DESKTOP-4C13T5V_20261125-1020_batch.json. */
+:root {
+  --bg: #f4f5f2; --panel: #ffffff; --ink: #1d2320; --muted: #5d6762; --line: #d9ddd8; --canvas: #fbfbf9;
+  --accent: #2f7d5b; --code: #eceee9;
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --f-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --mono: var(--f-mono);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121614; --panel: #1a1f1c; --ink: #e6ebe7; --muted: #9aa49f; --line: #2c3430; --canvas: #0d100f;
+  --accent: #5cc08e; --code: #242b27; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121614; --panel: #1a1f1c; --ink: #e6ebe7; --muted: #9aa49f; --line: #2c3430; --canvas: #0d100f;
+  --accent: #5cc08e; --code: #242b27; color-scheme: dark }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5;
+  padding: 20px max(16px, env(safe-area-inset-left, 0px)) 40px max(16px, env(safe-area-inset-right, 0px)) }
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 18px }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(26px, 4vw, 38px); line-height: 1.1; margin: 0; text-wrap: balance }
+h2 { font-family: var(--f-display); font-weight: 500; font-size: 21px; margin: 0 0 8px; text-wrap: balance }
+h2.big { font-size: 24px }
+h3 { font-family: var(--f-display); font-weight: 500; font-size: 17px; margin: 18px 0 6px }
+.eyebrow { font-family: var(--f-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px }
+.lede { color: var(--muted); max-width: 78ch; margin: 8px 0 0 }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px }
+.panel > p, .panel li { max-width: 82ch }
+.panel ul { padding-left: 20px; margin: 6px 0 }
+.panel li { margin: 4px 0 }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; flex-wrap: wrap }
+.seg button { font: 500 13px var(--f-body); padding: 7px 11px; background: var(--panel); color: var(--ink); border: 0; border-right: 1px solid var(--line); cursor: pointer }
+.seg button:last-child { border-right: 0 }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel) }
+.seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px }
+.tile { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--panel) }
+.tile .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600 }
+.tile .v { font-family: var(--f-mono); font-size: 26px; font-variant-numeric: tabular-nums; line-height: 1.2 }
+.tile .s { font-size: 12px; color: var(--muted) }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; font-variant-numeric: tabular-nums }
+th, td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top }
+th { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600 }
+td.n, th.n { text-align: right }
+.tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0 }
+.notes p { margin: 0 0 10px }
+.notes p:last-child { margin: 0 }
+.day { display: grid; gap: 18px }
+.wrap > *, .day > * { min-width: 0 }
+.day[hidden] { display: none }
+.sub { font-size: 12.5px; color: var(--muted); margin: 4px 0 0 }
+code { font-family: var(--f-mono); font-size: .86em; background: var(--code); border-radius: 4px; padding: 1px 5px }
+figcaption code, .sub code { overflow-wrap: anywhere }
+figcaption code { background: #eceee9; color: #1d2320 } /* the figure card stays white in dark mode */
+figure { margin: 16px 0; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 8px }
+figure img { display: block; width: 100%; height: auto }
+figure.sq { max-width: 560px }
+figcaption { font-size: .85rem; color: #5d6762; padding: 6px 4px 2px }
+.note { font-size: 13px; color: var(--muted) }
+/* GPU track tab: the section below is the earlier Week 4 page's GPU section, unchanged. These rules style its markup. */
+#gpu-track > h2 { font-size: 24px }
+#gpu-track > .eyebrow { margin-top: 26px }
+#gpu-track > h2 + .eyebrow { margin-top: 0 }
+#gpu-track p { max-width: 82ch }
+#gpu-track ul { padding-left: 20px }
+#gpu-track td.n, #gpu-track th.n { white-space: nowrap; padding-right: 14px }
+#gpu-track tr.total td { font-weight: 600; border-bottom: 2px solid var(--ink) }
+#gpu-track .rg { display: block; color: var(--muted); font-size: .85em; white-space: nowrap }
+#gpu-track figure { max-width: 760px }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">flybrain · week 5 · in progress · 25 nov 2026</p>
+    <h1>Week 5</h1>
+    <p class="lede">Week 5's science results will be added here. For now this page has the GPU track: running many independent trials of the 165,122-neuron CNS at once on one graphics card.</p>
+    <div class="seg" id="days" role="tablist" aria-label="Day" style="margin-top:14px">
+      <button role="tab" data-day="gpu" aria-pressed="true">GPU track · batched trials</button>
+    </div>
+  </header>
+
+  <div class="day" id="gpu">
+  <section class="panel" id="gpu-track">
+    <p class="eyebrow">gpu track · P1 · 25 nov 2026</p>
+    <h2>B trials in one CUDA graph</h2>
+    <p>The science datasets are many independent trials on one network (for example 120 hidden-state episodes, each with its own stimulus and state drive). One trial leaves the GPU mostly idle, so P1 runs B trials side by side in one step on an RTX&nbsp;5060&nbsp;Ti. They share the wiring, and each trial keeps its own seed, its own stimulus blocks and its own spike buffers. One captured CUDA graph is replayed per step for the whole batch. Everything is in float64, the precision used for every check.</p>
+    <div class="tiles" style="margin:14px 0">
+      <div class="tile"><div class="k">8 trials, ms per step</div><div class="v">2.04</div><div class="s">target was under 1 ms; not met</div></div>
+      <div class="tile"><div class="k">Best trials per second</div><div class="v">0.40</div><div class="s">1 s trials, from B = 8 on (CPU: 0.17)</div></div>
+      <div class="tile"><div class="k">Same spikes as alone</div><div class="v">0 differ</div><div class="s">each trial, B = 1 vs B = 8, and vs the reference</div></div>
+    </div>
+    <h3>Scaling with the batch size B</h3>
+    <figure>
+      <img src="gpu_batch_scaling.png" width="840" height="1320" alt="Two stacked line charts against the batch size B from 1 to 32 on a doubling axis. Top: milliseconds per step, float64 rising from 0.46 at B = 1 to 2.0 at B = 8 and 8.3 at B = 32, float32 a little lower; the 1 ms target line is crossed at B = 4. Bottom: one-second trials per wall-second, float64 rising from 0.22 at B = 1 to about 0.39 at B = 4 and staying flat near 0.40 to B = 32; float32 rising to 0.62 at B = 16. Dashed and dotted gray lines mark the single-trial GPU graph (0.23) and the single-trial CPU (0.17).">
+      <figcaption>Looming stimulus, 2,000 steps after 1,000 warm-up steps, 5 runs (median, bars = min–max). The clock is CUDA events rescaled to the host clock. From the flybrain repo, <code>perf/results/w5/DESKTOP-4C13T5V_20261125-1020_batch_scaling.png</code>.</figcaption>
+    </figure>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th class="n">B</th><th class="n">steady ms/step (min–max)</th><th class="n">all steps ms/step</th><th class="n">trials/s</th><th class="n">trials/s float32</th><th class="n">peak GPU MB</th></tr></thead>
+        <tbody>
+        <tr><td class="n">1</td><td class="n">0.474<span class="rg">0.443–0.531</span></td><td class="n">0.463</td><td class="n">0.216</td><td class="n">0.225</td><td class="n">405</td></tr>
+        <tr><td class="n">2</td><td class="n">0.690<span class="rg">0.672–0.786</span></td><td class="n">0.672</td><td class="n">0.297</td><td class="n">0.327</td><td class="n">419</td></tr>
+        <tr><td class="n">4</td><td class="n">1.064<span class="rg">1.019–1.119</span></td><td class="n">1.045</td><td class="n">0.383</td><td class="n">0.411</td><td class="n">447</td></tr>
+        <tr class="total"><td class="n">8</td><td class="n">2.038<span class="rg">1.967–2.090</span></td><td class="n">2.027</td><td class="n">0.395</td><td class="n">0.531</td><td class="n">504</td></tr>
+        <tr><td class="n">16</td><td class="n">3.994<span class="rg">3.940–4.086</span></td><td class="n">4.002</td><td class="n">0.400</td><td class="n">0.621</td><td class="n">613</td></tr>
+        <tr><td class="n">32</td><td class="n">–<span class="rg">every step &gt; 5 ms</span></td><td class="n">8.285</td><td class="n">0.386</td><td class="n">0.587</td><td class="n">832</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sub">Float64 unless marked. Medians of 5 runs. Same session, one trial alone: the Week 4 GPU graph runs at 0.44&nbsp;ms per step (0.231 trials/s) and the PC's CPU at 0.60&nbsp;ms (0.168 trials/s). No other simulation was running during any timed row (checked before and after each). No trial exceeded its spike or synapse cap.</p>
+    <h3>What held</h3>
+    <ul>
+      <li><b>Each trial is spike-for-spike the same as running it alone.</b> On the CPU, the spike times and final voltages are bitwise equal to the reference simulator. On the GPU, a trial gives the same spike counts alone and in a batch of 8 (tested in two slots each, three seeds), and the same counts as the GPU reference (8 seeds, 0 neurons differ).</li>
+      <li><b>Different stimuli per trial work.</b> Each step replays one graph, also with 8 different stimulus schedules.</li>
+    </ul>
+    <h3>What didn't</h3>
+    <ul>
+      <li><b>8 trials take 2.0&nbsp;ms per step, not under 1&nbsp;ms.</b> Throughput stops growing at B = 8. A batch of 8 runs 1.7× the single-trial GPU graph and 2.4× the CPU, and larger batches add nothing.</li>
+      <li><b>Why:</b> the number of GPU kernels per step hardly changes (173 at B = 1, 180 at B = 8). Their work grows instead:
+        <ul>
+          <li>Every trial reads its full fixed-size synapse buffers each step (about 98,000 entries), however few neurons spiked.</li>
+          <li>Above about 8 trials, the neuron state no longer fits the GPU's 32&nbsp;MB L2 cache, so the voltage update slows faster than B grows.</li>
+        </ul>
+        Fusing these steps into fewer kernels is the next GPU target.</li>
+      <li><b>Exact match costs some flexibility.</b> To match the reference exactly, each trial draws the same random numbers as the reference does. That means one graph per set of stimulus windows (11 graphs for the 8-schedule batch). A batch with its own random stream needs only one graph, but it is then a different random realization of each trial, and two realizations agree only to a correlation of 0.986–0.996.</li>
+    </ul>
+    <p class="note">Report: flybrain <code>perf/week05_p1.md</code>. Code: <code>sim/lif_torch_batch.py</code>, <code>bench/w5_batch.py</code>.</p>
+  </section>
+  </div>
+</div>
+
+<script>
+(function () {
+  const btns = [...document.querySelectorAll('#days button[data-day]')];
+  const ids = btns.map(b => b.dataset.day);
+  function showDay(d, push) {
+    btns.forEach(b => b.setAttribute('aria-pressed', b.dataset.day === d));
+    ids.forEach(id => { const el = document.getElementById(id); if (el) el.hidden = id !== d; });
+    if (push) try { history.replaceState(null, '', '#' + d); } catch (e) {}
+  }
+  btns.forEach(b => b.onclick = () => showDay(b.dataset.day, true));
+  const h = location.hash.slice(1);
+  showDay(ids.includes(h) ? h : ids[0], false);
+})();
+</script>
+</body>
+</html>
